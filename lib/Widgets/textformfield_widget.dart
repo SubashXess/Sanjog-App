@@ -8,7 +8,7 @@ class TextFormFieldWidget extends StatelessWidget {
     required this.hintText,
     required this.textInputType,
     required this.onChanged,
-    required this.validator,
+    this.validator,
   });
   final Size size;
   final TextEditingController? controller;
@@ -41,6 +41,65 @@ class TextFormFieldWidget extends StatelessWidget {
         maxLines: 1,
         onChanged: onChanged,
         validator: validator,
+      ),
+    );
+  }
+}
+
+class TextFieldWidget extends StatelessWidget {
+  const TextFieldWidget({
+    Key? key,
+    required this.size,
+    required this.controller,
+    required this.keyboardType,
+    required this.maxLength,
+    required this.onChanged,
+    required this.label,
+  }) : super(key: key);
+
+  final Size size;
+  final String label;
+  final TextEditingController controller;
+  final TextInputType keyboardType;
+  final int maxLength;
+  final Function(String) onChanged;
+
+  @override
+  Widget build(BuildContext context) {
+    return SizedBox(
+      width: double.infinity,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            label.toString(),
+            style: const TextStyle(
+              color: Colors.black,
+              fontSize: 15.0,
+              fontWeight: FontWeight.normal,
+            ),
+          ),
+          SizedBox(height: size.height * 0.012),
+          SizedBox(
+            // height: size.height * 0.056,
+            child: TextFormField(
+              controller: controller,
+              decoration: InputDecoration(
+                filled: true,
+                fillColor: Colors.red.shade100,
+                isDense: true,
+                counterText: '',
+                border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(6.0),
+                    borderSide: BorderSide.none),
+              ),
+              keyboardType: keyboardType,
+              maxLength: maxLength,
+              maxLines: 1,
+              onChanged: onChanged,
+            ),
+          ),
+        ],
       ),
     );
   }

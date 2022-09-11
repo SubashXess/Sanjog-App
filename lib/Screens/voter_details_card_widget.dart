@@ -1,6 +1,12 @@
-import 'package:flutter/material.dart';
+import 'dart:io';
 
-class VoterDetailsCard extends StatelessWidget {
+import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:image_picker/image_picker.dart';
+import 'package:path/path.dart';
+import 'package:path_provider/path_provider.dart';
+
+class VoterDetailsCard extends StatefulWidget {
   const VoterDetailsCard({
     Key? key,
     required this.size,
@@ -9,13 +15,22 @@ class VoterDetailsCard extends StatelessWidget {
   final Size size;
 
   @override
+  State<VoterDetailsCard> createState() => _VoterDetailsCardState();
+}
+
+class _VoterDetailsCardState extends State<VoterDetailsCard> {
+  // Image add
+  File? image;
+  String? loadImage;
+
+  @override
   Widget build(BuildContext context) {
     return SizedBox(
-      width: size.width,
+      width: widget.size.width,
       child: Column(
         children: [
           SizedBox(
-            width: size.width,
+            width: widget.size.width,
             child: Row(
               crossAxisAlignment: CrossAxisAlignment.center,
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -39,18 +54,19 @@ class VoterDetailsCard extends StatelessWidget {
               ],
             ),
           ),
-          SizedBox(height: size.height * 0.014),
+          SizedBox(height: widget.size.height * 0.014),
           SizedBox(
-            width: size.width,
+            width: widget.size.width,
             child: Card(
               margin: EdgeInsets.zero,
               color: Colors.white,
+              elevation: 0.0,
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(6.0),
                 side: BorderSide(color: Colors.grey.shade400, width: 1.0),
               ),
               child: SizedBox(
-                width: size.width,
+                width: widget.size.width,
                 child: Padding(
                   padding: const EdgeInsets.all(10.0),
                   child: Column(
@@ -73,7 +89,7 @@ class VoterDetailsCard extends StatelessWidget {
                               fontWeight: FontWeight.bold,
                             ),
                           ),
-                          SizedBox(width: size.width * 0.012),
+                          SizedBox(width: widget.size.width * 0.012),
                           Container(
                             padding: const EdgeInsets.symmetric(
                                 horizontal: 6.0, vertical: 4.0),
@@ -90,7 +106,7 @@ class VoterDetailsCard extends StatelessWidget {
                               ),
                             ),
                           ),
-                          SizedBox(width: size.width * 0.012),
+                          SizedBox(width: widget.size.width * 0.012),
                           Container(
                             padding: const EdgeInsets.symmetric(
                                 horizontal: 6.0, vertical: 4.0),
@@ -107,7 +123,7 @@ class VoterDetailsCard extends StatelessWidget {
                               ),
                             ),
                           ),
-                          SizedBox(width: size.width * 0.012),
+                          SizedBox(width: widget.size.width * 0.012),
                           Container(
                             padding: const EdgeInsets.symmetric(
                                 horizontal: 6.0, vertical: 4.0),
@@ -126,7 +142,7 @@ class VoterDetailsCard extends StatelessWidget {
                           ),
                         ],
                       ),
-                      SizedBox(height: size.height * 0.012),
+                      SizedBox(height: widget.size.height * 0.012),
                       Row(
                         crossAxisAlignment: CrossAxisAlignment.center,
                         children: [
@@ -148,7 +164,7 @@ class VoterDetailsCard extends StatelessWidget {
                               ),
                             ),
                           ),
-                          SizedBox(width: size.width * 0.036),
+                          SizedBox(width: widget.size.width * 0.036),
                           const Text(
                             'YXV0934471',
                             style: TextStyle(
@@ -157,7 +173,7 @@ class VoterDetailsCard extends StatelessWidget {
                               fontWeight: FontWeight.normal,
                             ),
                           ),
-                          SizedBox(width: size.width * 0.036),
+                          SizedBox(width: widget.size.width * 0.036),
                           Container(
                             padding: const EdgeInsets.symmetric(
                                 horizontal: 6.0, vertical: 4.0),
@@ -177,16 +193,16 @@ class VoterDetailsCard extends StatelessWidget {
                           // SizedBox(width: size.width * 0.012),
                         ],
                       ),
-                      SizedBox(height: size.height * 0.012),
+                      SizedBox(height: widget.size.height * 0.012),
                       SizedBox(
-                        width: size.width,
+                        width: widget.size.width,
                         child: Wrap(
                           alignment: WrapAlignment.start,
                           runSpacing: 10.0,
                           spacing: 10.0,
                           children: const [
                             Text(
-                              'Name: Subash Xess',
+                              'Name: Paul Buchheit',
                               style: TextStyle(
                                 color: Colors.black87,
                                 fontSize: 14.0,
@@ -194,7 +210,7 @@ class VoterDetailsCard extends StatelessWidget {
                               ),
                             ),
                             Text(
-                              'Sex: F',
+                              'Sex: M',
                               style: TextStyle(
                                 color: Colors.black87,
                                 fontSize: 14.0,
@@ -218,7 +234,7 @@ class VoterDetailsCard extends StatelessWidget {
                               ),
                             ),
                             Text(
-                              'Relation Name: Subash Xess',
+                              'Relation Name: John Carmack',
                               style: TextStyle(
                                 color: Colors.black87,
                                 fontSize: 14.0,
@@ -226,7 +242,7 @@ class VoterDetailsCard extends StatelessWidget {
                               ),
                             ),
                             Text(
-                              'Mobile No: 9337856231',
+                              'Mobile No: 1234567890',
                               style: TextStyle(
                                 color: Colors.black87,
                                 fontSize: 14.0,
@@ -234,7 +250,7 @@ class VoterDetailsCard extends StatelessWidget {
                               ),
                             ),
                             Text(
-                              'Whatsapp No: 9438749228',
+                              'Whatsapp No: 1234567890',
                               style: TextStyle(
                                 color: Colors.black87,
                                 fontSize: 14.0,
@@ -244,12 +260,12 @@ class VoterDetailsCard extends StatelessWidget {
                           ],
                         ),
                       ),
-                      SizedBox(height: size.height * 0.012),
+                      SizedBox(height: widget.size.height * 0.012),
                       MaterialButton(
                         onPressed: () {},
                         color: Colors.red,
-                        height: size.height * 0.04,
-                        minWidth: size.width * 0.3,
+                        height: widget.size.height * 0.04,
+                        minWidth: widget.size.width * 0.3,
                         shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(6.0)),
                         child: const Text(
@@ -261,57 +277,86 @@ class VoterDetailsCard extends StatelessWidget {
                           ),
                         ),
                       ),
-                      SizedBox(height: size.height * 0.012),
+                      SizedBox(height: widget.size.height * 0.012),
                       SizedBox(
                         width: 120.0,
                         height: 120.0,
                         child: Card(
                           margin: EdgeInsets.zero,
-                          color: Colors.red.shade400,
+                          color: Colors.red.shade50,
+                          elevation: 2.0,
                           shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(6.0),
-                              side: BorderSide(
-                                  color: Colors.red.shade300, width: 1.0)),
+                              side: const BorderSide(
+                                  color: Colors.red, width: 2.0)),
                           clipBehavior: Clip.antiAliasWithSaveLayer,
-                          child: Image.asset(
-                            'assets/demo-girl.jpg',
-                            fit: BoxFit.cover,
-                          ),
+                          child: image != null
+                              ? Image.file(
+                                  image!,
+                                  fit: BoxFit.cover,
+                                )
+                              : Image.asset(
+                                  'assets/demo-girl.jpg',
+                                  fit: BoxFit.cover,
+                                ),
                         ),
                       ),
-                      SizedBox(height: size.height * 0.012),
+                      SizedBox(height: widget.size.height * 0.012),
                       Row(
                         children: [
                           MaterialButton(
-                            onPressed: () {},
+                            onPressed: () {
+                              pickImage(ImageSource.gallery, context);
+                            },
                             color: Colors.white,
-                            height: size.height * 0.04,
-                            minWidth: size.width * 0.3,
+                            height: widget.size.height * 0.04,
+                            minWidth: widget.size.width * 0.3,
+                            elevation: image != null ? 0.0 : 1.0,
                             shape: RoundedRectangleBorder(
                                 borderRadius: BorderRadius.circular(6.0),
                                 side: BorderSide(
                                     width: 1.0, color: Colors.grey.shade300)),
-                            child: const Text(
-                              'Choose file',
-                              style: TextStyle(
-                                color: Colors.black,
-                                fontSize: 14.0,
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
+                            child: image != null
+                                ? Row(
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceEvenly,
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.center,
+                                    children: const [
+                                      Text('File uploaded'),
+                                      SizedBox(width: 4.0),
+                                      Icon(
+                                        Icons.check,
+                                        size: 18.0,
+                                        color: Colors.red,
+                                      ),
+                                    ],
+                                  )
+                                : const Text(
+                                    'Choose file',
+                                    style: TextStyle(
+                                      color: Colors.black,
+                                      fontSize: 14.0,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
                           ),
-                          SizedBox(width: size.width * 0.036),
-                          const Text(
-                            'No file chosen',
-                            style: TextStyle(
-                              color: Colors.black54,
-                              fontSize: 14.0,
-                              fontWeight: FontWeight.normal,
+                          SizedBox(width: widget.size.width * 0.036),
+                          Expanded(
+                            child: Text(
+                              image != null ? "$loadImage" : 'No file chosen',
+                              maxLines: 1,
+                              style: const TextStyle(
+                                color: Colors.black54,
+                                fontSize: 14.0,
+                                fontWeight: FontWeight.normal,
+                                overflow: TextOverflow.ellipsis,
+                              ),
                             ),
                           ),
                         ],
                       ),
-                      SizedBox(height: size.height * 0.012),
+                      SizedBox(height: widget.size.height * 0.012),
                       Row(
                         crossAxisAlignment: CrossAxisAlignment.center,
                         children: [
@@ -323,7 +368,7 @@ class VoterDetailsCard extends StatelessWidget {
                               fontWeight: FontWeight.bold,
                             ),
                           ),
-                          SizedBox(width: size.width * 0.04),
+                          SizedBox(width: widget.size.width * 0.04),
                           InkWell(
                             splashColor: Colors.transparent,
                             highlightColor: Colors.transparent,
@@ -342,7 +387,7 @@ class VoterDetailsCard extends StatelessWidget {
                               ),
                             ),
                           ),
-                          SizedBox(width: size.width * 0.04),
+                          SizedBox(width: widget.size.width * 0.04),
                           const Text(
                             'Family Details',
                             style: TextStyle(
@@ -362,5 +407,39 @@ class VoterDetailsCard extends StatelessWidget {
         ],
       ),
     );
+  }
+
+  Future pickImage(ImageSource source, BuildContext context) async {
+    try {
+      final image = await ImagePicker().pickImage(source: source);
+
+      if (image == null) return;
+
+      // temporary image
+      // final imageTemporary = File(image.path);
+
+      // permanent image
+      final imagePermanent = await saveImagePermanently(image.path);
+
+      setState(() {
+        // this.image = imageTemporary;
+        this.image = imagePermanent;
+        loadImage = imagePermanent.toString();
+
+        // ignore: avoid_print
+        print("Load Image : $loadImage");
+      });
+    } on PlatformException catch (e) {
+      // ignore: avoid_print
+      print('Failed to pick image : $e');
+    }
+  }
+
+  Future<File> saveImagePermanently(String imagePath) async {
+    final directory = await getApplicationDocumentsDirectory();
+    final name = basename(imagePath);
+    final image = File('${directory.path}/$name');
+
+    return File(imagePath).copy(image.path);
   }
 }

@@ -4,7 +4,8 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:sonjagapp/Components/showsnackbar.dart';
-import 'package:sonjagapp/Widgets/voter_details_card_widget.dart';
+import 'package:sonjagapp/Screens/search_screen.dart';
+import 'package:sonjagapp/Screens/voter_details_card_widget.dart';
 import 'package:sonjagapp/Widgets/button_widget.dart';
 import 'package:sonjagapp/Widgets/textformfield_widget.dart';
 
@@ -40,7 +41,9 @@ class _HomePageState extends State<HomePage> {
           automaticallyImplyLeading: true,
           leadingWidth: 36.0,
           titleSpacing: 0.0,
-          leading: InkWell(onTap: () {}, child: const Icon(Icons.arrow_back)),
+          leading: InkWell(
+              onTap: () => Navigator.pop(context),
+              child: const Icon(Icons.arrow_back)),
           centerTitle: true,
           title: const Text('Entry through Voter List'),
           actions: [
@@ -49,7 +52,12 @@ class _HomePageState extends State<HomePage> {
               child: InkWell(
                 splashColor: Colors.transparent,
                 highlightColor: Colors.transparent,
-                onTap: () {},
+                onTap: () {
+                  Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => const SearchScreen()));
+                },
                 child: const Icon(Icons.search),
               ),
             ),
@@ -230,12 +238,6 @@ class _HomePageState extends State<HomePage> {
                                         _isVerified = false;
                                       });
                                       showSnackBar(context, 'Required');
-                                      // Future.delayed(
-                                      //   const Duration(seconds: 2),
-                                      //   () {
-                                      //     showSnackBar(context, 'Error');
-                                      //   },
-                                      // );
                                     }
                                   }),
                             ],
@@ -251,7 +253,6 @@ class _HomePageState extends State<HomePage> {
                         ElevatedIconButtonWidget(
                           size: size,
                           textDirection: TextDirection.ltr,
-                          // iconPadding: const EdgeInsets.only(left: 5.0),
                           icon: Icons.arrow_back,
                           label: 'Previous Page',
                         ),
