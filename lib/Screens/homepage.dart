@@ -9,6 +9,8 @@ import 'package:sonjagapp/Screens/voter_details_card_widget.dart';
 import 'package:sonjagapp/Widgets/button_widget.dart';
 import 'package:sonjagapp/Widgets/textformfield_widget.dart';
 
+import '../Constants/constants.dart';
+
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
 
@@ -43,9 +45,17 @@ class _HomePageState extends State<HomePage> {
           titleSpacing: 0.0,
           leading: InkWell(
               onTap: () => Navigator.pop(context),
-              child: const Icon(Icons.arrow_back)),
+              child: const Icon(
+                Icons.arrow_back,
+                size: 20.0,
+                color: Colors.white,
+              )),
           centerTitle: true,
-          title: const Text('Entry through Voter List'),
+          title: const Text(
+            'Entry through Voter List',
+            style:
+                TextStyle(color: Colors.white, fontSize: Constants.fontLarge),
+          ),
           actions: [
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 10.0),
@@ -58,7 +68,11 @@ class _HomePageState extends State<HomePage> {
                       MaterialPageRoute(
                           builder: (context) => const SearchScreen()));
                 },
-                child: const Icon(Icons.search),
+                child: const Icon(
+                  Icons.search,
+                  size: 20.0,
+                  color: Colors.white,
+                ),
               ),
             ),
           ],
@@ -94,7 +108,7 @@ class _HomePageState extends State<HomePage> {
                                     const Text(
                                       'Assembly',
                                       style: TextStyle(
-                                        fontSize: 14.0,
+                                        fontSize: Constants.fontRegular,
                                         fontWeight: FontWeight.w500,
                                         color: Colors.black87,
                                       ),
@@ -126,7 +140,7 @@ class _HomePageState extends State<HomePage> {
                                     const Text(
                                       'Booth Number',
                                       style: TextStyle(
-                                        fontSize: 14.0,
+                                        fontSize: Constants.fontRegular,
                                         fontWeight: FontWeight.w500,
                                         color: Colors.black87,
                                       ),
@@ -158,7 +172,7 @@ class _HomePageState extends State<HomePage> {
                                     const Text(
                                       'Page Number',
                                       style: TextStyle(
-                                        fontSize: 14.0,
+                                        fontSize: Constants.fontRegular,
                                         fontWeight: FontWeight.w500,
                                         color: Colors.black87,
                                       ),
@@ -207,7 +221,8 @@ class _HomePageState extends State<HomePage> {
                                                   'Failed to Load',
                                                   style: TextStyle(
                                                     color: Colors.white,
-                                                    fontSize: 16.0,
+                                                    fontSize:
+                                                        Constants.fontRegular,
                                                     fontWeight: FontWeight.bold,
                                                   ),
                                                 )
@@ -215,7 +230,8 @@ class _HomePageState extends State<HomePage> {
                                                   'Load',
                                                   style: TextStyle(
                                                     color: Colors.white,
-                                                    fontSize: 16.0,
+                                                    fontSize:
+                                                        Constants.fontRegular,
                                                     fontWeight: FontWeight.bold,
                                                   ),
                                                 ),

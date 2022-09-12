@@ -5,6 +5,7 @@ import 'package:flutter/services.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:path/path.dart';
 import 'package:path_provider/path_provider.dart';
+import 'package:sonjagapp/Constants/constants.dart';
 
 class VoterDetailsCard extends StatefulWidget {
   const VoterDetailsCard({
@@ -38,16 +39,16 @@ class _VoterDetailsCardState extends State<VoterDetailsCard> {
                 Text(
                   "Section No: 1",
                   style: TextStyle(
-                    color: Colors.red,
-                    fontSize: 14.0,
+                    color: Constants.kPrimaryThemeColor,
+                    fontSize: Constants.fontRegular,
                     fontWeight: FontWeight.bold,
                   ),
                 ),
                 Text(
                   "Total Voters: 30",
                   style: TextStyle(
-                    color: Colors.red,
-                    fontSize: 14.0,
+                    color: Constants.kPrimaryThemeColor,
+                    fontSize: Constants.fontRegular,
                     fontWeight: FontWeight.bold,
                   ),
                 ),
@@ -72,20 +73,20 @@ class _VoterDetailsCardState extends State<VoterDetailsCard> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Row(
-                        // crossAxisAlignment: WrapCrossAlignment.center,
-                        // direction: Axis.horizontal,
-                        // alignment: WrapAlignment.spaceBetween,
-                        // runSpacing: 10.0,
-                        // spacing: 10.0,
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      Wrap(
+                        crossAxisAlignment: WrapCrossAlignment.center,
+                        direction: Axis.horizontal,
+                        alignment: WrapAlignment.start,
+                        runSpacing: 5.0,
+                        spacing: 0.0,
+                        // crossAxisAlignment: CrossAxisAlignment.center,
+                        // mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
                           const Text(
                             'AcNo: 111',
                             style: TextStyle(
-                              color: Colors.black87,
-                              fontSize: 14.0,
+                              color: Colors.black,
+                              fontSize: Constants.fontSmall,
                               fontWeight: FontWeight.bold,
                             ),
                           ),
@@ -95,13 +96,13 @@ class _VoterDetailsCardState extends State<VoterDetailsCard> {
                                 horizontal: 6.0, vertical: 4.0),
                             decoration: BoxDecoration(
                               borderRadius: BorderRadius.circular(6.0),
-                              color: Colors.red,
+                              color: Constants.kPrimaryThemeColor,
                             ),
                             child: const Text(
                               'Booth No: 1',
                               style: TextStyle(
                                 color: Colors.white,
-                                fontSize: 14.0,
+                                fontSize: Constants.fontSmall,
                                 fontWeight: FontWeight.bold,
                               ),
                             ),
@@ -112,13 +113,13 @@ class _VoterDetailsCardState extends State<VoterDetailsCard> {
                                 horizontal: 6.0, vertical: 4.0),
                             decoration: BoxDecoration(
                               borderRadius: BorderRadius.circular(6.0),
-                              color: Colors.red,
+                              color: Constants.kPrimaryThemeColor,
                             ),
                             child: const Text(
                               'Page No: 3',
                               style: TextStyle(
                                 color: Colors.white,
-                                fontSize: 14.0,
+                                fontSize: Constants.fontSmall,
                                 fontWeight: FontWeight.bold,
                               ),
                             ),
@@ -129,13 +130,13 @@ class _VoterDetailsCardState extends State<VoterDetailsCard> {
                                 horizontal: 6.0, vertical: 4.0),
                             decoration: BoxDecoration(
                               borderRadius: BorderRadius.circular(6.0),
-                              color: Colors.red,
+                              color: Constants.kPrimaryThemeColor,
                             ),
                             child: const Text(
                               'Serial No: 1',
                               style: TextStyle(
                                 color: Colors.white,
-                                fontSize: 14.0,
+                                fontSize: Constants.fontSmall,
                                 fontWeight: FontWeight.bold,
                               ),
                             ),
@@ -152,14 +153,16 @@ class _VoterDetailsCardState extends State<VoterDetailsCard> {
                             padding: const EdgeInsets.all(8.0),
                             decoration: BoxDecoration(
                               shape: BoxShape.circle,
-                              color: Colors.red.shade50,
-                              border: Border.all(color: Colors.red, width: 1.0),
+                              color: Constants.kLightThemeColor,
+                              border: Border.all(
+                                  color: Constants.kPrimaryThemeColor,
+                                  width: 1.0),
                             ),
                             child: const Text(
                               '1',
                               style: TextStyle(
-                                color: Colors.red,
-                                fontSize: 14.0,
+                                color: Constants.kPrimaryThemeColor,
+                                fontSize: Constants.fontSmall,
                                 fontWeight: FontWeight.bold,
                               ),
                             ),
@@ -169,7 +172,7 @@ class _VoterDetailsCardState extends State<VoterDetailsCard> {
                             'YXV0934471',
                             style: TextStyle(
                               color: Colors.black87,
-                              fontSize: 14.0,
+                              fontSize: Constants.fontSmall,
                               fontWeight: FontWeight.normal,
                             ),
                           ),
@@ -179,13 +182,13 @@ class _VoterDetailsCardState extends State<VoterDetailsCard> {
                                 horizontal: 6.0, vertical: 4.0),
                             decoration: BoxDecoration(
                               borderRadius: BorderRadius.circular(6.0),
-                              color: Colors.red,
+                              color: Constants.kPrimaryThemeColor,
                             ),
                             child: const Text(
                               'PP',
                               style: TextStyle(
                                 color: Colors.white,
-                                fontSize: 14.0,
+                                fontSize: Constants.fontSmall,
                                 fontWeight: FontWeight.normal,
                               ),
                             ),
@@ -205,7 +208,7 @@ class _VoterDetailsCardState extends State<VoterDetailsCard> {
                               'Name: Paul Buchheit',
                               style: TextStyle(
                                 color: Colors.black87,
-                                fontSize: 14.0,
+                                fontSize: Constants.fontSmall,
                                 fontWeight: FontWeight.bold,
                               ),
                             ),
@@ -213,7 +216,7 @@ class _VoterDetailsCardState extends State<VoterDetailsCard> {
                               'Sex: M',
                               style: TextStyle(
                                 color: Colors.black87,
-                                fontSize: 14.0,
+                                fontSize: Constants.fontSmall,
                                 fontWeight: FontWeight.bold,
                               ),
                             ),
@@ -221,7 +224,7 @@ class _VoterDetailsCardState extends State<VoterDetailsCard> {
                               'Category: General',
                               style: TextStyle(
                                 color: Colors.black87,
-                                fontSize: 14.0,
+                                fontSize: Constants.fontSmall,
                                 fontWeight: FontWeight.bold,
                               ),
                             ),
@@ -229,7 +232,7 @@ class _VoterDetailsCardState extends State<VoterDetailsCard> {
                               'Relation Type: H',
                               style: TextStyle(
                                 color: Colors.black87,
-                                fontSize: 14.0,
+                                fontSize: Constants.fontSmall,
                                 fontWeight: FontWeight.bold,
                               ),
                             ),
@@ -237,7 +240,7 @@ class _VoterDetailsCardState extends State<VoterDetailsCard> {
                               'Relation Name: John Carmack',
                               style: TextStyle(
                                 color: Colors.black87,
-                                fontSize: 14.0,
+                                fontSize: Constants.fontSmall,
                                 fontWeight: FontWeight.bold,
                               ),
                             ),
@@ -245,7 +248,7 @@ class _VoterDetailsCardState extends State<VoterDetailsCard> {
                               'Mobile No: 1234567890',
                               style: TextStyle(
                                 color: Colors.black87,
-                                fontSize: 14.0,
+                                fontSize: Constants.fontSmall,
                                 fontWeight: FontWeight.bold,
                               ),
                             ),
@@ -253,7 +256,7 @@ class _VoterDetailsCardState extends State<VoterDetailsCard> {
                               'Whatsapp No: 1234567890',
                               style: TextStyle(
                                 color: Colors.black87,
-                                fontSize: 14.0,
+                                fontSize: Constants.fontSmall,
                                 fontWeight: FontWeight.bold,
                               ),
                             ),
@@ -263,7 +266,7 @@ class _VoterDetailsCardState extends State<VoterDetailsCard> {
                       SizedBox(height: widget.size.height * 0.012),
                       MaterialButton(
                         onPressed: () {},
-                        color: Colors.red,
+                        color: Constants.kPrimaryThemeColor,
                         height: widget.size.height * 0.04,
                         minWidth: widget.size.width * 0.3,
                         shape: RoundedRectangleBorder(
@@ -272,7 +275,7 @@ class _VoterDetailsCardState extends State<VoterDetailsCard> {
                           'Add Details',
                           style: TextStyle(
                             color: Colors.white,
-                            fontSize: 14.0,
+                            fontSize: Constants.fontSmall,
                             fontWeight: FontWeight.bold,
                           ),
                         ),
@@ -288,12 +291,13 @@ class _VoterDetailsCardState extends State<VoterDetailsCard> {
                           shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(6.0),
                               side: const BorderSide(
-                                  color: Colors.red, width: 2.0)),
+                                  color: Constants.kPrimaryThemeColor,
+                                  width: 2.0)),
                           clipBehavior: Clip.antiAliasWithSaveLayer,
                           child: image != null
                               ? Image.file(
                                   image!,
-                                  fit: BoxFit.cover,
+                                  fit: BoxFit.contain,
                                 )
                               : Image.asset(
                                   'assets/demo-girl.jpg',
@@ -323,12 +327,18 @@ class _VoterDetailsCardState extends State<VoterDetailsCard> {
                                     crossAxisAlignment:
                                         CrossAxisAlignment.center,
                                     children: const [
-                                      Text('File uploaded'),
+                                      Text(
+                                        'File uploaded',
+                                        style: TextStyle(
+                                          color: Colors.black,
+                                          fontSize: Constants.fontSmall,
+                                        ),
+                                      ),
                                       SizedBox(width: 4.0),
                                       Icon(
                                         Icons.check,
                                         size: 18.0,
-                                        color: Colors.red,
+                                        color: Constants.kPrimaryThemeColor,
                                       ),
                                     ],
                                   )
@@ -336,7 +346,7 @@ class _VoterDetailsCardState extends State<VoterDetailsCard> {
                                     'Choose file',
                                     style: TextStyle(
                                       color: Colors.black,
-                                      fontSize: 14.0,
+                                      fontSize: Constants.fontSmall,
                                       fontWeight: FontWeight.bold,
                                     ),
                                   ),
@@ -348,7 +358,7 @@ class _VoterDetailsCardState extends State<VoterDetailsCard> {
                               maxLines: 1,
                               style: const TextStyle(
                                 color: Colors.black54,
-                                fontSize: 14.0,
+                                fontSize: Constants.fontSmall,
                                 fontWeight: FontWeight.normal,
                                 overflow: TextOverflow.ellipsis,
                               ),
@@ -364,7 +374,7 @@ class _VoterDetailsCardState extends State<VoterDetailsCard> {
                             'Add Family Details:',
                             style: TextStyle(
                               color: Colors.black,
-                              fontSize: 14.0,
+                              fontSize: Constants.fontSmall,
                               fontWeight: FontWeight.bold,
                             ),
                           ),
@@ -374,16 +384,16 @@ class _VoterDetailsCardState extends State<VoterDetailsCard> {
                             highlightColor: Colors.transparent,
                             onTap: () {},
                             child: Container(
-                              width: 30.0,
-                              height: 30.0,
-                              decoration: BoxDecoration(
+                              width: 26.0,
+                              height: 26.0,
+                              decoration: const BoxDecoration(
                                 shape: BoxShape.circle,
-                                color: Colors.amber.shade800,
+                                color: Constants.kLightThemeColor,
                               ),
                               child: const Icon(
                                 Icons.add,
-                                color: Colors.white,
-                                size: 24.0,
+                                color: Constants.kPrimaryThemeColor,
+                                size: 20.0,
                               ),
                             ),
                           ),
@@ -391,8 +401,8 @@ class _VoterDetailsCardState extends State<VoterDetailsCard> {
                           const Text(
                             'Family Details',
                             style: TextStyle(
-                              color: Colors.blue,
-                              fontSize: 14.0,
+                              color: Constants.kSecondaryThemeColor,
+                              fontSize: Constants.fontSmall,
                               fontWeight: FontWeight.normal,
                             ),
                           ),

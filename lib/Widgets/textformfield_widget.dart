@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+import '../Constants/constants.dart';
+
 class TextFormFieldWidget extends StatelessWidget {
   const TextFormFieldWidget({
     super.key,
@@ -55,6 +57,7 @@ class TextFieldWidget extends StatelessWidget {
     required this.maxLength,
     required this.onChanged,
     required this.label,
+    this.validator,
   }) : super(key: key);
 
   final Size size;
@@ -63,6 +66,7 @@ class TextFieldWidget extends StatelessWidget {
   final TextInputType keyboardType;
   final int maxLength;
   final Function(String) onChanged;
+  final String? Function(String?)? validator;
 
   @override
   Widget build(BuildContext context) {
@@ -74,9 +78,9 @@ class TextFieldWidget extends StatelessWidget {
           Text(
             label.toString(),
             style: const TextStyle(
-              color: Colors.black,
-              fontSize: 15.0,
-              fontWeight: FontWeight.normal,
+              color: Colors.white,
+              fontSize: Constants.fontRegular,
+              fontWeight: FontWeight.w600,
             ),
           ),
           SizedBox(height: size.height * 0.012),
@@ -86,7 +90,7 @@ class TextFieldWidget extends StatelessWidget {
               controller: controller,
               decoration: InputDecoration(
                 filled: true,
-                fillColor: Colors.red.shade100,
+                fillColor: Colors.white,
                 isDense: true,
                 counterText: '',
                 border: OutlineInputBorder(
@@ -97,6 +101,8 @@ class TextFieldWidget extends StatelessWidget {
               maxLength: maxLength,
               maxLines: 1,
               onChanged: onChanged,
+              validator: validator,
+              autovalidateMode: AutovalidateMode.onUserInteraction,
             ),
           ),
         ],
