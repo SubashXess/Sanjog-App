@@ -17,16 +17,29 @@ class MaterialButtonWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialButton(
-      onPressed: onPressed,
-      color: Constants.kPrimaryThemeColor,
-      disabledColor: Colors.red.shade200,
-      minWidth: size.width,
-      height: size.height * 0.06,
-      materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
-      padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 10.0),
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(6.0)),
-      child: widget,
+    return Container(
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(6.0),
+        gradient: const LinearGradient(
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+          colors: [
+            Constants.kPrimaryThemeColor,
+            Color(0xFFF97D09)
+          ], // Color(0xFFF97D09)
+        ),
+      ),
+      child: MaterialButton(
+        onPressed: onPressed,
+        // color: Constants.kPrimaryThemeColor,
+        disabledColor: Colors.red.shade200,
+        minWidth: size.width,
+        height: size.height * 0.06,
+        materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
+        padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 10.0),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(6.0)),
+        child: widget,
+      ),
     );
   }
 }
@@ -142,7 +155,8 @@ class CircleIconButtonWidget extends StatelessWidget {
     required this.assetsurl,
     required this.onTap,
     this.isPng = false,
-    this.isModi = false, this.splashColor,
+    this.isModi = false,
+    this.splashColor,
   }) : super(key: key);
 
   final Color? bgcolor, bordercolor, iconcolor, splashColor;

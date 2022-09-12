@@ -16,6 +16,7 @@ class SamitiScreen extends StatelessWidget {
         centerTitle: true,
         automaticallyImplyLeading: false,
         backgroundColor: Constants.kPrimaryThemeColor,
+        elevation: 1.0,
         actions: [
           Badge(
             badgeContent: const Text(

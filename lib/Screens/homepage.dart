@@ -114,20 +114,20 @@ class _HomePageState extends State<HomePage> {
                                       ),
                                     ),
                                     SizedBox(height: size.height * 0.012),
-                                    TextFormFieldWidget(
-                                      size: size,
-                                      controller: _assemblyController,
-                                      hintText: 'Assembly',
-                                      textInputType: TextInputType.text,
-                                      onChanged: (value) {},
-                                      validator: (value) {
-                                        if (value!.isEmpty) {
-                                          return 'Required';
-                                        } else {
-                                          return null;
-                                        }
-                                      },
-                                    ),
+                                    // TextFormFieldWidget(
+                                    //   size: size,
+                                    //   controller: _assemblyController,
+                                    //   hintText: 'Assembly',
+                                    //   textInputType: TextInputType.text,
+                                    //   onChanged: (value) {},
+                                    //   validator: (value) {
+                                    //     if (value!.isEmpty) {
+                                    //       return 'Required';
+                                    //     } else {
+                                    //       return null;
+                                    //     }
+                                    //   },
+                                    // ),
                                   ],
                                 ),
                               ),
@@ -146,20 +146,20 @@ class _HomePageState extends State<HomePage> {
                                       ),
                                     ),
                                     SizedBox(height: size.height * 0.012),
-                                    TextFormFieldWidget(
-                                      size: size,
-                                      controller: _boothNoController,
-                                      hintText: 'Booth number',
-                                      textInputType: TextInputType.number,
-                                      onChanged: (value) {},
-                                      validator: (value) {
-                                        if (value!.isEmpty) {
-                                          return 'Required';
-                                        } else {
-                                          return null;
-                                        }
-                                      },
-                                    ),
+                                    // TextFormFieldWidget(
+                                    //   size: size,
+                                    //   controller: _boothNoController,
+                                    //   hintText: 'Booth number',
+                                    //   textInputType: TextInputType.number,
+                                    //   onChanged: (value) {},
+                                    //   validator: (value) {
+                                    //     if (value!.isEmpty) {
+                                    //       return 'Required';
+                                    //     } else {
+                                    //       return null;
+                                    //     }
+                                    //   },
+                                    // ),
                                   ],
                                 ),
                               ),
@@ -178,20 +178,20 @@ class _HomePageState extends State<HomePage> {
                                       ),
                                     ),
                                     SizedBox(height: size.height * 0.012),
-                                    TextFormFieldWidget(
-                                      size: size,
-                                      controller: _pageNoController,
-                                      hintText: 'Page number',
-                                      textInputType: TextInputType.number,
-                                      onChanged: (value) {},
-                                      validator: (value) {
-                                        if (value!.isEmpty) {
-                                          return 'Required';
-                                        } else {
-                                          return null;
-                                        }
-                                      },
-                                    ),
+                                    // TextFormFieldWidget(
+                                    //   size: size,
+                                    //   controller: _pageNoController,
+                                    //   hintText: 'Page number',
+                                    //   textInputType: TextInputType.number,
+                                    //   onChanged: (value) {},
+                                    //   validator: (value) {
+                                    //     if (value!.isEmpty) {
+                                    //       return 'Required';
+                                    //     } else {
+                                    //       return null;
+                                    //     }
+                                    //   },
+                                    // ),
                                   ],
                                 ),
                               ),

@@ -27,13 +27,13 @@ class _SearchScreenState extends State<SearchScreen> {
             child: Column(
               children: [
                 SizedBox(height: size.height * 0.012),
-                TextFormFieldWidget(
-                  size: size,
-                  controller: _searchController,
-                  hintText: 'Search',
-                  textInputType: TextInputType.text,
-                  onChanged: (value) {},
-                ),
+                // TextFormFieldWidget(
+                //   size: size,
+                //   controller: _searchController,
+                //   hintText: 'Search',
+                //   textInputType: TextInputType.text,
+                //   onChanged: (value) {},
+                // ),
               ],
             ),
           ),

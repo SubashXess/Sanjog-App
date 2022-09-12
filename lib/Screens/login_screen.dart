@@ -1,11 +1,13 @@
 // ignore_for_file: avoid_print
 
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:sonjagapp/Screens/homepage.dart';
 import 'package:sonjagapp/Constants/constants.dart';
 import 'package:sonjagapp/Screens/samiti_screen.dart';
 
 import '../Widgets/button_widget.dart';
+import '../Widgets/dropdown_widget.dart';
 import '../Widgets/textformfield_widget.dart';
 
 class LoginScreen extends StatefulWidget {
@@ -15,15 +17,57 @@ class LoginScreen extends StatefulWidget {
   State<LoginScreen> createState() => _LoginScreenState();
 }
 
-class _LoginScreenState extends State<LoginScreen> {
+class _LoginScreenState extends State<LoginScreen>
+    with TickerProviderStateMixin {
   // form validate global state
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
 
   final TextEditingController _userLevelController = TextEditingController();
   final TextEditingController _userNameController = TextEditingController();
-  final TextEditingController _mobileController = TextEditingController();
+  final TextEditingController _passwordController = TextEditingController();
 
+  late AnimationController animationController;
+  bool _isPasswordVisible = true;
   bool _isLoading = false;
+
+  // Initial Selected Value
+  String defaultValue = '';
+
+  @override
+  void initState() {
+    super.initState();
+    _userNameController.addListener(onListen);
+    _passwordController.addListener(onListen);
+    animationController =
+        AnimationController(vsync: this, duration: const Duration(seconds: 2));
+    animationController.repeat();
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+    // _userLevelController.dispose();
+    _userNameController.removeListener(onListen);
+    _userNameController.dispose();
+    _passwordController.removeListener(onListen);
+    _passwordController.dispose();
+    animationController.dispose();
+  }
+
+  void onListen() {
+    setState(() {});
+  }
+
+  // List of items in our dropdown menu
+  List<String> items = [
+    'Loksabha',
+    'Assembly',
+    'Block',
+    'Mandal',
+    'GB/ULB Unit',
+    'Booth',
+    'Guest',
+  ];
 
   @override
   Widget build(BuildContext context) {
@@ -66,8 +110,9 @@ class _LoginScreenState extends State<LoginScreen> {
                     height: 145.0,
                     decoration: BoxDecoration(
                       shape: BoxShape.circle,
+                      color: Constants.kLightThemeColor,
                       border: Border.all(
-                          width: 4.0, color: Constants.kLightThemeColor),
+                          width: 4.0, color: Constants.kPrimaryThemeColor),
                       image: const DecorationImage(
                         image: AssetImage('assets/pic-1.jpeg'),
                         fit: BoxFit.cover,
@@ -91,63 +136,139 @@ class _LoginScreenState extends State<LoginScreen> {
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.center,
                         children: [
-                          TextFieldWidget(
-                            size: size,
-                            label: 'User Level',
-                            controller: _userLevelController,
-                            keyboardType: TextInputType.text,
-                            maxLength: 40,
-                            onChanged: (value) {},
-                            validator: userLevelvalidator,
+                          SizedBox(
+                            width: size.width,
+                            child: DropdownButtonFormField<String>(
+                              value:
+                                  defaultValue.isNotEmpty ? defaultValue : null,
+                              hint: Text(
+                                'User level',
+                                style: TextStyle(
+                                    color: Constants.kSecondaryThemeColor
+                                        .withOpacity(0.6),
+                                    fontSize: Constants.fontRegular,
+                                    fontWeight: FontWeight.w500),
+                              ),
+                              isExpanded: true,
+                              autovalidateMode:
+                                  AutovalidateMode.onUserInteraction,
+                              isDense: true,
+                              decoration: InputDecoration(
+                                contentPadding: const EdgeInsets.symmetric(
+                                    horizontal: 10.0),
+                                errorMaxLines: 2,
+                                filled: true,
+                                fillColor: Constants.kLightThemeColor,
+                                prefixIcon: Container(
+                                  padding: const EdgeInsets.all(12.0),
+                                  child: SvgPicture.asset(
+                                    'assets/svg/bjp-india.svg',
+                                    // color: Constants.kPrimaryThemeColor,
+                                    height: 12,
+                                    width: 12,
+                                  ),
+                                ),
+                                border: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(6.0),
+                                  borderSide: BorderSide.none,
+                                ),
+                                errorStyle: const TextStyle(
+                                    color: Colors.red,
+                                    fontSize: Constants.fontSmall,
+                                    fontWeight: FontWeight.normal),
+                              ),
+                              selectedItemBuilder: (context) => items
+                                  .map((e) => Text(
+                                        e,
+                                        style: const TextStyle(
+                                            fontSize: Constants.fontRegular,
+                                            color: Colors.black,
+                                            fontWeight: FontWeight.normal),
+                                      ))
+                                  .toList(),
+                              items: items
+                                  .map(
+                                    (e) => DropdownMenuItem<String>(
+                                      alignment: Alignment.centerLeft,
+                                      value: e,
+                                      child: Text(e),
+                                    ),
+                                  )
+                                  .toList(),
+                              icon: const Icon(
+                                Icons.arrow_drop_down,
+                                color: Constants.kPrimaryThemeColor,
+                                size: 26.0,
+                              ),
+                              validator: (String? value) {
+                                if (value == null) {
+                                  return 'Required';
+                                } else {
+                                  return null;
+                                }
+                              },
+                              onChanged: (value) {
+                                defaultValue = value!;
+                                print(defaultValue);
+                              },
+                            ),
                           ),
                           SizedBox(height: size.height * 0.010),
-                          TextFieldWidget(
-                            size: size,
-                            label: 'Username',
+                          FormFieldWidget(
                             controller: _userNameController,
-                            keyboardType: TextInputType.text,
-                            maxLength: 40,
-                            onChanged: (value) {},
+                            hintText: 'Username',
+                            prefixIcon: Icons.person,
+                            suffixIcon: _userNameController.text.isEmpty
+                                ? Container(width: 0.0)
+                                : IconButton(
+                                    onPressed: () =>
+                                        _userNameController.clear(),
+                                    icon: const Icon(
+                                      Icons.close,
+                                      color: Constants.kPrimaryThemeColor,
+                                    ),
+                                    splashColor: Colors.transparent,
+                                    highlightColor: Colors.transparent,
+                                  ),
                             validator: usernameValidator,
+                            onChanged: (value) {},
                           ),
                           SizedBox(height: size.height * 0.010),
-                          TextFieldWidget(
-                            size: size,
-                            label: 'Password',
-                            controller: _mobileController,
-                            keyboardType: TextInputType.phone,
-                            maxLength: 10,
+                          FormFieldWidget(
+                            controller: _passwordController,
+                            hintText: 'Password',
+                            prefixIcon: Icons.lock,
+                            obscureText: _isPasswordVisible,
+                            suffixIcon: _passwordController.text.isEmpty
+                                ? Container(width: 0.0)
+                                : IconButton(
+                                    onPressed: () => togglePasswordVisibility(),
+                                    icon: Icon(
+                                      _isPasswordVisible
+                                          ? Icons.visibility_off
+                                          : Icons.visibility,
+                                      size: 20.0,
+                                    ),
+                                  ),
                             onChanged: (value) {},
-                            validator: phoneValidator,
                           ),
                           SizedBox(height: size.height * 0.016),
                           MaterialButtonWidget(
                             size: size,
                             widget: _isLoading
-                                ? Row(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.center,
-                                    mainAxisAlignment: MainAxisAlignment.center,
-                                    children: const [
-                                      Text(
-                                        'Login',
-                                        style: TextStyle(
-                                            color: Colors.white,
-                                            fontSize: 15.0),
+                                ? const SizedBox(
+                                    width: 18.0,
+                                    height: 18.0,
+                                    child: Center(
+                                      child: CircularProgressIndicator.adaptive(
+                                        backgroundColor:
+                                            Constants.kLightThemeColor,
+                                        valueColor:
+                                            AlwaysStoppedAnimation<Color>(
+                                                Constants.kPrimaryThemeColor),
+                                        strokeWidth: 4.0,
                                       ),
-                                      SizedBox(width: 16.0),
-                                      SizedBox(
-                                        width: 18.0,
-                                        height: 18.0,
-                                        child: Center(
-                                          child: CircularProgressIndicator
-                                              .adaptive(
-                                            backgroundColor: Colors.white,
-                                            strokeWidth: 4.0,
-                                          ),
-                                        ),
-                                      )
-                                    ],
+                                    ),
                                   )
                                 : const Text(
                                     'Login',
@@ -169,17 +290,6 @@ class _LoginScreenState extends State<LoginScreen> {
                                   });
                                 });
                               } else {}
-                              // setState(() {
-                              //   _isLoading = true;
-                              // });
-                              // Future.delayed(const Duration(seconds: 2), () {
-                              //   Navigator.of(context).push(MaterialPageRoute(
-                              //       builder: (context) => const HomePage()));
-                              // }).then((value) {
-                              //   setState(() {
-                              //     _isLoading = false;
-                              //   });
-                              // });
                             },
                           ),
                         ],
@@ -196,11 +306,11 @@ class _LoginScreenState extends State<LoginScreen> {
     );
   }
 
-  Future login() async {
-    var url = "${APIs.DBAPI}user_login";
+  void togglePasswordVisibility() {
+    setState(() {
+      _isPasswordVisible = !_isPasswordVisible;
+    });
   }
-
-  String? userLevelvalidator(String? value) {}
 
   // username validate
   String? usernameValidator(String? username) {
@@ -224,28 +334,6 @@ class _LoginScreenState extends State<LoginScreen> {
   bool checkUsername(String value) {
     Pattern pattern =
         r"^(?=.{4,20}$)(?:[a-zA-Z\d]+(?:(?:\.|-|_)[a-zA-Z\d])*)+$";
-    RegExp regExp = RegExp(pattern.toString());
-    return (!regExp.hasMatch(value)) ? false : true;
-  }
-
-  // phone valitate
-  static String? phoneValidator(String? phone) {
-    if (phone!.isEmpty) {
-      return "Required phone"; // (      )
-    } else {
-      bool result = checkPhone(phone);
-      if (result) {
-        // perform action
-        print("Phone No : $result");
-      } else {
-        return "Invalid phone number";
-      }
-    }
-    return null;
-  }
-
-  static bool checkPhone(String value) {
-    Pattern pattern = r'(^(?:[+0]9)?[0-9]{10,12}$)';
     RegExp regExp = RegExp(pattern.toString());
     return (!regExp.hasMatch(value)) ? false : true;
   }

@@ -15,7 +15,7 @@ class MyApp extends StatelessWidget {
       title: 'Sanjog App',
       debugShowCheckedModeBanner: false,
       theme: ThemeData(primarySwatch: Colors.red),
-      home: const SamitiScreen(),
+      home: const LoginScreen(),
     );
   }
 }
