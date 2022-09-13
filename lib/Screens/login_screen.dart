@@ -1,8 +1,10 @@
 // ignore_for_file: avoid_print
 
+import 'dart:ui';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:sonjagapp/Screens/homepage.dart';
+import 'package:sonjagapp/Screens/entrythroughvoterlist_screen.dart';
 import 'package:sonjagapp/Constants/constants.dart';
 import 'package:sonjagapp/Screens/samiti_screen.dart';
 
@@ -74,224 +76,241 @@ class _LoginScreenState extends State<LoginScreen> {
           width: double.infinity,
           height: size.height,
           decoration: const BoxDecoration(
-            image: DecorationImage(
-              image: AssetImage('assets/bg-2.jpg'),
-              fit: BoxFit.cover,
-              colorFilter: ColorFilter.mode(
-                Colors.black12,
-                BlendMode.darken,
-              ),
+            // image: DecorationImage(
+            //   image: AssetImage('assets/bg-2.jpg'),
+            //   fit: BoxFit.cover,
+            //   colorFilter: ColorFilter.mode(
+            //     Colors.black12,
+            //     BlendMode.darken,
+            //   ),
+            // ),
+            gradient: LinearGradient(
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+              colors: [
+                Color(0xFF278D27),
+                Color(0xFFF97D09),
+              ], // Color(0xFFF97D09)
             ),
           ),
-          child: SingleChildScrollView(
-            child: SafeArea(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.center,
-                mainAxisAlignment: MainAxisAlignment.start,
-                children: [
-                  SizedBox(height: size.height * 0.08),
-                  Text(
-                    'Sanjog Ekamra'.toUpperCase(),
-                    style: const TextStyle(
-                      color: Colors.white,
-                      fontSize: Constants.fontUltraLarge,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                  SizedBox(height: size.height * 0.045),
-                  Container(
-                    width: 145.0,
-                    height: 145.0,
-                    decoration: BoxDecoration(
-                      shape: BoxShape.circle,
-                      color: Constants.kLightThemeColor,
-                      border: Border.all(
-                          width: 4.0, color: Constants.kPrimaryThemeColor),
-                      image: const DecorationImage(
-                        image: AssetImage('assets/pic-1.jpeg'),
-                        fit: BoxFit.cover,
+          child: BackdropFilter(
+            filter: ImageFilter.blur(sigmaX: 4.0, sigmaY: 4.0),
+            child: SingleChildScrollView(
+              child: SafeArea(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  children: [
+                    SizedBox(height: size.height * 0.08),
+                    Text(
+                      'Sanjog Ekamra'.toUpperCase(),
+                      style: const TextStyle(
+                        color: Colors.white,
+                        fontSize: Constants.fontUltraLarge,
+                        fontWeight: FontWeight.bold,
                       ),
-                      boxShadow: const [
-                        BoxShadow(
-                          blurRadius: 4.0,
-                          color: Colors.black38,
-                          spreadRadius: 1.0,
-                          offset: Offset(0.0, 2.0),
-                        ),
-                      ],
                     ),
-                  ),
-                  SizedBox(height: size.height * 0.045),
-                  Container(
-                    width: double.infinity,
-                    margin: const EdgeInsets.symmetric(horizontal: 10.0),
-                    child: Form(
-                      key: _formKey,
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        children: [
-                          SizedBox(
-                            width: size.width,
-                            child: DropdownButtonFormField<String>(
-                              value:
-                                  defaultValue.isNotEmpty ? defaultValue : null,
-                              hint: Text(
-                                'User level',
-                                style: TextStyle(
-                                    color: Constants.kSecondaryThemeColor
-                                        .withOpacity(0.6),
-                                    fontSize: Constants.fontRegular,
-                                    fontWeight: FontWeight.w500),
-                              ),
-                              isExpanded: true,
-                              autovalidateMode:
-                                  AutovalidateMode.onUserInteraction,
-                              isDense: true,
-                              decoration: InputDecoration(
-                                contentPadding: const EdgeInsets.symmetric(
-                                    horizontal: 10.0),
-                                errorMaxLines: 2,
-                                filled: true,
-                                fillColor: Constants.kLightThemeColor,
-                                prefixIcon: Container(
-                                  padding: const EdgeInsets.all(12.0),
-                                  child: SvgPicture.asset(
-                                    'assets/svg/bjp-india.svg',
-                                    // color: Constants.kPrimaryThemeColor,
-                                    height: 12,
-                                    width: 12,
-                                  ),
-                                ),
-                                border: OutlineInputBorder(
-                                  borderRadius: BorderRadius.circular(6.0),
-                                  borderSide: BorderSide.none,
-                                ),
-                                errorStyle: const TextStyle(
-                                    color: Colors.red,
-                                    fontSize: Constants.fontSmall,
-                                    fontWeight: FontWeight.normal),
-                              ),
-                              selectedItemBuilder: (context) => items
-                                  .map((e) => Text(
-                                        e,
-                                        style: const TextStyle(
-                                            fontSize: Constants.fontRegular,
-                                            color: Colors.black,
-                                            fontWeight: FontWeight.normal),
-                                      ))
-                                  .toList(),
-                              items: items
-                                  .map(
-                                    (e) => DropdownMenuItem<String>(
-                                      alignment: Alignment.centerLeft,
-                                      value: e,
-                                      child: Text(e),
-                                    ),
-                                  )
-                                  .toList(),
-                              icon: const Icon(
-                                Icons.arrow_drop_down,
-                                color: Constants.kPrimaryThemeColor,
-                                size: 26.0,
-                              ),
-                              validator: (String? value) {
-                                if (value == null) {
-                                  return 'Required';
-                                } else {
-                                  return null;
-                                }
-                              },
-                              onChanged: (value) {
-                                defaultValue = value!;
-                                print(defaultValue);
-                              },
-                            ),
-                          ),
-                          SizedBox(height: size.height * 0.010),
-                          FormFieldWidget(
-                            controller: _userNameController,
-                            hintText: 'Username',
-                            prefixIcon: Icons.person,
-                            suffixIcon: _userNameController.text.isEmpty
-                                ? Container(width: 0.0)
-                                : IconButton(
-                                    onPressed: () =>
-                                        _userNameController.clear(),
-                                    icon: const Icon(
-                                      Icons.close,
-                                      color: Constants.kPrimaryThemeColor,
-                                    ),
-                                    splashColor: Colors.transparent,
-                                    highlightColor: Colors.transparent,
-                                  ),
-                            validator: usernameValidator,
-                            onChanged: (value) {},
-                          ),
-                          SizedBox(height: size.height * 0.010),
-                          FormFieldWidget(
-                            controller: _passwordController,
-                            hintText: 'Password',
-                            prefixIcon: Icons.lock,
-                            obscureText: _isPasswordVisible,
-                            suffixIcon: _passwordController.text.isEmpty
-                                ? Container(width: 0.0)
-                                : IconButton(
-                                    onPressed: () => togglePasswordVisibility(),
-                                    icon: Icon(
-                                      _isPasswordVisible
-                                          ? Icons.visibility_off
-                                          : Icons.visibility,
-                                      size: 20.0,
-                                    ),
-                                  ),
-                            onChanged: (value) {},
-                          ),
-                          SizedBox(height: size.height * 0.016),
-                          MaterialButtonWidget(
-                            size: size,
-                            widget: _isLoading
-                                ? const SizedBox(
-                                    width: 18.0,
-                                    height: 18.0,
-                                    child: Center(
-                                      child: CircularProgressIndicator.adaptive(
-                                        backgroundColor:
-                                            Constants.kLightThemeColor,
-                                        valueColor:
-                                            AlwaysStoppedAnimation<Color>(
-                                                Constants.kPrimaryThemeColor),
-                                        strokeWidth: 4.0,
-                                      ),
-                                    ),
-                                  )
-                                : const Text(
-                                    'Login',
-                                    style: TextStyle(
-                                        color: Colors.white, fontSize: 15.0),
-                                  ),
-                            onPressed: () {
-                              if (_formKey.currentState!.validate()) {
-                                setState(() {
-                                  _isLoading = true;
-                                });
-                                Future.delayed(const Duration(seconds: 2), () {
-                                  Navigator.of(context).push(MaterialPageRoute(
-                                      builder: (context) =>
-                                          const SamitiScreen()));
-                                }).then((value) {
-                                  setState(() {
-                                    _isLoading = false;
-                                  });
-                                });
-                              } else {}
-                            },
+                    SizedBox(height: size.height * 0.045),
+                    Container(
+                      width: 145.0,
+                      height: 145.0,
+                      decoration: BoxDecoration(
+                        shape: BoxShape.circle,
+                        color: Constants.kLightThemeColor,
+                        border: Border.all(
+                            width: 4.0, color: Constants.kPrimaryThemeColor),
+                        image: const DecorationImage(
+                          image: AssetImage('assets/pic-1.jpeg'),
+                          fit: BoxFit.cover,
+                        ),
+                        boxShadow: const [
+                          BoxShadow(
+                            blurRadius: 4.0,
+                            color: Colors.black38,
+                            spreadRadius: 1.0,
+                            offset: Offset(0.0, 2.0),
                           ),
                         ],
                       ),
                     ),
-                  ),
-                  SizedBox(height: size.height * 0.030),
-                ],
+                    SizedBox(height: size.height * 0.045),
+                    Container(
+                      width: double.infinity,
+                      margin: const EdgeInsets.symmetric(horizontal: 10.0),
+                      child: Form(
+                        key: _formKey,
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: [
+                            SizedBox(
+                              width: size.width,
+                              child: DropdownButtonFormField<String>(
+                                value: defaultValue.isNotEmpty
+                                    ? defaultValue
+                                    : null,
+                                hint: Text(
+                                  'User level',
+                                  style: TextStyle(
+                                      color: Constants.kSecondaryThemeColor
+                                          .withOpacity(0.6),
+                                      fontSize: Constants.fontRegular,
+                                      fontWeight: FontWeight.w500),
+                                ),
+                                isExpanded: true,
+                                autovalidateMode:
+                                    AutovalidateMode.onUserInteraction,
+                                isDense: true,
+                                decoration: InputDecoration(
+                                  contentPadding: const EdgeInsets.symmetric(
+                                      horizontal: 10.0),
+                                  errorMaxLines: 2,
+                                  filled: true,
+                                  fillColor: Constants.kLightThemeColor,
+                                  prefixIcon: Container(
+                                    padding: const EdgeInsets.all(12.0),
+                                    child: SvgPicture.asset(
+                                      'assets/svg/bjp-india.svg',
+                                      // color: Constants.kPrimaryThemeColor,
+                                      height: 12,
+                                      width: 12,
+                                    ),
+                                  ),
+                                  border: OutlineInputBorder(
+                                    borderRadius: BorderRadius.circular(6.0),
+                                    borderSide: BorderSide.none,
+                                  ),
+                                  errorStyle: const TextStyle(
+                                      color: Colors.red,
+                                      fontSize: Constants.fontSmall,
+                                      fontWeight: FontWeight.normal),
+                                ),
+                                selectedItemBuilder: (context) => items
+                                    .map((e) => Text(
+                                          e,
+                                          style: const TextStyle(
+                                              fontSize: Constants.fontRegular,
+                                              color: Colors.black,
+                                              fontWeight: FontWeight.normal),
+                                        ))
+                                    .toList(),
+                                items: items
+                                    .map(
+                                      (e) => DropdownMenuItem<String>(
+                                        alignment: Alignment.centerLeft,
+                                        value: e,
+                                        child: Text(e),
+                                      ),
+                                    )
+                                    .toList(),
+                                icon: const Icon(
+                                  Icons.arrow_drop_down,
+                                  color: Constants.kPrimaryThemeColor,
+                                  size: 26.0,
+                                ),
+                                validator: (String? value) {
+                                  if (value == null) {
+                                    return 'Required user level';
+                                  } else {
+                                    return null;
+                                  }
+                                },
+                                onChanged: (value) {
+                                  defaultValue = value!;
+                                  print(defaultValue);
+                                },
+                              ),
+                            ),
+                            SizedBox(height: size.height * 0.010),
+                            FormFieldWidget(
+                              controller: _userNameController,
+                              hintText: 'Username',
+                              prefixIcon: Icons.person,
+                              suffixIcon: _userNameController.text.isEmpty
+                                  ? Container(width: 0.0)
+                                  : IconButton(
+                                      onPressed: () =>
+                                          _userNameController.clear(),
+                                      icon: const Icon(
+                                        Icons.close,
+                                        color: Constants.kPrimaryThemeColor,
+                                      ),
+                                      splashColor: Colors.transparent,
+                                      highlightColor: Colors.transparent,
+                                    ),
+                              validator: usernameValidator,
+                              onChanged: (value) {},
+                            ),
+                            SizedBox(height: size.height * 0.010),
+                            FormFieldWidget(
+                              controller: _passwordController,
+                              hintText: 'Password',
+                              prefixIcon: Icons.lock,
+                              obscureText: _isPasswordVisible,
+                              suffixIcon: _passwordController.text.isEmpty
+                                  ? Container(width: 0.0)
+                                  : IconButton(
+                                      onPressed: () =>
+                                          togglePasswordVisibility(),
+                                      icon: Icon(
+                                        _isPasswordVisible
+                                            ? Icons.visibility_off
+                                            : Icons.visibility,
+                                        size: 20.0,
+                                      ),
+                                    ),
+                              validator: passwordValidator,
+                              onChanged: (value) {},
+                            ),
+                            SizedBox(height: size.height * 0.016),
+                            MaterialButtonWidget(
+                              size: size,
+                              widget: _isLoading
+                                  ? const SizedBox(
+                                      width: 18.0,
+                                      height: 18.0,
+                                      child: Center(
+                                        child:
+                                            CircularProgressIndicator.adaptive(
+                                          backgroundColor:
+                                              Constants.kLightThemeColor,
+                                          valueColor:
+                                              AlwaysStoppedAnimation<Color>(
+                                                  Constants.kPrimaryThemeColor),
+                                          strokeWidth: 4.0,
+                                        ),
+                                      ),
+                                    )
+                                  : const Text(
+                                      'Login',
+                                      style: TextStyle(
+                                          color: Colors.white, fontSize: 15.0),
+                                    ),
+                              onPressed: () {
+                                if (_formKey.currentState!.validate()) {
+                                  setState(() {
+                                    _isLoading = true;
+                                  });
+                                  Future.delayed(const Duration(seconds: 2),
+                                      () {
+                                    Navigator.of(context).push(
+                                        MaterialPageRoute(
+                                            builder: (context) =>
+                                                const SamitiScreen()));
+                                  }).then((value) {
+                                    setState(() {
+                                      _isLoading = false;
+                                    });
+                                  });
+                                } else {}
+                              },
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                    SizedBox(height: size.height * 0.030),
+                  ],
+                ),
               ),
             ),
           ),
@@ -304,6 +323,14 @@ class _LoginScreenState extends State<LoginScreen> {
     setState(() {
       _isPasswordVisible = !_isPasswordVisible;
     });
+  }
+
+  String? passwordValidator(String? password) {
+    if (password!.isEmpty) {
+      return 'Required password';
+    } else {
+      return null;
+    }
   }
 
   // username validate

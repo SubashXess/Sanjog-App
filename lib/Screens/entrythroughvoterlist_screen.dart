@@ -11,16 +11,20 @@ import 'package:sonjagapp/Widgets/textformfield_widget.dart';
 
 import '../Constants/constants.dart';
 
-class HomePage extends StatefulWidget {
-  const HomePage({super.key});
+class EntryThroughVoterListScreen extends StatefulWidget {
+  const EntryThroughVoterListScreen({super.key});
 
   @override
-  State<HomePage> createState() => _HomePageState();
+  State<EntryThroughVoterListScreen> createState() =>
+      _EntryThroughVoterListScreenState();
 }
 
-class _HomePageState extends State<HomePage> {
+class _EntryThroughVoterListScreenState
+    extends State<EntryThroughVoterListScreen> {
   // form validate global state
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
+
+  final ScrollController _scrollController = ScrollController();
 
   // text field controller
   final TextEditingController _assemblyController = TextEditingController();
@@ -53,8 +57,11 @@ class _HomePageState extends State<HomePage> {
           centerTitle: true,
           title: const Text(
             'Entry through Voter List',
-            style:
-                TextStyle(color: Colors.white, fontSize: Constants.fontLarge),
+            style: TextStyle(
+              color: Colors.white,
+              fontWeight: FontWeight.bold,
+              fontSize: Constants.fontLarge,
+            ),
           ),
           actions: [
             Padding(
@@ -76,6 +83,20 @@ class _HomePageState extends State<HomePage> {
               ),
             ),
           ],
+          flexibleSpace: FlexibleSpaceBar(
+            background: Container(
+              decoration: const BoxDecoration(
+                gradient: LinearGradient(
+                  begin: Alignment.topLeft,
+                  end: Alignment.bottomRight,
+                  colors: [
+                    Constants.kPrimaryThemeColor,
+                    Color(0xFFF97D09)
+                  ], // Color(0xFFF97D09)
+                ),
+              ),
+            ),
+          ),
         ),
         body: SizedBox(
           width: double.infinity,
@@ -105,52 +126,9 @@ class _HomePageState extends State<HomePage> {
                                 child: Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
-                                    const Text(
-                                      'Assembly',
-                                      style: TextStyle(
-                                        fontSize: Constants.fontRegular,
-                                        fontWeight: FontWeight.w500,
-                                        color: Colors.black87,
-                                      ),
-                                    ),
-                                    SizedBox(height: size.height * 0.012),
-                                    // TextFormFieldWidget(
-                                    //   size: size,
-                                    //   controller: _assemblyController,
-                                    //   hintText: 'Assembly',
-                                    //   textInputType: TextInputType.text,
-                                    //   onChanged: (value) {},
-                                    //   validator: (value) {
-                                    //     if (value!.isEmpty) {
-                                    //       return 'Required';
-                                    //     } else {
-                                    //       return null;
-                                    //     }
-                                    //   },
-                                    // ),
-                                    // TextFormField(
-                                    //   controller: _assemblyController,
-                                    //   decoration: InputDecoration(
-                                    //     labelText: 'Assembly',
-                                    //     filled: true,
-                                    //     fillColor: Colors.green,
-                                    //     contentPadding:
-                                    //         const EdgeInsets.symmetric(
-                                    //             horizontal: 10.0,
-                                    //             vertical: 6.0),
-                                    //     // border: OutlineInputBorder(),
-                                    //     border: InputBorder.none,
-                                    //     focusedBorder: OutlineInputBorder(
-                                    //         borderRadius:
-                                    //             BorderRadius.circular(6.0)),
-                                    //     enabledBorder: OutlineInputBorder(
-                                    //         borderRadius:
-                                    //             BorderRadius.circular(6.0)),
-                                    //   ),
-                                    // ),
                                     FormFieldWidget(
                                       controller: _assemblyController,
-                                      hintText: 'Username',
+                                      hintText: 'Assembly',
                                       isPrefixIcon: false,
                                       isSuffixIcon: false,
                                       onChanged: (value) {},
@@ -164,29 +142,13 @@ class _HomePageState extends State<HomePage> {
                                 child: Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
-                                    const Text(
-                                      'Booth Number',
-                                      style: TextStyle(
-                                        fontSize: Constants.fontRegular,
-                                        fontWeight: FontWeight.w500,
-                                        color: Colors.black87,
-                                      ),
+                                    FormFieldWidget(
+                                      controller: _boothNoController,
+                                      hintText: 'Booth number',
+                                      isPrefixIcon: false,
+                                      isSuffixIcon: false,
+                                      onChanged: (value) {},
                                     ),
-                                    SizedBox(height: size.height * 0.012),
-                                    // TextFormFieldWidget(
-                                    //   size: size,
-                                    //   controller: _boothNoController,
-                                    //   hintText: 'Booth number',
-                                    //   textInputType: TextInputType.number,
-                                    //   onChanged: (value) {},
-                                    //   validator: (value) {
-                                    //     if (value!.isEmpty) {
-                                    //       return 'Required';
-                                    //     } else {
-                                    //       return null;
-                                    //     }
-                                    //   },
-                                    // ),
                                   ],
                                 ),
                               ),
@@ -196,29 +158,13 @@ class _HomePageState extends State<HomePage> {
                                 child: Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
-                                    const Text(
-                                      'Page Number',
-                                      style: TextStyle(
-                                        fontSize: Constants.fontRegular,
-                                        fontWeight: FontWeight.w500,
-                                        color: Colors.black87,
-                                      ),
+                                    FormFieldWidget(
+                                      controller: _pageNoController,
+                                      hintText: 'Page number',
+                                      isPrefixIcon: false,
+                                      isSuffixIcon: false,
+                                      onChanged: (value) {},
                                     ),
-                                    SizedBox(height: size.height * 0.012),
-                                    // TextFormFieldWidget(
-                                    //   size: size,
-                                    //   controller: _pageNoController,
-                                    //   hintText: 'Page number',
-                                    //   textInputType: TextInputType.number,
-                                    //   onChanged: (value) {},
-                                    //   validator: (value) {
-                                    //     if (value!.isEmpty) {
-                                    //       return 'Required';
-                                    //     } else {
-                                    //       return null;
-                                    //     }
-                                    //   },
-                                    // ),
                                   ],
                                 ),
                               ),
@@ -288,27 +234,84 @@ class _HomePageState extends State<HomePage> {
                         ),
                       ),
                     ),
-                    SizedBox(height: size.height * 0.026),
-                    VoterDetailsCard(size: size),
-                    SizedBox(height: size.height * 0.026),
-                    Row(
-                      children: [
-                        ElevatedIconButtonWidget(
-                          size: size,
-                          textDirection: TextDirection.ltr,
-                          icon: Icons.arrow_back,
-                          label: 'Previous Page',
-                        ),
-                        const SizedBox(width: 10),
-                        ElevatedIconButtonWidget(
-                          size: size,
-                          textDirection: TextDirection.rtl,
-                          // iconPadding: const EdgeInsets.only(right: 5.0),
-                          icon: Icons.arrow_back,
-                          label: 'Next Page',
-                        ),
-                      ],
-                    ),
+                    _isVerified
+                        ? Column(
+                            children: [
+                              Container(
+                                width: size.width,
+                                margin: EdgeInsets.only(
+                                    bottom: size.height * 0.016,
+                                    top: size.height * 0.026),
+                                child: Row(
+                                  crossAxisAlignment: CrossAxisAlignment.center,
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
+                                  children: const [
+                                    Text(
+                                      "Section No: 1",
+                                      style: TextStyle(
+                                        color: Constants.kPrimaryThemeColor,
+                                        fontSize: Constants.fontRegular,
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                    ),
+                                    Text(
+                                      "Total Voters: 30",
+                                      style: TextStyle(
+                                        color: Constants.kPrimaryThemeColor,
+                                        fontSize: Constants.fontRegular,
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                              ListView.builder(
+                                itemCount: 30,
+                                clipBehavior: Clip.none,
+                                padding: EdgeInsets.zero,
+                                controller: _scrollController,
+                                keyboardDismissBehavior:
+                                    ScrollViewKeyboardDismissBehavior.onDrag,
+                                shrinkWrap: true,
+                                itemBuilder: (context, index) => Container(
+                                  margin: EdgeInsets.only(
+                                      bottom: size.height * 0.016),
+                                  child: VoterDetailsCard(
+                                    size: size,
+                                    acNo: '111',
+                                    boothNo: '1',
+                                    pageNo: '3',
+                                    serialNo: '${index + 1}'.toString(),
+                                  ),
+                                ),
+                              ),
+                            ],
+                          )
+                        : Padding(
+                            padding: EdgeInsets.symmetric(
+                                vertical: size.height * 0.026),
+                            child: const Text('No data'),
+                          ),
+                    _isVerified
+                        ? Row(
+                            children: [
+                              ElevatedIconButtonWidget(
+                                size: size,
+                                textDirection: TextDirection.ltr,
+                                icon: Icons.arrow_back,
+                                label: 'Previous Page',
+                              ),
+                              const SizedBox(width: 10),
+                              ElevatedIconButtonWidget(
+                                size: size,
+                                textDirection: TextDirection.rtl,
+                                icon: Icons.arrow_back,
+                                label: 'Next Page',
+                              ),
+                            ],
+                          )
+                        : Container(width: 0.0),
                   ],
                 ),
               ),

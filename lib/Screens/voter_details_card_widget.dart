@@ -11,9 +11,14 @@ class VoterDetailsCard extends StatefulWidget {
   const VoterDetailsCard({
     Key? key,
     required this.size,
+    required this.serialNo, required this.acNo, required this.boothNo, required this.pageNo,
   }) : super(key: key);
 
   final Size size;
+  final String acNo;
+  final String boothNo;
+  final String pageNo;
+  final String serialNo;
 
   @override
   State<VoterDetailsCard> createState() => _VoterDetailsCardState();
@@ -30,32 +35,6 @@ class _VoterDetailsCardState extends State<VoterDetailsCard> {
       width: widget.size.width,
       child: Column(
         children: [
-          SizedBox(
-            width: widget.size.width,
-            child: Row(
-              crossAxisAlignment: CrossAxisAlignment.center,
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: const [
-                Text(
-                  "Section No: 1",
-                  style: TextStyle(
-                    color: Constants.kPrimaryThemeColor,
-                    fontSize: Constants.fontRegular,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-                Text(
-                  "Total Voters: 30",
-                  style: TextStyle(
-                    color: Constants.kPrimaryThemeColor,
-                    fontSize: Constants.fontRegular,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-              ],
-            ),
-          ),
-          SizedBox(height: widget.size.height * 0.014),
           SizedBox(
             width: widget.size.width,
             child: Card(
@@ -82,9 +61,9 @@ class _VoterDetailsCardState extends State<VoterDetailsCard> {
                         // crossAxisAlignment: CrossAxisAlignment.center,
                         // mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          const Text(
-                            'AcNo: 111',
-                            style: TextStyle(
+                           Text(
+                            'AcNo: ${widget.acNo}'.toString(),
+                            style: const TextStyle(
                               color: Colors.black,
                               fontSize: Constants.fontSmall,
                               fontWeight: FontWeight.bold,
@@ -132,9 +111,9 @@ class _VoterDetailsCardState extends State<VoterDetailsCard> {
                               borderRadius: BorderRadius.circular(6.0),
                               color: Constants.kPrimaryThemeColor,
                             ),
-                            child: const Text(
-                              'Serial No: 1',
-                              style: TextStyle(
+                            child: Text(
+                              'Serial No: ${widget.serialNo.toString()}',
+                              style: const TextStyle(
                                 color: Colors.white,
                                 fontSize: Constants.fontSmall,
                                 fontWeight: FontWeight.bold,

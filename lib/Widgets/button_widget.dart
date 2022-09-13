@@ -139,7 +139,8 @@ class OutlinedButtonWidget extends StatelessWidget {
         child: Text(
           // 'Page Samiti',
           label.toString(),
-          style: const TextStyle(color: Constants.kPrimaryThemeColor),
+          style: const TextStyle(
+              color: Constants.kPrimaryThemeColor, fontWeight: FontWeight.w500),
         ),
       ),
     );
@@ -183,6 +184,7 @@ class CircleIconButtonWidget extends StatelessWidget {
             ),
             child: isPng!
                 ? Image.asset(
+                    isAntiAlias: true,
                     assetsurl.toString(),
                     fit: isModi! ? BoxFit.cover : null,
                   )

@@ -162,7 +162,7 @@ class FormFieldWidget extends StatelessWidget {
         autofocus: autofocus!,
         autovalidateMode: AutovalidateMode.onUserInteraction,
         decoration: InputDecoration(
-          isDense: true,
+          isDense: false,
           labelText: label,
           hintText: hintText,
           filled: true,

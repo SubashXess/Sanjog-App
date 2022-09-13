@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:sonjagapp/Screens/homepage.dart';
+import 'package:sonjagapp/Screens/entrythroughvoterlist_screen.dart';
 import 'package:sonjagapp/Screens/login_screen.dart';
 import 'package:sonjagapp/Screens/samiti_screen.dart';
 
@@ -16,7 +16,7 @@ class MyApp extends StatelessWidget {
       title: 'Sanjog App',
       debugShowCheckedModeBanner: false,
       theme: ThemeData(primarySwatch: Colors.red),
-      home: const HomePage(),
+      home: const EntryThroughVoterListScreen(),
     );
   }
 }
