@@ -278,7 +278,6 @@ class _EntryThroughVoterListScreenState
                                   margin: EdgeInsets.only(
                                       bottom: size.height * 0.016),
                                   child: VoterDetailsCard(
-                                    size: size,
                                     acNo: '111',
                                     boothNo: '1',
                                     pageNo: '3',
