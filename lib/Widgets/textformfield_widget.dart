@@ -129,7 +129,9 @@ class FormFieldWidget extends StatelessWidget {
       this.autofillHints,
       this.maxLength = 40,
       this.textCapitalization = TextCapitalization.none,
-      this.inputBorder});
+      this.inputBorder,
+      this.isPrefixIcon = true,
+      this.isSuffixIcon = true});
 
   final String? label;
   final String? hintText;
@@ -146,6 +148,7 @@ class FormFieldWidget extends StatelessWidget {
   final int? maxLength;
   final TextCapitalization? textCapitalization;
   final BoxBorder? inputBorder;
+  final bool? isPrefixIcon, isSuffixIcon;
 
   @override
   Widget build(BuildContext context) {
@@ -164,7 +167,8 @@ class FormFieldWidget extends StatelessWidget {
           hintText: hintText,
           filled: true,
           fillColor: Constants.kLightThemeColor,
-          contentPadding: const EdgeInsets.symmetric(horizontal: 10.0),
+          contentPadding:
+              const EdgeInsets.symmetric(horizontal: 10.0, vertical: 4.0),
           hintStyle: TextStyle(
               color: Constants.kSecondaryThemeColor.withOpacity(0.6),
               fontSize: Constants.fontRegular,
@@ -185,12 +189,14 @@ class FormFieldWidget extends StatelessWidget {
           border: OutlineInputBorder(
               borderRadius: BorderRadius.circular(6.0),
               borderSide: BorderSide.none),
-          prefixIcon: Icon(
-            prefixIcon,
-            color: Constants.kPrimaryThemeColor,
-            size: 20.0,
-          ),
-          suffixIcon: suffixIcon,
+          prefixIcon: isPrefixIcon!
+              ? Icon(
+                  prefixIcon,
+                  color: Constants.kPrimaryThemeColor,
+                  size: 20.0,
+                )
+              : null,
+          suffixIcon: isSuffixIcon! ? suffixIcon : null,
         ),
         maxLength: maxLength,
         keyboardType: keyboardType,

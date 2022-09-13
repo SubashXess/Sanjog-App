@@ -128,6 +128,33 @@ class _HomePageState extends State<HomePage> {
                                     //     }
                                     //   },
                                     // ),
+                                    // TextFormField(
+                                    //   controller: _assemblyController,
+                                    //   decoration: InputDecoration(
+                                    //     labelText: 'Assembly',
+                                    //     filled: true,
+                                    //     fillColor: Colors.green,
+                                    //     contentPadding:
+                                    //         const EdgeInsets.symmetric(
+                                    //             horizontal: 10.0,
+                                    //             vertical: 6.0),
+                                    //     // border: OutlineInputBorder(),
+                                    //     border: InputBorder.none,
+                                    //     focusedBorder: OutlineInputBorder(
+                                    //         borderRadius:
+                                    //             BorderRadius.circular(6.0)),
+                                    //     enabledBorder: OutlineInputBorder(
+                                    //         borderRadius:
+                                    //             BorderRadius.circular(6.0)),
+                                    //   ),
+                                    // ),
+                                    FormFieldWidget(
+                                      controller: _assemblyController,
+                                      hintText: 'Username',
+                                      isPrefixIcon: false,
+                                      isSuffixIcon: false,
+                                      onChanged: (value) {},
+                                    ),
                                   ],
                                 ),
                               ),

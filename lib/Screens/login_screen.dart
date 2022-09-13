@@ -17,8 +17,7 @@ class LoginScreen extends StatefulWidget {
   State<LoginScreen> createState() => _LoginScreenState();
 }
 
-class _LoginScreenState extends State<LoginScreen>
-    with TickerProviderStateMixin {
+class _LoginScreenState extends State<LoginScreen> {
   // form validate global state
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
 
@@ -26,7 +25,6 @@ class _LoginScreenState extends State<LoginScreen>
   final TextEditingController _userNameController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
 
-  late AnimationController animationController;
   bool _isPasswordVisible = true;
   bool _isLoading = false;
 
@@ -38,9 +36,6 @@ class _LoginScreenState extends State<LoginScreen>
     super.initState();
     _userNameController.addListener(onListen);
     _passwordController.addListener(onListen);
-    animationController =
-        AnimationController(vsync: this, duration: const Duration(seconds: 2));
-    animationController.repeat();
   }
 
   @override
@@ -51,7 +46,6 @@ class _LoginScreenState extends State<LoginScreen>
     _userNameController.dispose();
     _passwordController.removeListener(onListen);
     _passwordController.dispose();
-    animationController.dispose();
   }
 
   void onListen() {
