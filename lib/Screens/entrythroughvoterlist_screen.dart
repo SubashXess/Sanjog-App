@@ -36,6 +36,21 @@ class _EntryThroughVoterListScreenState
   bool _isLoading = false;
   bool _isError = false;
 
+  // Initial Selected Value
+  String defaultValue = '';
+
+  // List of items in our dropdown menu
+  List<String> items = [
+    'Jayadev',
+    'Bhubaneswar Central',
+    'Bhubaneswar North',
+    'Ekamra Bhubaneswar',
+    'Jatani',
+    'Begunia',
+    'Khurda',
+    'Chilika',
+  ];
+
   @override
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
@@ -43,8 +58,9 @@ class _EntryThroughVoterListScreenState
       onTap: () => FocusScope.of(context).unfocus(),
       child: Scaffold(
         backgroundColor: Colors.grey.shade100,
+        resizeToAvoidBottomInset: false,
         appBar: AppBar(
-          automaticallyImplyLeading: true,
+          automaticallyImplyLeading: false,
           leadingWidth: 36.0,
           titleSpacing: 0.0,
           leading: InkWell(
@@ -121,19 +137,106 @@ class _EntryThroughVoterListScreenState
                             crossAxisAlignment: CrossAxisAlignment.center,
                             mainAxisAlignment: MainAxisAlignment.start,
                             children: [
+                              // SizedBox(
+                              //   width: size.width,
+                              //   child: Column(
+                              //     crossAxisAlignment: CrossAxisAlignment.start,
+                              //     children: [
+                              //       FormFieldWidget(
+                              //         controller: _assemblyController,
+                              //         hintText: 'Assembly',
+                              //         isPrefixIcon: false,
+                              //         isSuffixIcon: false,
+                              //         onChanged: (value) {},
+                              //       ),
+                              //     ],
+                              //   ),
+                              // ),
                               SizedBox(
                                 width: size.width,
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    FormFieldWidget(
-                                      controller: _assemblyController,
-                                      hintText: 'Assembly',
-                                      isPrefixIcon: false,
-                                      isSuffixIcon: false,
-                                      onChanged: (value) {},
+                                child: DropdownButtonFormField<String>(
+                                  value: defaultValue.isNotEmpty
+                                      ? defaultValue
+                                      : null,
+                                  hint: Text(
+                                    'Assembly',
+                                    style: TextStyle(
+                                        color: Constants.kSecondaryThemeColor
+                                            .withOpacity(0.6),
+                                        fontSize: Constants.fontRegular,
+                                        fontWeight: FontWeight.w500),
+                                  ),
+                                  isExpanded: true,
+                                  autovalidateMode:
+                                      AutovalidateMode.onUserInteraction,
+                                  isDense: true,
+                                  decoration: InputDecoration(
+                                    contentPadding: const EdgeInsets.symmetric(
+                                        horizontal: 10.0),
+                                    errorMaxLines: 2,
+                                    filled: true,
+                                    fillColor: Constants.kLightThemeColor,
+                                    border: OutlineInputBorder(
+                                      borderRadius: BorderRadius.circular(6.0),
+                                      borderSide: BorderSide.none,
                                     ),
-                                  ],
+                                    errorStyle: const TextStyle(
+                                        color: Colors.red,
+                                        fontSize: Constants.fontSmall,
+                                        fontWeight: FontWeight.normal),
+                                  ),
+                                  // selectedItemBuilder: (context) => items
+                                  //     .map(
+                                  //       (e) => Text(
+                                  //         e,
+                                  //         style: const TextStyle(
+                                  //             fontSize: Constants.fontRegular,
+                                  //             color: Colors.black54,
+                                  //             fontWeight: FontWeight.w500),
+                                  //       ),
+                                  //     )
+                                  //     .toList(),
+                                  items: items
+                                      .map(
+                                        (String value) =>
+                                            DropdownMenuItem<String>(
+                                          alignment: Alignment.centerLeft,
+                                          value: value,
+                                          enabled:
+                                              value == 'Ekamra Bhubaneswar',
+                                          child: Text(
+                                            value,
+                                            style: TextStyle(
+                                              color:
+                                                  value != 'Ekamra Bhubaneswar'
+                                                      ? Colors.black45
+                                                      : Colors.black,
+                                              fontSize: Constants.fontRegular,
+                                              fontWeight: FontWeight.w500,
+                                            ),
+                                          ),
+                                          onTap: () {
+                                            print(value);
+                                          },
+                                        ),
+                                      )
+                                      .toList(),
+                                  icon: const Icon(
+                                    Icons.arrow_drop_down,
+                                    color: Constants.kPrimaryThemeColor,
+                                    size: 26.0,
+                                  ),
+                                  validator: (String? value) {
+                                    if (value == null) {
+                                      return 'Required user level';
+                                    } else {
+                                      return null;
+                                    }
+                                  },
+                                  onChanged: (value) {
+                                    defaultValue = value!;
+                                    // print(defaultValue);
+                                  },
                                 ),
                               ),
                               SizedBox(height: size.height * 0.012),
@@ -147,6 +250,8 @@ class _EntryThroughVoterListScreenState
                                       hintText: 'Booth number',
                                       isPrefixIcon: false,
                                       isSuffixIcon: false,
+                                      maxLength: 3,
+                                      keyboardType: TextInputType.number,
                                       onChanged: (value) {},
                                     ),
                                   ],
@@ -155,17 +260,15 @@ class _EntryThroughVoterListScreenState
                               SizedBox(height: size.height * 0.012),
                               SizedBox(
                                 width: size.width,
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    FormFieldWidget(
-                                      controller: _pageNoController,
-                                      hintText: 'Page number',
-                                      isPrefixIcon: false,
-                                      isSuffixIcon: false,
-                                      onChanged: (value) {},
-                                    ),
-                                  ],
+                                child: FormFieldWidget(
+                                  controller: _pageNoController,
+                                  hintText: 'Page number',
+                                  keyboardType: TextInputType.number,
+                                  maxLength: 3,
+                                  isPrefixIcon: false,
+                                  isSuffixIcon: false,
+                                  suffixText: '31',
+                                  onChanged: (value) {},
                                 ),
                               ),
                               SizedBox(height: size.height * 0.02),
@@ -234,7 +337,7 @@ class _EntryThroughVoterListScreenState
                         ),
                       ),
                     ),
-                    _isVerified
+                    !_isVerified
                         ? Column(
                             children: [
                               Container(
@@ -267,7 +370,7 @@ class _EntryThroughVoterListScreenState
                                 ),
                               ),
                               ListView.builder(
-                                itemCount: 30,
+                                itemCount: 200,
                                 clipBehavior: Clip.none,
                                 padding: EdgeInsets.zero,
                                 controller: _scrollController,
@@ -282,6 +385,7 @@ class _EntryThroughVoterListScreenState
                                     boothNo: '1',
                                     pageNo: '3',
                                     serialNo: '${index + 1}'.toString(),
+                                    voteIndexNo: '${index + 1}'.toString(),
                                   ),
                                 ),
                               ),

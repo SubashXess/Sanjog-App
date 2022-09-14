@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
 import '../Constants/constants.dart';
 
@@ -113,25 +114,28 @@ import '../Constants/constants.dart';
 // }
 
 class FormFieldWidget extends StatelessWidget {
-  const FormFieldWidget(
-      {super.key,
-      this.label,
-      this.hintText,
-      this.obscureText = false,
-      this.controller,
-      this.autofocus = false,
-      this.focusNode,
-      this.prefixIcon,
-      this.suffixIcon,
-      this.validator,
-      this.onChanged,
-      this.keyboardType = TextInputType.text,
-      this.autofillHints,
-      this.maxLength = 40,
-      this.textCapitalization = TextCapitalization.none,
-      this.inputBorder,
-      this.isPrefixIcon = true,
-      this.isSuffixIcon = true});
+  const FormFieldWidget({
+    super.key,
+    this.label,
+    this.hintText,
+    this.obscureText = false,
+    this.controller,
+    this.autofocus = false,
+    this.focusNode,
+    this.prefixIcon,
+    this.suffixIcon,
+    this.validator,
+    this.onChanged,
+    this.keyboardType = TextInputType.text,
+    this.autofillHints,
+    this.maxLength = 40,
+    this.textCapitalization = TextCapitalization.none,
+    this.inputBorder,
+    this.isPrefixIcon = true,
+    this.isSuffixIcon = true,
+    this.suffixText,
+    this.inputFormatters,
+  });
 
   final String? label;
   final String? hintText;
@@ -149,6 +153,8 @@ class FormFieldWidget extends StatelessWidget {
   final TextCapitalization? textCapitalization;
   final BoxBorder? inputBorder;
   final bool? isPrefixIcon, isSuffixIcon;
+  final String? suffixText;
+  final List<TextInputFormatter>? inputFormatters;
 
   @override
   Widget build(BuildContext context) {
@@ -189,6 +195,11 @@ class FormFieldWidget extends StatelessWidget {
           border: OutlineInputBorder(
               borderRadius: BorderRadius.circular(6.0),
               borderSide: BorderSide.none),
+          suffixText: suffixText,
+          suffixStyle: const TextStyle(
+              color: Constants.kPrimaryThemeColor,
+              fontSize: Constants.fontRegular,
+              fontWeight: FontWeight.bold),
           prefixIcon: isPrefixIcon!
               ? Icon(
                   prefixIcon,
@@ -198,6 +209,7 @@ class FormFieldWidget extends StatelessWidget {
               : null,
           suffixIcon: isSuffixIcon! ? suffixIcon : null,
         ),
+        inputFormatters: inputFormatters,
         maxLength: maxLength,
         keyboardType: keyboardType,
         cursorColor: Constants.kPrimaryThemeColor,

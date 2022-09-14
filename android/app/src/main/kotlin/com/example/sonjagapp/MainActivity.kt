@@ -1,4 +1,4 @@
-package com.example.sonjagapp
+package com.example.sanjogapp
 
 import io.flutter.embedding.android.FlutterActivity
 

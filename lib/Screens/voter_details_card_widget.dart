@@ -8,9 +8,13 @@ import 'package:flutter/services.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:path/path.dart';
 import 'package:path_provider/path_provider.dart';
+import 'package:sliding_sheet/sliding_sheet.dart';
 import 'package:sonjagapp/Constants/constants.dart';
+import 'package:sonjagapp/Screens/add_family_members.dart';
+import 'package:sonjagapp/Screens/see_family_members.dart';
 import 'package:sonjagapp/Widgets/button_widget.dart';
 import 'package:sonjagapp/Widgets/text_button_widget.dart';
+import 'package:sonjagapp/Widgets/textformfield_widget.dart';
 
 class VoterDetailsCard extends StatefulWidget {
   const VoterDetailsCard({
@@ -18,13 +22,14 @@ class VoterDetailsCard extends StatefulWidget {
     required this.serialNo,
     required this.acNo,
     required this.boothNo,
-    required this.pageNo,
+    required this.pageNo, required this.voteIndexNo,
   }) : super(key: key);
 
   final String acNo;
   final String boothNo;
   final String pageNo;
   final String serialNo;
+  final String voteIndexNo;
 
   @override
   State<VoterDetailsCard> createState() => _VoterDetailsCardState();
@@ -146,9 +151,10 @@ class _VoterDetailsCardState extends State<VoterDetailsCard> {
                                   color: Constants.kPrimaryThemeColor,
                                   width: 1.0),
                             ),
-                            child: const Text(
-                              '1',
-                              style: TextStyle(
+                            child:  Text(
+                              // '1',
+                              widget.voteIndexNo.toString(),
+                              style: const TextStyle(
                                 color: Constants.kPrimaryThemeColor,
                                 fontSize: Constants.fontSmall,
                                 fontWeight: FontWeight.bold,
@@ -373,7 +379,15 @@ class _VoterDetailsCardState extends State<VoterDetailsCard> {
                               InkWell(
                                 splashColor: Colors.transparent,
                                 highlightColor: Colors.transparent,
-                                onTap: () {},
+                                onTap: () {
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (context) =>
+                                          const AddFamilyMembers(),
+                                    ),
+                                  );
+                                },
                                 child: Container(
                                   width: 26.0,
                                   height: 26.0,
@@ -394,13 +408,19 @@ class _VoterDetailsCardState extends State<VoterDetailsCard> {
                             label: 'See family members',
                             fontSize: Constants.fontSmall,
                             onPressed: () {
-                              showModalBottomSheet(
-                                context: context,
-                                backgroundColor: Colors.transparent,
-                                enableDrag: true,
-                                isScrollControlled: true,
-                                builder: (context) => buildSheet(context),
-                              );
+                              Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (context) =>
+                                          SeeFamilyMembers()));
+                              // seeFamilyDetailsBuildSheet(context);
+                              // showModalBottomSheet(
+                              //   context: context,
+                              //   backgroundColor: Colors.transparent,
+                              //   enableDrag: true,
+                              //   isScrollControlled: true,
+                              //   builder: (context) => buildSheet(context),
+                              // );
                             },
                           ),
                         ],
@@ -417,6 +437,331 @@ class _VoterDetailsCardState extends State<VoterDetailsCard> {
   }
 
   Widget buildSheet(context) {
+    Size size = MediaQuery.of(context).size;
+    // ScrollController scrollController = ScrollController();
+    return DraggableScrollableSheet(
+      expand: true,
+      // initialChildSize: 0.45,
+      // maxChildSize: 0.9,
+      // minChildSize: 0.4,
+      builder: (context, scrollController) => Container(
+        padding: const EdgeInsets.only(top: 10.0, right: 10.0, left: 10.0),
+        decoration: const BoxDecoration(
+          borderRadius: BorderRadius.vertical(top: Radius.circular(6.0)),
+          color: Colors.white,
+        ),
+        child: ListView(
+          // crossAxisAlignment: CrossAxisAlignment.start,
+          // mainAxisAlignment: MainAxisAlignment.start,
+          // mainAxisSize: MainAxisSize.min,
+          shrinkWrap: true,
+          controller: scrollController,
+          physics: const ClampingScrollPhysics(),
+          // keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
+
+          children: [
+            SizedBox(
+              width: size.width,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                mainAxisAlignment: MainAxisAlignment.start,
+                children: [
+                  Container(
+                    width: size.width / 8,
+                    height: 4.0,
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(10.0),
+                      gradient: const LinearGradient(
+                        begin: Alignment.topLeft,
+                        end: Alignment.bottomRight,
+                        colors: [
+                          Constants.kPrimaryThemeColor,
+                          Color(0xFFF97D09)
+                        ], // Color(0xFFF97D09)
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 10.0),
+                  const Text(
+                    'Family Details',
+                    style: TextStyle(
+                      color: Colors.black,
+                      fontWeight: FontWeight.bold,
+                      fontSize: Constants.fontMedium,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            const SizedBox(height: 10.0),
+            const Text(
+              'Total Records: 3',
+              style: TextStyle(
+                color: Constants.kPrimaryThemeColor,
+                fontWeight: FontWeight.bold,
+                fontSize: Constants.fontRegular,
+              ),
+            ),
+            const SizedBox(height: 10.0),
+            ListView.builder(
+              itemCount: 4,
+              shrinkWrap: true,
+              clipBehavior: Clip.none,
+              padding: EdgeInsets.only(
+                  bottom: MediaQuery.of(context).viewInsets.bottom),
+              controller: scrollController,
+              physics: const NeverScrollableScrollPhysics(),
+              itemBuilder: (context, index) {
+                return StatefulBuilder(
+                    builder: (context, StateSetter setState) {
+                  return Card(
+                    margin:
+                        EdgeInsets.only(bottom: _isLongPressed ? 10.0 : 0.0),
+                    elevation: 0.0,
+                    clipBehavior: Clip.antiAliasWithSaveLayer,
+                    shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(6.0),
+                        side: _isLongPressed
+                            ? const BorderSide(
+                                color: Constants.kLightThemeColor, width: 1.0)
+                            : BorderSide.none),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      children: [
+                        Card(
+                          margin: EdgeInsets.only(
+                              bottom: _isLongPressed ? 0.0 : 10.0),
+                          elevation: 0.0,
+                          clipBehavior: Clip.antiAliasWithSaveLayer,
+                          shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(6.0),
+                              side: _isLongPressed
+                                  ? BorderSide.none
+                                  : const BorderSide(
+                                      color: Constants.kLightThemeColor,
+                                      width: 1.0)),
+                          child: InkWell(
+                            splashColor: Constants.kLightThemeColor,
+                            highlightColor: Colors.transparent,
+                            onTap: () {
+                              // _isLongPressed = !_isLongPressed;
+                              setState(() => _isLongPressed = !_isLongPressed);
+                            },
+                            child: Padding(
+                              padding: const EdgeInsets.all(10.0),
+                              child: Column(
+                                children: [
+                                  Row(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.center,
+                                    mainAxisAlignment: MainAxisAlignment.start,
+                                    children: const [
+                                      Text(
+                                        'Name of the voter:',
+                                        style: TextStyle(
+                                          color: Colors.black87,
+                                          fontWeight: FontWeight.w500,
+                                          fontSize: Constants.fontSmall,
+                                        ),
+                                      ),
+                                      SizedBox(width: 10.0),
+                                      Expanded(
+                                        child: Text(
+                                          'Babu Pradhan',
+                                          style: TextStyle(
+                                            color: Colors.black,
+                                            fontWeight: FontWeight.bold,
+                                            fontSize: Constants.fontSmall,
+                                          ),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                  const SizedBox(height: 10.0),
+                                  Row(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.center,
+                                    mainAxisAlignment: MainAxisAlignment.start,
+                                    children: const [
+                                      Text(
+                                        'Rel-Name of the voters:',
+                                        style: TextStyle(
+                                          color: Colors.black87,
+                                          fontWeight: FontWeight.w500,
+                                          fontSize: Constants.fontSmall,
+                                        ),
+                                      ),
+                                      SizedBox(width: 10.0),
+                                      Expanded(
+                                        child: Text(
+                                          'Bhramara Pradhan',
+                                          style: TextStyle(
+                                            color: Colors.black,
+                                            fontWeight: FontWeight.bold,
+                                            fontSize: Constants.fontSmall,
+                                          ),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                  const SizedBox(height: 10.0),
+                                  Row(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.center,
+                                    mainAxisAlignment: MainAxisAlignment.start,
+                                    children: [
+                                      const Text(
+                                        'Voter ID number:',
+                                        style: TextStyle(
+                                          color: Colors.black87,
+                                          fontWeight: FontWeight.w500,
+                                          fontSize: Constants.fontSmall,
+                                        ),
+                                      ),
+                                      const SizedBox(width: 10.0),
+                                      Expanded(
+                                        child: Text(
+                                          'Rmu1169697'.toUpperCase(),
+                                          style: const TextStyle(
+                                            color: Colors.black,
+                                            fontWeight: FontWeight.bold,
+                                            fontSize: Constants.fontSmall,
+                                          ),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                  const SizedBox(height: 10.0),
+                                  Row(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.center,
+                                    mainAxisAlignment: MainAxisAlignment.start,
+                                    children: const [
+                                      Text(
+                                        'Mobile number:',
+                                        style: TextStyle(
+                                          color: Colors.black87,
+                                          fontWeight: FontWeight.w500,
+                                          fontSize: Constants.fontSmall,
+                                        ),
+                                      ),
+                                      SizedBox(width: 10.0),
+                                      Expanded(
+                                        child: Text(
+                                          '1234567890',
+                                          style: TextStyle(
+                                            color: Colors.black,
+                                            fontWeight: FontWeight.bold,
+                                            fontSize: Constants.fontSmall,
+                                          ),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                  // TextField(
+                                  //   autofocus: true,
+                                  // ),
+                                ],
+                              ),
+                            ),
+                          ),
+                        ),
+                        _isLongPressed
+                            ? Container(
+                                margin: const EdgeInsets.only(
+                                    bottom: 10.0, right: 10.0, left: 10.0),
+                                child: Row(
+                                  crossAxisAlignment: CrossAxisAlignment.center,
+                                  mainAxisAlignment: MainAxisAlignment.end,
+                                  children: [
+                                    TextButton.icon(
+                                      onPressed: () {},
+                                      style: ButtonStyle(
+                                        backgroundColor:
+                                            MaterialStateProperty.all(
+                                                Constants.kLightThemeColor),
+                                        padding: MaterialStateProperty.all(
+                                            const EdgeInsets.symmetric(
+                                                horizontal: 6.0,
+                                                vertical: 0.0)),
+                                        shape: MaterialStateProperty.all(
+                                            RoundedRectangleBorder(
+                                                borderRadius:
+                                                    BorderRadius.circular(
+                                                        6.0))),
+                                        tapTargetSize:
+                                            MaterialTapTargetSize.shrinkWrap,
+                                        visualDensity: const VisualDensity(
+                                            horizontal: -2.0, vertical: -2.0),
+                                      ),
+                                      icon: const Icon(
+                                        Icons.delete,
+                                        size: 16.0,
+                                        color: Constants.kPrimaryThemeColor,
+                                      ),
+                                      label: const Text(
+                                        'Delete',
+                                        style: TextStyle(
+                                            fontSize: 12.0,
+                                            color:
+                                                Constants.kPrimaryThemeColor),
+                                      ),
+                                    ),
+                                    const SizedBox(width: 36.0),
+                                    TextButton.icon(
+                                      onPressed: () {},
+                                      style: ButtonStyle(
+                                        backgroundColor:
+                                            MaterialStateProperty.all(
+                                                // Constants.kLightThemeColor,
+                                                Colors.green.shade50),
+                                        padding: MaterialStateProperty.all(
+                                            const EdgeInsets.symmetric(
+                                                horizontal: 6.0,
+                                                vertical: 0.0)),
+                                        shape: MaterialStateProperty.all(
+                                            RoundedRectangleBorder(
+                                                borderRadius:
+                                                    BorderRadius.circular(
+                                                        6.0))),
+                                        tapTargetSize:
+                                            MaterialTapTargetSize.shrinkWrap,
+                                        visualDensity: const VisualDensity(
+                                            horizontal: -2.0, vertical: -2.0),
+                                      ),
+                                      icon: const Icon(
+                                        Icons.edit,
+                                        size: 16.0,
+                                        // color: Constants.kPrimaryThemeColor,
+                                        color: Colors.green,
+                                      ),
+                                      label: const Text(
+                                        'Edit',
+                                        style: TextStyle(
+                                          fontSize: 12.0,
+                                          // color: Constants.kPrimaryThemeColor,
+                                          color: Colors.green,
+                                        ),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              )
+                            : Container(width: 0.0),
+                      ],
+                    ),
+                  );
+                });
+              },
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget buildAddFamilyMembersSheet(BuildContext context) {
     Size size = MediaQuery.of(context).size;
     ScrollController scrollController = ScrollController();
     return Container(
@@ -457,7 +802,7 @@ class _VoterDetailsCardState extends State<VoterDetailsCard> {
                 ),
                 const SizedBox(height: 10.0),
                 const Text(
-                  'Family Details',
+                  'Add Family Details',
                   style: TextStyle(
                     color: Colors.black,
                     fontWeight: FontWeight.bold,
@@ -467,247 +812,78 @@ class _VoterDetailsCardState extends State<VoterDetailsCard> {
               ],
             ),
           ),
-          const SizedBox(height: 10.0),
-          const Text(
-            'Total Records: 3',
-            style: TextStyle(
-              color: Constants.kPrimaryThemeColor,
-              fontWeight: FontWeight.bold,
-              fontSize: Constants.fontRegular,
-            ),
-          ),
-          const SizedBox(height: 10.0),
-          ListView.builder(
-            itemCount: 3,
-            shrinkWrap: true,
-            clipBehavior: Clip.none,
-            padding: EdgeInsets.zero,
-            controller: scrollController,
-            physics: const ClampingScrollPhysics(),
-            itemBuilder: (context, index) {
-              return Card(
-                margin: EdgeInsets.only(bottom: _isLongPressed ? 10.0 : 0.0),
-                elevation: 0.0,
-                clipBehavior: Clip.antiAliasWithSaveLayer,
-                shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(6.0),
-                    side: _isLongPressed
-                        ? const BorderSide(
-                            color: Constants.kLightThemeColor, width: 1.0)
-                        : BorderSide.none),
+          // const SizedBox(height: 10.0),
+          // const Text(
+          //   'Total Records: 3',
+          //   style: TextStyle(
+          //     color: Constants.kPrimaryThemeColor,
+          //     fontWeight: FontWeight.bold,
+          //     fontSize: Constants.fontRegular,
+          //   ),
+          // ),
+          Row(
+            children: [
+              Expanded(
+                // width: size.width / 3.4,
+                child: TextFormField(
+                  decoration: InputDecoration(
+                    isDense: true,
+                    contentPadding: EdgeInsets.zero,
+                    hintText: 'AC number',
+                  ),
+                  keyboardType: TextInputType.number,
+                  onChanged: (value) {},
+                ),
+              ),
+              const SizedBox(width: 10.0),
+              Expanded(
+                // width: size.width / 3.4,
+                child: TextFormField(
+                  decoration: InputDecoration(
+                    isDense: true,
+                    contentPadding: EdgeInsets.zero,
+                    hintText: 'Booth number',
+                  ),
+                  keyboardType: TextInputType.number,
+                  onChanged: (value) {},
+                ),
+              ),
+              const SizedBox(width: 10.0),
+              Expanded(
+                // width: size.width / 3.4,
                 child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  mainAxisAlignment: MainAxisAlignment.start,
                   children: [
-                    Card(
-                      margin:
-                          EdgeInsets.only(bottom: _isLongPressed ? 0.0 : 10.0),
-                      elevation: 0.0,
-                      clipBehavior: Clip.antiAliasWithSaveLayer,
-                      shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(6.0),
-                          side: _isLongPressed
-                              ? BorderSide.none
-                              : const BorderSide(
-                                  color: Constants.kLightThemeColor,
-                                  width: 1.0)),
-                      child: InkWell(
-                        splashColor: Constants.kLightThemeColor,
-                        highlightColor: Colors.transparent,
-                        onTap: () {
-                          _isLongPressed = !_isLongPressed;
-                        },
-                        child: Padding(
-                          padding: const EdgeInsets.all(10.0),
-                          child: Column(
-                            children: [
-                              Row(
-                                crossAxisAlignment: CrossAxisAlignment.center,
-                                mainAxisAlignment: MainAxisAlignment.start,
-                                children: const [
-                                  Text(
-                                    'Name of the voter:',
-                                    style: TextStyle(
-                                      color: Colors.black87,
-                                      fontWeight: FontWeight.w500,
-                                      fontSize: Constants.fontSmall,
-                                    ),
-                                  ),
-                                  SizedBox(width: 10.0),
-                                  Expanded(
-                                    child: Text(
-                                      'Babu Pradhan',
-                                      style: TextStyle(
-                                        color: Colors.black,
-                                        fontWeight: FontWeight.bold,
-                                        fontSize: Constants.fontSmall,
-                                      ),
-                                    ),
-                                  ),
-                                ],
-                              ),
-                              const SizedBox(height: 10.0),
-                              Row(
-                                crossAxisAlignment: CrossAxisAlignment.center,
-                                mainAxisAlignment: MainAxisAlignment.start,
-                                children: const [
-                                  Text(
-                                    'Rel-Name of the voters:',
-                                    style: TextStyle(
-                                      color: Colors.black87,
-                                      fontWeight: FontWeight.w500,
-                                      fontSize: Constants.fontSmall,
-                                    ),
-                                  ),
-                                  SizedBox(width: 10.0),
-                                  Expanded(
-                                    child: Text(
-                                      'Bhramara Pradhan',
-                                      style: TextStyle(
-                                        color: Colors.black,
-                                        fontWeight: FontWeight.bold,
-                                        fontSize: Constants.fontSmall,
-                                      ),
-                                    ),
-                                  ),
-                                ],
-                              ),
-                              const SizedBox(height: 10.0),
-                              Row(
-                                crossAxisAlignment: CrossAxisAlignment.center,
-                                mainAxisAlignment: MainAxisAlignment.start,
-                                children: [
-                                  const Text(
-                                    'Voter ID number:',
-                                    style: TextStyle(
-                                      color: Colors.black87,
-                                      fontWeight: FontWeight.w500,
-                                      fontSize: Constants.fontSmall,
-                                    ),
-                                  ),
-                                  const SizedBox(width: 10.0),
-                                  Expanded(
-                                    child: Text(
-                                      'Rmu1169697'.toUpperCase(),
-                                      style: const TextStyle(
-                                        color: Colors.black,
-                                        fontWeight: FontWeight.bold,
-                                        fontSize: Constants.fontSmall,
-                                      ),
-                                    ),
-                                  ),
-                                ],
-                              ),
-                              const SizedBox(height: 10.0),
-                              Row(
-                                crossAxisAlignment: CrossAxisAlignment.center,
-                                mainAxisAlignment: MainAxisAlignment.start,
-                                children: const [
-                                  Text(
-                                    'Mobile number:',
-                                    style: TextStyle(
-                                      color: Colors.black87,
-                                      fontWeight: FontWeight.w500,
-                                      fontSize: Constants.fontSmall,
-                                    ),
-                                  ),
-                                  SizedBox(width: 10.0),
-                                  Expanded(
-                                    child: Text(
-                                      '1234567890',
-                                      style: TextStyle(
-                                        color: Colors.black,
-                                        fontWeight: FontWeight.bold,
-                                        fontSize: Constants.fontSmall,
-                                      ),
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ],
-                          ),
-                        ),
+                    const Text(
+                      'Serial No.',
+                      style: TextStyle(
+                        color: Constants.kPrimaryThemeColor,
+                        fontWeight: FontWeight.bold,
+                        fontSize: Constants.fontRegular,
                       ),
                     ),
-                    _isLongPressed
-                        ? Container(
-                            margin: const EdgeInsets.only(
-                                bottom: 10.0, right: 10.0, left: 10.0),
-                            child: Row(
-                              crossAxisAlignment: CrossAxisAlignment.center,
-                              mainAxisAlignment: MainAxisAlignment.end,
-                              children: [
-                                TextButton.icon(
-                                  onPressed: () {},
-                                  style: ButtonStyle(
-                                    backgroundColor: MaterialStateProperty.all(
-                                        Constants.kLightThemeColor),
-                                    padding: MaterialStateProperty.all(
-                                        const EdgeInsets.symmetric(
-                                            horizontal: 6.0, vertical: 0.0)),
-                                    shape: MaterialStateProperty.all(
-                                        RoundedRectangleBorder(
-                                            borderRadius:
-                                                BorderRadius.circular(6.0))),
-                                    tapTargetSize:
-                                        MaterialTapTargetSize.shrinkWrap,
-                                    visualDensity: const VisualDensity(
-                                        horizontal: -2.0, vertical: -2.0),
-                                  ),
-                                  icon: const Icon(
-                                    Icons.delete,
-                                    size: 16.0,
-                                    color: Constants.kPrimaryThemeColor,
-                                  ),
-                                  label: const Text(
-                                    'Delete',
-                                    style: TextStyle(
-                                        fontSize: 12.0,
-                                        color: Constants.kPrimaryThemeColor),
-                                  ),
-                                ),
-                                const SizedBox(width: 36.0),
-                                TextButton.icon(
-                                  onPressed: () {},
-                                  style: ButtonStyle(
-                                    backgroundColor: MaterialStateProperty.all(
-                                        // Constants.kLightThemeColor,
-                                        Colors.green.shade50),
-                                    padding: MaterialStateProperty.all(
-                                        const EdgeInsets.symmetric(
-                                            horizontal: 6.0, vertical: 0.0)),
-                                    shape: MaterialStateProperty.all(
-                                        RoundedRectangleBorder(
-                                            borderRadius:
-                                                BorderRadius.circular(6.0))),
-                                    tapTargetSize:
-                                        MaterialTapTargetSize.shrinkWrap,
-                                    visualDensity: const VisualDensity(
-                                        horizontal: -2.0, vertical: -2.0),
-                                  ),
-                                  icon: const Icon(
-                                    Icons.edit,
-                                    size: 16.0,
-                                    // color: Constants.kPrimaryThemeColor,
-                                    color: Colors.green,
-                                  ),
-                                  label: const Text(
-                                    'Edit',
-                                    style: TextStyle(
-                                      fontSize: 12.0,
-                                      // color: Constants.kPrimaryThemeColor,
-                                      color: Colors.green,
-                                    ),
-                                  ),
-                                ),
-                              ],
-                            ),
-                          )
-                        : Container(width: 0.0),
+                    TextFormField(
+                      decoration: InputDecoration(
+                        isDense: true,
+                        contentPadding: EdgeInsets.zero,
+                        filled: true,
+                        fillColor: Constants.kLightThemeColor,
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(6.0),
+                          borderSide: BorderSide.none,
+                        ),
+                        focusedBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(6.0),
+                          borderSide: const BorderSide(
+                              width: 1.0, color: Constants.kPrimaryThemeColor),
+                        ),
+                      ),
+                      keyboardType: TextInputType.number,
+                      onChanged: (value) {},
+                    ),
                   ],
                 ),
-              );
-            },
+              ),
+            ],
           ),
         ],
       ),
