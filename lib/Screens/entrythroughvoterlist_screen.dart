@@ -27,17 +27,19 @@ class _EntryThroughVoterListScreenState
   final ScrollController _scrollController = ScrollController();
 
   // text field controller
-  final TextEditingController _assemblyController = TextEditingController();
   final TextEditingController _boothNoController = TextEditingController();
   final TextEditingController _pageNoController = TextEditingController();
 
-  late Timer _timer;
-  bool _isVerified = false;
-  bool _isLoading = false;
-  bool _isError = false;
-
   // Initial Selected Value
   String defaultValue = '';
+
+  // load value
+  String? loadUserLevel;
+  String? loadBoothNo;
+  String? loadPageNo;
+
+  // result show card
+  bool _isShowCard = false;
 
   // List of items in our dropdown menu
   List<String> items = [
@@ -137,21 +139,6 @@ class _EntryThroughVoterListScreenState
                             crossAxisAlignment: CrossAxisAlignment.center,
                             mainAxisAlignment: MainAxisAlignment.start,
                             children: [
-                              // SizedBox(
-                              //   width: size.width,
-                              //   child: Column(
-                              //     crossAxisAlignment: CrossAxisAlignment.start,
-                              //     children: [
-                              //       FormFieldWidget(
-                              //         controller: _assemblyController,
-                              //         hintText: 'Assembly',
-                              //         isPrefixIcon: false,
-                              //         isSuffixIcon: false,
-                              //         onChanged: (value) {},
-                              //       ),
-                              //     ],
-                              //   ),
-                              // ),
                               SizedBox(
                                 width: size.width,
                                 child: DropdownButtonFormField<String>(
@@ -228,7 +215,7 @@ class _EntryThroughVoterListScreenState
                                   ),
                                   validator: (String? value) {
                                     if (value == null) {
-                                      return 'Required user level';
+                                      return 'Required';
                                     } else {
                                       return null;
                                     }
@@ -239,105 +226,90 @@ class _EntryThroughVoterListScreenState
                                   },
                                 ),
                               ),
-                              SizedBox(height: size.height * 0.012),
-                              SizedBox(
-                                width: size.width,
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    FormFieldWidget(
+                              const SizedBox(height: 10.0),
+                              Row(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                children: [
+                                  Expanded(
+                                    child: FormFieldWidget(
                                       controller: _boothNoController,
                                       hintText: 'Booth number',
                                       isPrefixIcon: false,
                                       isSuffixIcon: false,
                                       maxLength: 3,
                                       keyboardType: TextInputType.number,
+                                      validator: (value) {
+                                        if (value!.isEmpty) {
+                                          return 'Required';
+                                        } else {
+                                          return null;
+                                        }
+                                      },
                                       onChanged: (value) {},
                                     ),
-                                  ],
-                                ),
+                                  ),
+                                  const SizedBox(width: 10.0),
+                                  Expanded(
+                                    child: FormFieldWidget(
+                                      controller: _pageNoController,
+                                      hintText: 'Page number',
+                                      keyboardType: TextInputType.number,
+                                      maxLength: 3,
+                                      isPrefixIcon: false,
+                                      isSuffixIcon: false,
+                                      suffixText: '31',
+                                      validator: (value) {
+                                        if (value!.isEmpty) {
+                                          return 'Required';
+                                        } else {
+                                          return null;
+                                        }
+                                      },
+                                      onChanged: (value) {},
+                                    ),
+                                  ),
+                                ],
                               ),
-                              SizedBox(height: size.height * 0.012),
-                              SizedBox(
-                                width: size.width,
-                                child: FormFieldWidget(
-                                  controller: _pageNoController,
-                                  hintText: 'Page number',
-                                  keyboardType: TextInputType.number,
-                                  maxLength: 3,
-                                  isPrefixIcon: false,
-                                  isSuffixIcon: false,
-                                  suffixText: '31',
-                                  onChanged: (value) {},
-                                ),
-                              ),
-                              SizedBox(height: size.height * 0.02),
+                              const SizedBox(height: 10.0),
                               MaterialButtonWidget(
-                                  size: size,
-                                  widget: _isLoading
-                                      ? const SizedBox(
-                                          width: 28.0,
-                                          height: 28.0,
-                                          child: Center(
-                                            child: CircularProgressIndicator
-                                                .adaptive(
-                                              backgroundColor: Colors.white,
-                                              strokeWidth: 4.0,
-                                            ),
-                                          ),
-                                        )
-                                      : _isVerified
-                                          ? const Icon(
-                                              Icons.check_circle_sharp,
-                                              color: Colors.white,
-                                              size: 28.0,
-                                            )
-                                          : _isError
-                                              ? const Text(
-                                                  'Failed to Load',
-                                                  style: TextStyle(
-                                                    color: Colors.white,
-                                                    fontSize:
-                                                        Constants.fontRegular,
-                                                    fontWeight: FontWeight.bold,
-                                                  ),
-                                                )
-                                              : const Text(
-                                                  'Load',
-                                                  style: TextStyle(
-                                                    color: Colors.white,
-                                                    fontSize:
-                                                        Constants.fontRegular,
-                                                    fontWeight: FontWeight.bold,
-                                                  ),
-                                                ),
-                                  onPressed: () {
-                                    if (_formKey.currentState!.validate()) {
-                                      print('Success');
-                                      load();
+                                size: size,
+                                widget: const Text(
+                                  'Load',
+                                  style: TextStyle(
+                                    color: Colors.white,
+                                    fontSize: Constants.fontRegular,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                                onPressed: () {
+                                  if (_formKey.currentState!.validate()) {
+                                    print('Success');
+                                    setState(() {
+                                      _isShowCard = true;
 
-                                      Future.delayed(
-                                        const Duration(seconds: 2),
-                                        () {
-                                          showSnackBar(context, 'Success');
-                                        },
-                                      );
-                                    } else {
-                                      print('Error');
-                                      setState(() {
-                                        _isError = true;
-                                        _isLoading = false;
-                                        _isVerified = false;
-                                      });
-                                      showSnackBar(context, 'Required');
-                                    }
-                                  }),
+                                      loadBoothNo = _boothNoController.text
+                                          .trim()
+                                          .toString();
+                                      loadPageNo = _pageNoController.text
+                                          .trim()
+                                          .toString();
+                                    });
+                                  } else {
+                                    print('Error');
+                                    setState(() {
+                                      _isShowCard = false;
+                                    });
+                                  }
+                                },
+                              ),
                             ],
                           ),
                         ),
                       ),
                     ),
-                    !_isVerified
+                    _isShowCard
                         ? Column(
                             children: [
                               Container(
@@ -370,7 +342,7 @@ class _EntryThroughVoterListScreenState
                                 ),
                               ),
                               ListView.builder(
-                                itemCount: 200,
+                                itemCount: 10,
                                 clipBehavior: Clip.none,
                                 padding: EdgeInsets.zero,
                                 controller: _scrollController,
@@ -382,8 +354,8 @@ class _EntryThroughVoterListScreenState
                                       bottom: size.height * 0.016),
                                   child: VoterDetailsCard(
                                     acNo: '111',
-                                    boothNo: '1',
-                                    pageNo: '3',
+                                    boothNo: loadBoothNo.toString(),
+                                    pageNo: loadPageNo.toString(),
                                     serialNo: '${index + 1}'.toString(),
                                     voteIndexNo: '${index + 1}'.toString(),
                                   ),
@@ -391,12 +363,8 @@ class _EntryThroughVoterListScreenState
                               ),
                             ],
                           )
-                        : Padding(
-                            padding: EdgeInsets.symmetric(
-                                vertical: size.height * 0.026),
-                            child: const Text('No data'),
-                          ),
-                    _isVerified
+                        : Container(width: 0.0),
+                    _isShowCard
                         ? Row(
                             children: [
                               ElevatedIconButtonWidget(
@@ -424,33 +392,4 @@ class _EntryThroughVoterListScreenState
       ),
     );
   }
-
-  load() {
-    setState(() {
-      _isLoading = true;
-    });
-    const oneSec = Duration(seconds: 2);
-    _timer = Timer.periodic(oneSec, (timer) {
-      setState(() {
-        _isLoading = false;
-        _isVerified = true;
-      });
-      _timer.cancel();
-    });
-  }
-
-  // errorShow() {
-  //   setState(() {
-  //     _isLoading = true;
-  //   });
-  //   const oneSec = Duration(seconds: 2);
-  //   _timer = Timer.periodic(oneSec, (timer) {
-  //     setState(() {
-  //       _isError = true;
-  //       _isLoading = false;
-  //       _isVerified = false;
-  //     });
-  //     _timer.cancel();
-  //   });
-  // }
 }

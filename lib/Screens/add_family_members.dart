@@ -92,64 +92,139 @@ class _AddFamilyMembersState extends State<AddFamilyMembers> {
           padding: const EdgeInsets.all(10.0),
           child: Column(
             children: [
-              SizedBox(
-                width: size.width,
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    const Text(
-                      'AC number',
-                      style: TextStyle(
-                        color: Colors.black,
-                        fontWeight: FontWeight.w500,
-                        fontSize: Constants.fontRegular,
-                      ),
+              Row(
+                children: [
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        const Text(
+                          'AC No',
+                          style: TextStyle(
+                            color: Colors.black,
+                            fontWeight: FontWeight.w500,
+                            fontSize: Constants.fontRegular,
+                          ),
+                        ),
+                        const SizedBox(height: 10.0),
+                        FormFieldWidget(
+                          keyboardType: TextInputType.number,
+                          maxLength: 4,
+                          isPrefixIcon: false,
+                          isSuffixIcon: false,
+                          onChanged: (value) {},
+                        ),
+                      ],
                     ),
-                    const SizedBox(height: 10.0),
-                    FormFieldWidget(
-                      keyboardType: TextInputType.number,
-                      maxLength: 4,
-                      isPrefixIcon: false,
-                      isSuffixIcon: false,
-                      onChanged: (value) {},
+                  ),
+                  const SizedBox(width: 10.0),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        const Text(
+                          'Booth No',
+                          style: TextStyle(
+                            color: Colors.black,
+                            fontWeight: FontWeight.w500,
+                            fontSize: Constants.fontRegular,
+                          ),
+                        ),
+                        const SizedBox(height: 10.0),
+                        FormFieldWidget(
+                          keyboardType: TextInputType.number,
+                          maxLength: 4,
+                          isPrefixIcon: false,
+                          isSuffixIcon: false,
+                          onChanged: (value) {},
+                        ),
+                      ],
                     ),
-                    const SizedBox(height: 10.0),
-                    const Text(
-                      'Booth number',
-                      style: TextStyle(
-                        color: Colors.black,
-                        fontWeight: FontWeight.w500,
-                        fontSize: Constants.fontRegular,
-                      ),
+                  ),
+                  const SizedBox(width: 10.0),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        const Text(
+                          'Serial No',
+                          style: TextStyle(
+                            color: Colors.black,
+                            fontWeight: FontWeight.w500,
+                            fontSize: Constants.fontRegular,
+                          ),
+                        ),
+                        const SizedBox(height: 10.0),
+                        FormFieldWidget(
+                          keyboardType: TextInputType.number,
+                          maxLength: 4,
+                          isPrefixIcon: false,
+                          isSuffixIcon: false,
+                          onChanged: (value) {},
+                        ),
+                      ],
                     ),
-                    const SizedBox(height: 10.0),
-                    FormFieldWidget(
-                      keyboardType: TextInputType.number,
-                      maxLength: 4,
-                      isPrefixIcon: false,
-                      isSuffixIcon: false,
-                      onChanged: (value) {},
-                    ),
-                    const SizedBox(height: 10.0),
-                    const Text(
-                      'Serial number',
-                      style: TextStyle(
-                        color: Colors.black,
-                        fontWeight: FontWeight.w500,
-                        fontSize: Constants.fontRegular,
-                      ),
-                    ),
-                    const SizedBox(height: 10.0),
-                    FormFieldWidget(
-                      keyboardType: TextInputType.number,
-                      maxLength: 4,
-                      isPrefixIcon: false,
-                      isSuffixIcon: false,
-                      onChanged: (value) {},
-                    ),
-                  ],
-                ),
+                  ),
+                ],
               ),
+              // SizedBox(
+              //   width: size.width,
+              //   child: Column(
+              //     crossAxisAlignment: CrossAxisAlignment.start,
+              //     children: [
+              //       // const Text(
+              //       //   'AC number',
+              //       //   style: TextStyle(
+              //       //     color: Colors.black,
+              //       //     fontWeight: FontWeight.w500,
+              //       //     fontSize: Constants.fontRegular,
+              //       //   ),
+              //       // ),
+              //       // const SizedBox(height: 10.0),
+              //       // FormFieldWidget(
+              //       //   keyboardType: TextInputType.number,
+              //       //   maxLength: 4,
+              //       //   isPrefixIcon: false,
+              //       //   isSuffixIcon: false,
+              //       //   onChanged: (value) {},
+              //       // ),
+              //       // const SizedBox(height: 10.0),
+              //       // const Text(
+              //       //   'Booth number',
+              //       //   style: TextStyle(
+              //       //     color: Colors.black,
+              //       //     fontWeight: FontWeight.w500,
+              //       //     fontSize: Constants.fontRegular,
+              //       //   ),
+              //       // ),
+              //       // const SizedBox(height: 10.0),
+              //       // FormFieldWidget(
+              //       //   keyboardType: TextInputType.number,
+              //       //   maxLength: 4,
+              //       //   isPrefixIcon: false,
+              //       //   isSuffixIcon: false,
+              //       //   onChanged: (value) {},
+              //       // ),
+              //       // const SizedBox(height: 10.0),
+              //       // const Text(
+              //       //   'Serial number',
+              //       //   style: TextStyle(
+              //       //     color: Colors.black,
+              //       //     fontWeight: FontWeight.w500,
+              //       //     fontSize: Constants.fontRegular,
+              //       //   ),
+              //       // ),
+              //       // const SizedBox(height: 10.0),
+              //       // FormFieldWidget(
+              //       //   keyboardType: TextInputType.number,
+              //       //   maxLength: 4,
+              //       //   isPrefixIcon: false,
+              //       //   isSuffixIcon: false,
+              //       //   onChanged: (value) {},
+              //       // ),
+              //     ],
+              //   ),
+              // ),
               const SizedBox(height: 10.0),
               orDivider(),
               const SizedBox(height: 10.0),

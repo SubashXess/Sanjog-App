@@ -10,9 +10,11 @@ import 'package:path/path.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:sliding_sheet/sliding_sheet.dart';
 import 'package:sonjagapp/Constants/constants.dart';
+import 'package:sonjagapp/Screens/add_details.dart';
 import 'package:sonjagapp/Screens/add_family_members.dart';
 import 'package:sonjagapp/Screens/see_family_members.dart';
 import 'package:sonjagapp/Widgets/button_widget.dart';
+import 'package:sonjagapp/Widgets/card_widget.dart';
 import 'package:sonjagapp/Widgets/text_button_widget.dart';
 import 'package:sonjagapp/Widgets/textformfield_widget.dart';
 
@@ -22,7 +24,8 @@ class VoterDetailsCard extends StatefulWidget {
     required this.serialNo,
     required this.acNo,
     required this.boothNo,
-    required this.pageNo, required this.voteIndexNo,
+    required this.pageNo,
+    required this.voteIndexNo,
   }) : super(key: key);
 
   final String acNo;
@@ -84,55 +87,27 @@ class _VoterDetailsCardState extends State<VoterDetailsCard> {
                             ),
                           ),
                           SizedBox(width: size.width * 0.012),
-                          Container(
-                            padding: const EdgeInsets.symmetric(
-                                horizontal: 6.0, vertical: 4.0),
-                            decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(6.0),
-                              color: Constants.kPrimaryThemeColor,
-                            ),
-                            child: const Text(
-                              'Booth No: 1',
-                              style: TextStyle(
-                                color: Colors.white,
-                                fontSize: Constants.fontSmall,
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
+                          SmallCardDesignOne(
+                            cardColor: Constants.kLightThemeColor,
+                            label: 'Booth no:',
+                            labelColor: Constants.kPrimaryThemeColor,
+                            // value: '1',
+                            value: widget.boothNo.toString(),
                           ),
                           SizedBox(width: size.width * 0.012),
-                          Container(
-                            padding: const EdgeInsets.symmetric(
-                                horizontal: 6.0, vertical: 4.0),
-                            decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(6.0),
-                              color: Constants.kPrimaryThemeColor,
-                            ),
-                            child: const Text(
-                              'Page No: 3',
-                              style: TextStyle(
-                                color: Colors.white,
-                                fontSize: Constants.fontSmall,
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
+                          SmallCardDesignOne(
+                            cardColor: Constants.kLightThemeColor,
+                            label: 'Page no:',
+                            labelColor: Constants.kPrimaryThemeColor,
+                            value: widget.pageNo.toString(),
+                            // value: '3',
                           ),
                           SizedBox(width: size.width * 0.012),
-                          Container(
-                            padding: const EdgeInsets.symmetric(
-                                horizontal: 6.0, vertical: 4.0),
-                            decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(6.0),
-                              color: Constants.kPrimaryThemeColor,
-                            ),
-                            child: Text(
-                              'Serial No: ${widget.serialNo.toString()}',
-                              style: const TextStyle(
-                                color: Colors.white,
-                                fontSize: Constants.fontSmall,
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
+                          SmallCardDesignOne(
+                            cardColor: Constants.kLightThemeColor,
+                            label: 'Serial no:',
+                            labelColor: Constants.kPrimaryThemeColor,
+                            value: widget.serialNo.toString(),
                           ),
                         ],
                       ),
@@ -151,7 +126,7 @@ class _VoterDetailsCardState extends State<VoterDetailsCard> {
                                   color: Constants.kPrimaryThemeColor,
                                   width: 1.0),
                             ),
-                            child:  Text(
+                            child: Text(
                               // '1',
                               widget.voteIndexNo.toString(),
                               style: const TextStyle(
@@ -259,7 +234,17 @@ class _VoterDetailsCardState extends State<VoterDetailsCard> {
                       ),
                       SizedBox(height: size.height * 0.012),
                       MaterialButton(
-                        onPressed: () {},
+                        onPressed: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => const AddDetailsScreen(
+                                voterId: 'YXV0934471',
+                                acNo: '111',
+                              ),
+                            ),
+                          );
+                        },
                         color: Constants.kPrimaryThemeColor,
                         height: size.height * 0.04,
                         minWidth: size.width * 0.3,
