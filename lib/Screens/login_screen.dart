@@ -1,13 +1,17 @@
 // ignore_for_file: avoid_print
 
+import 'dart:convert';
 import 'dart:ui';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:sonjagapp/Components/gradients.dart';
+import 'package:sonjagapp/Components/showsnackbar.dart';
 import 'package:sonjagapp/Screens/entrythroughvoterlist_screen.dart';
 import 'package:sonjagapp/Constants/constants.dart';
 import 'package:sonjagapp/Screens/samiti_screen.dart';
-
+import 'package:sonjagapp/Services/service.dart';
+import 'package:http/http.dart' as http;
 import '../Widgets/button_widget.dart';
 import '../Widgets/dropdown_widget.dart';
 import '../Widgets/textformfield_widget.dart';
@@ -75,23 +79,10 @@ class _LoginScreenState extends State<LoginScreen> {
           alignment: Alignment.topCenter,
           width: double.infinity,
           height: size.height,
-          decoration: const BoxDecoration(
-            // image: DecorationImage(
-            //   image: AssetImage('assets/bg-2.jpg'),
-            //   fit: BoxFit.cover,
-            //   colorFilter: ColorFilter.mode(
-            //     Colors.black12,
-            //     BlendMode.darken,
-            //   ),
-            // ),
-            gradient: LinearGradient(
-              begin: Alignment.topLeft,
-              end: Alignment.bottomRight,
-              colors: [
-                Color(0xFF278D27),
-                Color(0xFFF97D09),
-              ], // Color(0xFFF97D09)
-            ),
+          decoration: BoxDecoration(
+            gradient: gradientColor2(
+                color2: Constants.kLightThemeColor,
+                color1: const Color.fromARGB(255, 240, 100, 13)),
           ),
           child: BackdropFilter(
             filter: ImageFilter.blur(sigmaX: 4.0, sigmaY: 4.0),
@@ -118,15 +109,15 @@ class _LoginScreenState extends State<LoginScreen> {
                         shape: BoxShape.circle,
                         color: Constants.kLightThemeColor,
                         border: Border.all(
-                            width: 4.0, color: Constants.kPrimaryThemeColor),
+                            width: 2.5, color: Constants.kLightThemeColor),
                         image: const DecorationImage(
                           image: AssetImage('assets/pic-1.jpeg'),
                           fit: BoxFit.cover,
                         ),
                         boxShadow: const [
                           BoxShadow(
-                            blurRadius: 4.0,
-                            color: Colors.black38,
+                            blurRadius: 3.0,
+                            color: Colors.black26,
                             spreadRadius: 1.0,
                             offset: Offset(0.0, 2.0),
                           ),
@@ -148,11 +139,10 @@ class _LoginScreenState extends State<LoginScreen> {
                                 value: defaultValue.isNotEmpty
                                     ? defaultValue
                                     : null,
-                                hint: Text(
+                                hint: const Text(
                                   'User level',
                                   style: TextStyle(
-                                      color: Constants.kSecondaryThemeColor
-                                          .withOpacity(0.6),
+                                      color: Colors.black45,
                                       fontSize: Constants.fontRegular,
                                       fontWeight: FontWeight.w500),
                                 ),
@@ -230,10 +220,7 @@ class _LoginScreenState extends State<LoginScreen> {
                                   : IconButton(
                                       onPressed: () =>
                                           _userNameController.clear(),
-                                      icon: const Icon(
-                                        Icons.close,
-                                        color: Constants.kPrimaryThemeColor,
-                                      ),
+                                      icon: const Icon(Icons.close, size: 20.0),
                                       splashColor: Colors.transparent,
                                       highlightColor: Colors.transparent,
                                     ),
@@ -246,6 +233,7 @@ class _LoginScreenState extends State<LoginScreen> {
                               hintText: 'Password',
                               prefixIcon: Icons.lock,
                               obscureText: _isPasswordVisible,
+                              maxLength: 16,
                               suffixIcon: _passwordController.text.isEmpty
                                   ? Container(width: 0.0)
                                   : IconButton(
@@ -287,21 +275,35 @@ class _LoginScreenState extends State<LoginScreen> {
                                     ),
                               onPressed: () {
                                 if (_formKey.currentState!.validate()) {
-                                  setState(() {
-                                    _isLoading = true;
-                                  });
-                                  Future.delayed(const Duration(seconds: 2),
-                                      () {
-                                    Navigator.of(context).push(
-                                        MaterialPageRoute(
-                                            builder: (context) =>
-                                                const SamitiScreen()));
-                                  }).then((value) {
-                                    setState(() {
-                                      _isLoading = false;
-                                    });
-                                  });
-                                } else {}
+                                  login(
+                                      context,
+                                      _userNameController.text
+                                          .trim()
+                                          .toString(),
+                                      _passwordController.text
+                                          .trim()
+                                          .toString());
+
+                                  print('Login');
+                                } else {
+                                  print('Error');
+                                }
+                                // if (_formKey.currentState!.validate()) {
+                                //   setState(() {
+                                //     _isLoading = true;
+                                //   });
+                                //   Future.delayed(const Duration(seconds: 2),
+                                //       () {
+                                //     Navigator.of(context).push(
+                                //         MaterialPageRoute(
+                                //             builder: (context) =>
+                                //                 const SamitiScreen()));
+                                //   }).then((value) {
+                                //     setState(() {
+                                //       _isLoading = false;
+                                //     });
+                                //   });
+                                // } else {}
                               },
                             ),
                           ],
@@ -328,6 +330,8 @@ class _LoginScreenState extends State<LoginScreen> {
   String? passwordValidator(String? password) {
     if (password!.isEmpty) {
       return 'Required password';
+    } else if (password.length < 10) {
+      return 'Invalid password';
     } else {
       return null;
     }
@@ -337,25 +341,42 @@ class _LoginScreenState extends State<LoginScreen> {
   String? usernameValidator(String? username) {
     if (username!.isEmpty) {
       return "Required username";
-    } else if (username == 'Subash123') {
-      // bool result = checkUsername(username);
-      // if (result) {
-      //   // action perform
-
-      //   print("Username : $result");
-      // } else {
-      //   return "Invalid username";
-      // }
-    } else {
+    } else if (username.length < 4) {
       return 'Invalid username';
+    } else {
+      return null;
     }
-    return null;
   }
 
-  bool checkUsername(String value) {
-    Pattern pattern =
-        r"^(?=.{4,20}$)(?:[a-zA-Z\d]+(?:(?:\.|-|_)[a-zA-Z\d])*)+$";
-    RegExp regExp = RegExp(pattern.toString());
-    return (!regExp.hasMatch(value)) ? false : true;
+  // bool checkUsername(String value) {
+  //   Pattern pattern =
+  //       r"^(?=.{4,20}$)(?:[a-zA-Z\d]+(?:(?:\.|-|_)[a-zA-Z\d])*)+$";
+  //   RegExp regExp = RegExp(pattern.toString());
+  //   return (!regExp.hasMatch(value)) ? false : true;
+  // }
+
+  void login(BuildContext context, username, password) async {
+    final http.Response response = await http
+        .get(Uri.parse('${APIs.LOGIN_API}?u_name=$username&mobile=$password'));
+
+    var data = jsonDecode(response.body.toString());
+    try {
+      if (response.statusCode == 200) {
+        print('Data : ${data['status']}');
+        if (data['status'] == 'true') {
+          // print('Data : $data');
+          print('Login successfully');
+          Navigator.of(context).push(
+              MaterialPageRoute(builder: (context) => const SamitiScreen()));
+        } else {
+          // print(data['message']);
+          showSnackBar(context, 'ok1 ${data['message']}');
+        }
+      } else {
+        showSnackBar(context, 'ok2 ${data['message']}');
+      }
+    } catch (e) {
+      print(e.toString());
+    }
   }
 }

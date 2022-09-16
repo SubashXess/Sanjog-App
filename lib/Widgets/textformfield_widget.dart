@@ -135,6 +135,10 @@ class FormFieldWidget extends StatelessWidget {
     this.isSuffixIcon = true,
     this.suffixText,
     this.inputFormatters,
+    this.readOnly = false,
+    this.onTap,
+    this.textAlign = TextAlign.start,
+    this.maxLines = 1,
   });
 
   final String? label;
@@ -155,6 +159,10 @@ class FormFieldWidget extends StatelessWidget {
   final bool? isPrefixIcon, isSuffixIcon;
   final String? suffixText;
   final List<TextInputFormatter>? inputFormatters;
+  final bool? readOnly;
+  final VoidCallback? onTap;
+  final TextAlign? textAlign;
+  final int? maxLines;
 
   @override
   Widget build(BuildContext context) {
@@ -167,6 +175,7 @@ class FormFieldWidget extends StatelessWidget {
         focusNode: focusNode,
         autofocus: autofocus!,
         autovalidateMode: AutovalidateMode.onUserInteraction,
+        readOnly: readOnly!,
         decoration: InputDecoration(
           isDense: false,
           labelText: label,
@@ -175,8 +184,8 @@ class FormFieldWidget extends StatelessWidget {
           fillColor: Constants.kLightThemeColor,
           contentPadding:
               const EdgeInsets.symmetric(horizontal: 10.0, vertical: 4.0),
-          hintStyle: TextStyle(
-              color: Constants.kSecondaryThemeColor.withOpacity(0.6),
+          hintStyle: const TextStyle(
+              color: Colors.black45,
               fontSize: Constants.fontRegular,
               fontWeight: FontWeight.w500),
           labelStyle: TextStyle(
@@ -211,12 +220,15 @@ class FormFieldWidget extends StatelessWidget {
         ),
         inputFormatters: inputFormatters,
         maxLength: maxLength,
+        maxLines: maxLines,
         keyboardType: keyboardType,
         cursorColor: Constants.kPrimaryThemeColor,
         autofillHints: autofillHints,
         textCapitalization: textCapitalization!,
+        textAlign: textAlign!,
         validator: validator,
         onChanged: onChanged,
+        onTap: onTap,
       ),
     );
   }

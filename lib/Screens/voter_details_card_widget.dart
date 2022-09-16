@@ -10,6 +10,7 @@ import 'package:path/path.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:sliding_sheet/sliding_sheet.dart';
 import 'package:sonjagapp/Constants/constants.dart';
+import 'package:sonjagapp/Models/user_data_model.dart';
 import 'package:sonjagapp/Screens/add_details.dart';
 import 'package:sonjagapp/Screens/add_family_members.dart';
 import 'package:sonjagapp/Screens/see_family_members.dart';
@@ -21,18 +22,23 @@ import 'package:sonjagapp/Widgets/textformfield_widget.dart';
 class VoterDetailsCard extends StatefulWidget {
   const VoterDetailsCard({
     Key? key,
-    required this.serialNo,
-    required this.acNo,
-    required this.boothNo,
-    required this.pageNo,
-    required this.voteIndexNo,
+    // required this.serialNo,
+    // required this.acNo,
+    // required this.boothNo,
+    // required this.pageNo,
+    // required this.voteIndexNo,
+    required this.snapshot,
+    required this.index,
   }) : super(key: key);
 
-  final String acNo;
-  final String boothNo;
-  final String pageNo;
-  final String serialNo;
-  final String voteIndexNo;
+  // final String acNo;
+  // final String boothNo;
+  // final String pageNo;
+  // final String serialNo;
+  // final String voteIndexNo;
+
+  final UserDataModel snapshot;
+  final int index;
 
   @override
   State<VoterDetailsCard> createState() => _VoterDetailsCardState();
@@ -48,6 +54,8 @@ class _VoterDetailsCardState extends State<VoterDetailsCard> {
   @override
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
+    print(widget.snapshot.boothNo.toString());
+    print(widget.snapshot.pageNo.toString());
     return SizedBox(
       width: double.infinity,
       child: Column(
@@ -79,7 +87,7 @@ class _VoterDetailsCardState extends State<VoterDetailsCard> {
                         // mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
                           Text(
-                            'AcNo: ${widget.acNo}'.toString(),
+                            'AcNo: ${widget.snapshot.acNo}'.toString(),
                             style: const TextStyle(
                               color: Colors.black,
                               fontSize: Constants.fontSmall,
@@ -92,14 +100,14 @@ class _VoterDetailsCardState extends State<VoterDetailsCard> {
                             label: 'Booth no:',
                             labelColor: Constants.kPrimaryThemeColor,
                             // value: '1',
-                            value: widget.boothNo.toString(),
+                            value: widget.snapshot.boothNo.toString(),
                           ),
                           SizedBox(width: size.width * 0.012),
                           SmallCardDesignOne(
                             cardColor: Constants.kLightThemeColor,
                             label: 'Page no:',
                             labelColor: Constants.kPrimaryThemeColor,
-                            value: widget.pageNo.toString(),
+                            value: widget.snapshot.pageNo.toString(),
                             // value: '3',
                           ),
                           SizedBox(width: size.width * 0.012),
@@ -107,7 +115,7 @@ class _VoterDetailsCardState extends State<VoterDetailsCard> {
                             cardColor: Constants.kLightThemeColor,
                             label: 'Serial no:',
                             labelColor: Constants.kPrimaryThemeColor,
-                            value: widget.serialNo.toString(),
+                            value: widget.snapshot.serialNo.toString(),
                           ),
                         ],
                       ),
@@ -128,7 +136,7 @@ class _VoterDetailsCardState extends State<VoterDetailsCard> {
                             ),
                             child: Text(
                               // '1',
-                              widget.voteIndexNo.toString(),
+                              '${widget.index + 1}',
                               style: const TextStyle(
                                 color: Constants.kPrimaryThemeColor,
                                 fontSize: Constants.fontSmall,
@@ -137,9 +145,10 @@ class _VoterDetailsCardState extends State<VoterDetailsCard> {
                             ),
                           ),
                           SizedBox(width: size.width * 0.036),
-                          const Text(
-                            'YXV0934471',
-                            style: TextStyle(
+                          Text(
+                            // 'YXV0934471',
+                            widget.snapshot.voterNo.toString(),
+                            style: const TextStyle(
                               color: Colors.black87,
                               fontSize: Constants.fontSmall,
                               fontWeight: FontWeight.normal,
@@ -153,9 +162,10 @@ class _VoterDetailsCardState extends State<VoterDetailsCard> {
                               borderRadius: BorderRadius.circular(6.0),
                               color: Constants.kPrimaryThemeColor,
                             ),
-                            child: const Text(
-                              'PP',
-                              style: TextStyle(
+                            child: Text(
+                              // 'PP',
+                              widget.snapshot.position.toString(),
+                              style: const TextStyle(
                                 color: Colors.white,
                                 fontSize: Constants.fontSmall,
                                 fontWeight: FontWeight.normal,
@@ -172,9 +182,25 @@ class _VoterDetailsCardState extends State<VoterDetailsCard> {
                           alignment: WrapAlignment.start,
                           runSpacing: 10.0,
                           spacing: 10.0,
-                          children: const [
+                          children: [
                             Text(
-                              'Name: Paul Buchheit',
+                              'Name: ${widget.snapshot.name.toString()}',
+                              style: const TextStyle(
+                                color: Colors.black87,
+                                fontSize: Constants.fontSmall,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                            Text(
+                              'Sex: ${widget.snapshot.gender.toString()}',
+                              style: const TextStyle(
+                                color: Colors.black87,
+                                fontSize: Constants.fontSmall,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                            Text(
+                              'Category: ${widget.snapshot.category.toString()}',
                               style: TextStyle(
                                 color: Colors.black87,
                                 fontSize: Constants.fontSmall,
@@ -182,7 +208,7 @@ class _VoterDetailsCardState extends State<VoterDetailsCard> {
                               ),
                             ),
                             Text(
-                              'Sex: M',
+                              'Relation Type: ${widget.snapshot.relationType.toString()}',
                               style: TextStyle(
                                 color: Colors.black87,
                                 fontSize: Constants.fontSmall,
@@ -190,7 +216,7 @@ class _VoterDetailsCardState extends State<VoterDetailsCard> {
                               ),
                             ),
                             Text(
-                              'Category: General',
+                              'Relation Name: ${widget.snapshot.relationName.toString()}',
                               style: TextStyle(
                                 color: Colors.black87,
                                 fontSize: Constants.fontSmall,
@@ -198,7 +224,7 @@ class _VoterDetailsCardState extends State<VoterDetailsCard> {
                               ),
                             ),
                             Text(
-                              'Relation Type: H',
+                              'Mobile No: ${widget.snapshot.mobileNo.toString()}',
                               style: TextStyle(
                                 color: Colors.black87,
                                 fontSize: Constants.fontSmall,
@@ -206,23 +232,7 @@ class _VoterDetailsCardState extends State<VoterDetailsCard> {
                               ),
                             ),
                             Text(
-                              'Relation Name: John Carmack',
-                              style: TextStyle(
-                                color: Colors.black87,
-                                fontSize: Constants.fontSmall,
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
-                            Text(
-                              'Mobile No: 1234567890',
-                              style: TextStyle(
-                                color: Colors.black87,
-                                fontSize: Constants.fontSmall,
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
-                            Text(
-                              'Whatsapp No: 1234567890',
+                              'Whatsapp No: ${widget.snapshot.whatsappNo.toString()}',
                               style: TextStyle(
                                 color: Colors.black87,
                                 fontSize: Constants.fontSmall,
@@ -238,9 +248,9 @@ class _VoterDetailsCardState extends State<VoterDetailsCard> {
                           Navigator.push(
                             context,
                             MaterialPageRoute(
-                              builder: (context) => const AddDetailsScreen(
-                                voterId: 'YXV0934471',
-                                acNo: '111',
+                              builder: (context) => AddDetailsScreen(
+                                voterId: widget.snapshot.voterNo.toString(),
+                                acNo: widget.snapshot.acNo.toString(),
                               ),
                             ),
                           );

@@ -1,7 +1,9 @@
 // ignore_for_file: avoid_print
 
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:sonjagapp/Components/gradients.dart';
+import 'package:sonjagapp/Components/showsnackbar.dart';
 import 'package:sonjagapp/Widgets/textformfield_widget.dart';
 
 import '../Constants/constants.dart';
@@ -26,7 +28,15 @@ class _AddDetailsScreenState extends State<AddDetailsScreen> {
   final TextEditingController _mobileNoController = TextEditingController();
   final TextEditingController _whatsappNoController = TextEditingController();
   final TextEditingController _addressController = TextEditingController();
+  final TextEditingController _dobController = TextEditingController();
+  final TextEditingController _domController = TextEditingController();
+
   final TextEditingController _postBJPController = TextEditingController();
+
+  // final bool _sameNoIsWhatsapp = false;
+  // final bool _isUserMarriage = false;
+
+  String? marriage;
 
   // Initial Selected Value
   String positionDefaultValue = '';
@@ -106,18 +116,18 @@ class _AddDetailsScreenState extends State<AddDetailsScreen> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      const Text(
-                        'Voter Id: YXV0934471',
-                        style: TextStyle(
+                      Text(
+                        'Voter Id: ${widget.voterId}',
+                        style: const TextStyle(
                           color: Colors.black87,
                           fontSize: Constants.fontSmall,
                           fontWeight: FontWeight.bold,
                         ),
                       ),
                       const SizedBox(height: 10.0),
-                      const Text(
-                        'AC No: 111',
-                        style: TextStyle(
+                      Text(
+                        'AC No: ${widget.acNo}',
+                        style: const TextStyle(
                           color: Colors.black87,
                           fontSize: Constants.fontSmall,
                           fontWeight: FontWeight.bold,
@@ -187,11 +197,12 @@ class _AddDetailsScreenState extends State<AddDetailsScreen> {
                                   size: 26.0,
                                 ),
                                 validator: (String? value) {
-                                  if (value == null) {
-                                    return 'Required';
-                                  } else {
-                                    return null;
-                                  }
+                                  return null;
+                                  // if (value == null) {
+                                  //   return 'Required';
+                                  // } else {
+                                  //   return null;
+                                  // }
                                 },
                                 onChanged: (value) {
                                   positionDefaultValue = value!;
@@ -308,13 +319,7 @@ class _AddDetailsScreenState extends State<AddDetailsScreen> {
                                         isSuffixIcon: false,
                                         keyboardType: TextInputType.phone,
                                         maxLength: 10,
-                                        validator: (value) {
-                                          if (value!.isEmpty) {
-                                            return 'Required';
-                                          } else {
-                                            return null;
-                                          }
-                                        },
+                                        validator: mobileValidator,
                                         onChanged: (value) {},
                                       ),
                                     ],
@@ -344,13 +349,7 @@ class _AddDetailsScreenState extends State<AddDetailsScreen> {
                                         isSuffixIcon: false,
                                         keyboardType: TextInputType.phone,
                                         maxLength: 10,
-                                        validator: (value) {
-                                          if (value!.isEmpty) {
-                                            return 'Required';
-                                          } else {
-                                            return null;
-                                          }
-                                        },
+                                        validator: whatsappValidator,
                                         onChanged: (value) {},
                                       ),
                                     ],
@@ -373,8 +372,9 @@ class _AddDetailsScreenState extends State<AddDetailsScreen> {
                               autofillHints: const [AutofillHints.addressCity],
                               isPrefixIcon: false,
                               isSuffixIcon: false,
-                              keyboardType: TextInputType.text,
-                              maxLength: 80,
+                              keyboardType: TextInputType.multiline,
+                              maxLength: 100,
+                              maxLines: 4,
                               validator: (value) {
                                 if (value!.isEmpty) {
                                   return 'Required';
@@ -386,15 +386,14 @@ class _AddDetailsScreenState extends State<AddDetailsScreen> {
                             ),
                             const SizedBox(height: 16.0),
                             Row(
-                              
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 Expanded(
                                   child: Column(
                                     crossAxisAlignment:
                                         CrossAxisAlignment.start,
-                                    children: const [
-                                      Text(
+                                    children: [
+                                      const Text(
                                         'Date of Birth',
                                         style: TextStyle(
                                           color: Colors.black87,
@@ -402,8 +401,37 @@ class _AddDetailsScreenState extends State<AddDetailsScreen> {
                                           fontWeight: FontWeight.bold,
                                         ),
                                       ),
-                                      SizedBox(height: 10.0),
-                                      FormFieldWidget(),
+                                      const SizedBox(height: 10.0),
+                                      FormFieldWidget(
+                                        controller: _dobController,
+                                        hintText: 'DD-MM-YYYY',
+                                        isPrefixIcon: false,
+                                        isSuffixIcon: false,
+                                        readOnly: true,
+                                        onTap: () async {
+                                          DateTime? pickedDate =
+                                              await showDatePicker(
+                                                  context: context,
+                                                  initialDate: DateTime.now(),
+                                                  firstDate: DateTime(1900),
+                                                  lastDate: DateTime(2101));
+
+                                          if (pickedDate != null) {
+                                            print(pickedDate);
+                                            String formattedDate =
+                                                DateFormat('dd-MM-yyyy')
+                                                    .format(pickedDate);
+                                            print(formattedDate);
+                                            setState(() {
+                                              _dobController.text =
+                                                  formattedDate;
+                                            });
+                                          } else {
+                                            print('Date is not selected');
+                                          }
+                                        },
+                                        validator: dobValidator,
+                                      ),
                                     ],
                                   ),
                                 ),
@@ -412,8 +440,8 @@ class _AddDetailsScreenState extends State<AddDetailsScreen> {
                                   child: Column(
                                     crossAxisAlignment:
                                         CrossAxisAlignment.start,
-                                    children: const [
-                                      Text(
+                                    children: [
+                                      const Text(
                                         'Date of Marriage',
                                         style: TextStyle(
                                           color: Colors.black87,
@@ -421,8 +449,37 @@ class _AddDetailsScreenState extends State<AddDetailsScreen> {
                                           fontWeight: FontWeight.bold,
                                         ),
                                       ),
-                                      SizedBox(height: 10.0),
-                                      FormFieldWidget(),
+                                      const SizedBox(height: 10.0),
+                                      FormFieldWidget(
+                                        controller: _domController,
+                                        hintText: 'DD-MM-YYYY',
+                                        isPrefixIcon: false,
+                                        isSuffixIcon: false,
+                                        readOnly: true,
+                                        onTap: () async {
+                                          DateTime? pickedDate =
+                                              await showDatePicker(
+                                                  context: context,
+                                                  initialDate: DateTime.now(),
+                                                  firstDate: DateTime(1900),
+                                                  lastDate: DateTime(2101));
+
+                                          if (pickedDate != null) {
+                                            print(pickedDate);
+                                            String formattedDate =
+                                                DateFormat('dd-MM-yyyy')
+                                                    .format(pickedDate);
+                                            print(formattedDate);
+                                            setState(() {
+                                              _domController.text =
+                                                  formattedDate;
+                                            });
+                                          } else {
+                                            print('Date is not selected');
+                                          }
+                                        },
+                                        validator: domValidator,
+                                      ),
                                     ],
                                   ),
                                 ),
@@ -501,13 +558,7 @@ class _AddDetailsScreenState extends State<AddDetailsScreen> {
                                       color: Constants.kPrimaryThemeColor,
                                       size: 26.0,
                                     ),
-                                    validator: (String? value) {
-                                      if (value == null) {
-                                        return 'Required';
-                                      } else {
-                                        return null;
-                                      }
-                                    },
+                                    validator: bloodValidator,
                                     onChanged: (value) {
                                       bloodGroupDefaultValue = value!;
                                     },
@@ -531,13 +582,7 @@ class _AddDetailsScreenState extends State<AddDetailsScreen> {
                               isSuffixIcon: false,
                               keyboardType: TextInputType.text,
                               maxLength: 40,
-                              validator: (value) {
-                                if (value!.isEmpty) {
-                                  return 'Required';
-                                } else {
-                                  return null;
-                                }
-                              },
+                              validator: postInBJPValidator,
                               onChanged: (value) {},
                             ),
                             const SizedBox(height: 16.0),
@@ -613,13 +658,7 @@ class _AddDetailsScreenState extends State<AddDetailsScreen> {
                                       color: Constants.kPrimaryThemeColor,
                                       size: 26.0,
                                     ),
-                                    validator: (String? value) {
-                                      if (value == null) {
-                                        return 'Required';
-                                      } else {
-                                        return null;
-                                      }
-                                    },
+                                    validator: socialOrgValidator,
                                     onChanged: (value) {
                                       socialOrgDefaultValue = value!;
                                     },
@@ -634,14 +673,17 @@ class _AddDetailsScreenState extends State<AddDetailsScreen> {
                       MaterialButtonWidget(
                         size: size,
                         widget: const Text(
-                          'Save',
+                          'Update',
                           style: TextStyle(color: Colors.white),
                         ),
                         onPressed: () {
                           if (_formKey.currentState!.validate()) {
-                            print('Success');
+                            // print('Success');
+                            showSnackBar(context, 'Update success');
                           } else {
                             print('Error');
+                            showSnackBar(
+                                context, 'Please fill out all required fields');
                           }
                         },
                       ),
@@ -654,5 +696,80 @@ class _AddDetailsScreenState extends State<AddDetailsScreen> {
         ),
       ),
     );
+  }
+
+  String? mobileValidator(String? value) {
+    if (value!.isEmpty) {
+      return 'Required';
+    } else {
+      bool result = checkPhone(value);
+      if (result == true) {
+        // print('mobile : $value');
+        return null;
+      } else {
+        return 'Invalid number';
+      }
+    }
+  }
+
+  String? whatsappValidator(String? value) {
+    if (value!.isEmpty) {
+      return null;
+    } else {
+      bool result = checkPhone(value);
+      if (result == true) {
+        // print('mobile : $value');
+        return null;
+      } else {
+        return 'Invalid number';
+      }
+    }
+  }
+
+  bool checkPhone(String value) {
+    // Pattern pattern = r'(^(?:[+0]9)?[0-9]{10,12}$)';
+    Pattern pattern = r'^(?:(?:\+|0{0,2})91(\s*[\-]\s*)?|[0]?)?[6789]\d{9}$';
+    RegExp regExp = RegExp(pattern.toString());
+    return (!regExp.hasMatch(value)) ? false : true;
+  }
+
+  String? domValidator(String? value) {
+    if (value!.isEmpty) {
+      return 'Required';
+    } else {
+      return null;
+    }
+  }
+
+  String? dobValidator(String? value) {
+    if (value!.isEmpty) {
+      return 'Required';
+    } else {
+      return null;
+    }
+  }
+
+  String? bloodValidator(String? value) {
+    if (value == null) {
+      return 'Required';
+    } else {
+      return null;
+    }
+  }
+
+  String? postInBJPValidator(String? value) {
+    if (value!.isEmpty) {
+      return 'Required';
+    } else {
+      return null;
+    }
+  }
+
+  String? socialOrgValidator(String? value) {
+    if (value == null) {
+      return 'Required';
+    } else {
+      return null;
+    }
   }
 }

@@ -9,25 +9,33 @@ class MaterialButtonWidget extends StatelessWidget {
     required this.size,
     required this.widget,
     required this.onPressed,
+    this.elevation = 0.0,
+    this.isGradient = true,
+    this.color,
   }) : super(key: key);
 
   final Size size;
   final Widget widget;
   final VoidCallback onPressed;
+  final double? elevation;
+  final bool? isGradient;
+  final Color? color;
 
   @override
   Widget build(BuildContext context) {
     return Container(
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(6.0),
-        gradient: const LinearGradient(
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-          colors: [
-            Constants.kPrimaryThemeColor,
-            Color(0xFFF97D09)
-          ], // Color(0xFFF97D09)
-        ),
+        gradient: isGradient!
+            ? const LinearGradient(
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
+                colors: [
+                  Constants.kPrimaryThemeColor,
+                  Color(0xFFF97D09)
+                ], // Color(0xFFF97D09)
+              )
+            : null,
       ),
       child: MaterialButton(
         onPressed: onPressed,
@@ -38,6 +46,8 @@ class MaterialButtonWidget extends StatelessWidget {
         materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
         padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 10.0),
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(6.0)),
+        elevation: elevation,
+        color: isGradient! ? null : color,
         child: widget,
       ),
     );

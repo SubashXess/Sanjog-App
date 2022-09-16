@@ -10,6 +10,7 @@ import 'package:sonjagapp/Widgets/button_widget.dart';
 import 'package:sonjagapp/Widgets/textformfield_widget.dart';
 
 import '../Constants/constants.dart';
+import '../Models/user_data_model.dart';
 
 class EntryThroughVoterListScreen extends StatefulWidget {
   const EntryThroughVoterListScreen({super.key});
@@ -29,6 +30,9 @@ class _EntryThroughVoterListScreenState
   // text field controller
   final TextEditingController _boothNoController = TextEditingController();
   final TextEditingController _pageNoController = TextEditingController();
+
+  // model
+  // var _usermodel = Future<List<UserDataModel>>;
 
   // Initial Selected Value
   String defaultValue = '';
@@ -52,6 +56,12 @@ class _EntryThroughVoterListScreenState
     'Khurda',
     'Chilika',
   ];
+
+  @override
+  void initState() {
+    super.initState();
+    // _usermodel = UserDataModel.getUserData('1', '1');
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -285,17 +295,23 @@ class _EntryThroughVoterListScreenState
                                 ),
                                 onPressed: () {
                                   if (_formKey.currentState!.validate()) {
-                                    print('Success');
                                     setState(() {
-                                      _isShowCard = true;
-
                                       loadBoothNo = _boothNoController.text
                                           .trim()
                                           .toString();
                                       loadPageNo = _pageNoController.text
                                           .trim()
                                           .toString();
+                                      _isShowCard = true;
                                     });
+                                    // UserDataModel.getUserData(
+                                    //         loadBoothNo.toString(),
+                                    //         loadPageNo.toString())
+                                    //     .then((value) {
+                                    //   setState(() {
+                                    //     _isShowCard = true;
+                                    //   });
+                                    // });
                                   } else {
                                     print('Error');
                                     setState(() {
@@ -310,59 +326,74 @@ class _EntryThroughVoterListScreenState
                       ),
                     ),
                     _isShowCard
-                        ? Column(
-                            children: [
-                              Container(
-                                width: size.width,
-                                margin: EdgeInsets.only(
-                                    bottom: size.height * 0.016,
-                                    top: size.height * 0.026),
-                                child: Row(
-                                  crossAxisAlignment: CrossAxisAlignment.center,
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceBetween,
-                                  children: const [
-                                    Text(
-                                      "Section No: 1",
-                                      style: TextStyle(
-                                        color: Constants.kPrimaryThemeColor,
-                                        fontSize: Constants.fontRegular,
-                                        fontWeight: FontWeight.bold,
+                        ? FutureBuilder(
+                            future: UserDataModel.getUserData(
+                                loadBoothNo.toString(), loadPageNo.toString()),
+                            builder: (context,
+                                AsyncSnapshot<List<UserDataModel>> snapshot) {
+                              print('Load Booth No : $loadBoothNo');
+                              print('Load Page No : $loadPageNo');
+                              if (snapshot.hasData) {
+                                return Column(
+                                  children: [
+                                    Container(
+                                      width: size.width,
+                                      margin: EdgeInsets.only(
+                                          bottom: size.height * 0.016,
+                                          top: size.height * 0.026),
+                                      child: Row(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.center,
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.spaceBetween,
+                                        children: const [
+                                          Text(
+                                            "Section No: 1",
+                                            style: TextStyle(
+                                              color:
+                                                  Constants.kPrimaryThemeColor,
+                                              fontSize: Constants.fontRegular,
+                                              fontWeight: FontWeight.bold,
+                                            ),
+                                          ),
+                                          Text(
+                                            "Total Voters: 30",
+                                            style: TextStyle(
+                                              color:
+                                                  Constants.kPrimaryThemeColor,
+                                              fontSize: Constants.fontRegular,
+                                              fontWeight: FontWeight.bold,
+                                            ),
+                                          ),
+                                        ],
                                       ),
                                     ),
-                                    Text(
-                                      "Total Voters: 30",
-                                      style: TextStyle(
-                                        color: Constants.kPrimaryThemeColor,
-                                        fontSize: Constants.fontRegular,
-                                        fontWeight: FontWeight.bold,
-                                      ),
-                                    ),
+                                    ListView.builder(
+                                        itemCount: snapshot.data!.length,
+                                        clipBehavior: Clip.none,
+                                        padding: EdgeInsets.zero,
+                                        controller: _scrollController,
+                                        keyboardDismissBehavior:
+                                            ScrollViewKeyboardDismissBehavior
+                                                .onDrag,
+                                        shrinkWrap: true,
+                                        itemBuilder: (context, index) {
+                                          print(snapshot.data!.length);
+                                          return Container(
+                                            margin: EdgeInsets.only(
+                                                bottom: size.height * 0.016),
+                                            child: VoterDetailsCard(
+                                              snapshot: snapshot.data![index],
+                                              index: index,
+                                            ),
+                                          );
+                                        }),
                                   ],
-                                ),
-                              ),
-                              ListView.builder(
-                                itemCount: 10,
-                                clipBehavior: Clip.none,
-                                padding: EdgeInsets.zero,
-                                controller: _scrollController,
-                                keyboardDismissBehavior:
-                                    ScrollViewKeyboardDismissBehavior.onDrag,
-                                shrinkWrap: true,
-                                itemBuilder: (context, index) => Container(
-                                  margin: EdgeInsets.only(
-                                      bottom: size.height * 0.016),
-                                  child: VoterDetailsCard(
-                                    acNo: '111',
-                                    boothNo: loadBoothNo.toString(),
-                                    pageNo: loadPageNo.toString(),
-                                    serialNo: '${index + 1}'.toString(),
-                                    voteIndexNo: '${index + 1}'.toString(),
-                                  ),
-                                ),
-                              ),
-                            ],
-                          )
+                                );
+                              } else {
+                                return const Text('No Data');
+                              }
+                            })
                         : Container(width: 0.0),
                     _isShowCard
                         ? Row(

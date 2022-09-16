@@ -4,9 +4,12 @@ import 'dart:ui';
 
 import 'package:badges/badges.dart';
 import 'package:flutter/material.dart';
+import 'package:sonjagapp/Screens/entry_through_voter_search.dart';
 import 'package:sonjagapp/Screens/entrythroughvoterlist_screen.dart';
 import 'package:sonjagapp/Screens/login_screen.dart';
+import 'package:sonjagapp/Screens/page_samiti_list.dart';
 import 'package:sonjagapp/Screens/search_screen.dart';
+import 'package:sonjagapp/Screens/well_wisher_target.dart';
 import '../Components/showsnackbar.dart';
 import '../Constants/constants.dart';
 import '../Widgets/button_widget.dart';
@@ -124,6 +127,10 @@ class _SamitiScreenState extends State<SamitiScreen> {
                       // } else {
                       //   print('no data');
                       // }
+                      Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => _samitiScreenData[page]));
                     },
                     itemBuilder: (context) {
                       return List.generate(_pageSamitiItems.length, (index) {
@@ -161,21 +168,12 @@ class _SamitiScreenState extends State<SamitiScreen> {
                     ),
                   ),
                   SizedBox(width: size.width * 0.04),
-                  PopupMenuButton(
-                    position: PopupMenuPosition.under,
-                    shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(6.0)),
-                    padding: const EdgeInsets.symmetric(
-                        horizontal: 10.0, vertical: 10.0),
-                    tooltip: 'Well wisher',
-                    itemBuilder: (context) {
-                      return List.generate(_wellWisherItems.length, (index) {
-                        return PopupMenuItem(
-                          padding: const EdgeInsets.all(10.0),
-                          child: Text(_wellWisherItems[index].toString()),
-                          onTap: () {},
-                        );
-                      });
+                  InkWell(
+                    onTap: () {
+                      Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => const WellWisherTarget()));
                     },
                     child: Container(
                       width: size.width / 2.5,
@@ -198,6 +196,50 @@ class _SamitiScreenState extends State<SamitiScreen> {
                       ),
                     ),
                   ),
+                  //  Navigator.push(
+                  //         context,
+                  //         MaterialPageRoute(
+                  //             builder: (context) => const WellWisherTarget()));
+                  // PopupMenuButton(
+                  //   position: PopupMenuPosition.under,
+                  //   shape: RoundedRectangleBorder(
+                  //       borderRadius: BorderRadius.circular(6.0)),
+                  //   padding: const EdgeInsets.symmetric(
+                  //       horizontal: 10.0, vertical: 10.0),
+                  //   tooltip: 'Well wisher',
+                  //   onSelected: (page) {
+
+                  //   },
+                  //   itemBuilder: (context) {
+                  //     return List.generate(_wellWisherItems.length, (index) {
+                  //       return PopupMenuItem(
+                  //         padding: const EdgeInsets.all(10.0),
+                  //         child: Text(_wellWisherItems[index].toString()),
+                  //         onTap: () {},
+                  //       );
+                  //     });
+                  //   },
+                  //   child: Container(
+                  //     width: size.width / 2.5,
+                  //     height: size.height * 0.06,
+                  //     padding: const EdgeInsets.symmetric(
+                  //         horizontal: 10.0, vertical: 10.0),
+                  //     alignment: Alignment.center,
+                  //     decoration: BoxDecoration(
+                  //       borderRadius: BorderRadius.circular(6.0),
+                  //       border: Border.all(
+                  //           width: 1.0, color: Constants.kPrimaryThemeColor),
+                  //       color: Constants.kLightThemeColor,
+                  //     ),
+                  //     child: const Text(
+                  //       'Well Wisher',
+                  //       style: TextStyle(
+                  //         color: Constants.kPrimaryThemeColor,
+                  //         fontWeight: FontWeight.w500,
+                  //       ),
+                  //     ),
+                  //   ),
+                  // ),
                 ],
               ),
             ),
@@ -274,7 +316,8 @@ class _SamitiScreenState extends State<SamitiScreen> {
 
   final _samitiScreenData = const [
     EntryThroughVoterListScreen(),
-    SearchScreen(),
+    EntryThroughVoterSearch(),
+    PageSamitiList(),
   ];
 
   // Future<void> _openHomePage(BuildContext context) async {

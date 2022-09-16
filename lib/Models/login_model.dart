@@ -1,31 +1,27 @@
-import 'package:http/http.dart' as http;
-
-import '../Constants/constants.dart';
-
 class LoginModel {
   int? uid;
   String? userlevel;
   String? username;
-  String? phone;
+  String? password;
 
   LoginModel(
       {required this.uid,
       required this.userlevel,
       required this.username,
-      required this.phone});
+      required this.password});
 
   factory LoginModel.fromMap(Map<String, dynamic> res) {
     return LoginModel(
         uid: res['uid'],
         userlevel: res['userlevel'],
-        username: res['username'],
-        phone: res['phone']);
+        username: res['u_name'],
+        password: res['mobile']);
   }
 
   Map<String, Object?> toMap() => {
         'uid': uid,
         'userlevel': userlevel,
-        'username': username,
-        'phone': phone,
+        'u_name': username,
+        'mobile': password,
       };
 }
