@@ -1,15 +1,20 @@
 import 'package:flutter/material.dart';
-import 'package:sonjagapp/Screens/add_details.dart';
-import 'package:sonjagapp/Screens/entrythroughvoterlist_screen.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:sonjagapp/Screens/login_screen.dart';
 import 'package:sonjagapp/Screens/samiti_screen.dart';
 
-void main() {
-  runApp(const MyApp());
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  SharedPreferences preferences = await SharedPreferences.getInstance();
+  final isLoggedIn = preferences.getBool('login') ?? false;
+
+  runApp(MyApp(isLoggedIn: isLoggedIn));
 }
 
 class MyApp extends StatelessWidget {
-  const MyApp({super.key});
+  const MyApp({super.key, this.isLoggedIn});
+
+  final bool? isLoggedIn;
 
   @override
   Widget build(BuildContext context) {
@@ -17,11 +22,26 @@ class MyApp extends StatelessWidget {
       title: 'Sanjog App',
       debugShowCheckedModeBanner: false,
       theme: ThemeData(primarySwatch: Colors.red),
-      home: const LoginScreen(),
+      home: isLoggedIn! ? const SamitiScreen() : const LoginScreen(),
       // home: const AddDetailsScreen(
       //   voterId: 'YXV0934471',
       //   acNo: '111',
       // ),
     );
   }
+
+  // Future<String> checkLogin() async {
+  //   SharedPreferences preferences = await SharedPreferences.getInstance();
+  //   String? value = preferences.getString('login');
+  //   if (value!.isNotEmpty) {
+  //     return value;
+  //     // await Navigator.push(context,
+  //     //     MaterialPageRoute(builder: (context) => const SamitiScreen()));
+  //   } else {
+  //     return value;
+  //     // Navigator.push(context,
+  //     //     MaterialPageRoute(builder: (context) => const LoginScreen()));
+  //   }
+  //   // return value;
+  // }
 }

@@ -1,16 +1,14 @@
 // ignore_for_file: avoid_print
 
-import 'dart:ui';
-
 import 'package:badges/badges.dart';
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:sonjagapp/Screens/entry_through_voter_search.dart';
 import 'package:sonjagapp/Screens/entrythroughvoterlist_screen.dart';
 import 'package:sonjagapp/Screens/login_screen.dart';
 import 'package:sonjagapp/Screens/page_samiti_list.dart';
-import 'package:sonjagapp/Screens/search_screen.dart';
 import 'package:sonjagapp/Screens/well_wisher_target.dart';
-import '../Components/showsnackbar.dart';
+import 'package:sonjagapp/Services/service.dart';
 import '../Constants/constants.dart';
 import '../Widgets/button_widget.dart';
 
@@ -23,6 +21,14 @@ class SamitiScreen extends StatefulWidget {
 
 class _SamitiScreenState extends State<SamitiScreen> {
   int _currentScreenIndex = 0;
+  String? status;
+
+  @override
+  void initState() {
+    super.initState();
+    // getLoginCred();
+  }
+
   @override
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
@@ -59,20 +65,28 @@ class _SamitiScreenState extends State<SamitiScreen> {
                 PopupMenuItem(
                   value: 0,
                   height: 20.0,
-                  onTap: () {},
+                  onTap: () async {
+                    SharedPreferences preferences =
+                        await SharedPreferences.getInstance();
+                    preferences.setBool('login', false);
+                    Navigator.of(context).pushReplacement(MaterialPageRoute(
+                        builder: (context) => const LoginScreen()));
+                  },
                   child: Row(
                     crossAxisAlignment: CrossAxisAlignment.center,
                     children: const [
                       Icon(
                         Icons.power_settings_new,
-                        color: Colors.black,
+                        color: Constants.kPrimaryThemeColor,
                         size: 18.0,
                       ),
                       SizedBox(width: 6.0),
                       Text(
                         'Logout',
                         style: TextStyle(
-                            color: Colors.black, fontSize: Constants.fontSmall),
+                            color: Constants.kPrimaryThemeColor,
+                            fontSize: Constants.fontSmall,
+                            fontWeight: FontWeight.bold),
                       ),
                     ],
                   ),
@@ -96,7 +110,7 @@ class _SamitiScreenState extends State<SamitiScreen> {
           ),
         ),
       ),
-      body: Container(
+      body: SizedBox(
         width: double.infinity,
         height: size.height,
         // decoration: const BoxDecoration(
@@ -259,7 +273,7 @@ class _SamitiScreenState extends State<SamitiScreen> {
                     splashColor: const Color(0xFFA6B8DE),
                     assetsurl: 'assets/svg/facebook-f.svg',
                     onTap: () {
-                      facebookLauncher();
+                      SocialLink.openFacebook();
                     },
                   ),
                   CircleIconButtonWidget(
@@ -269,7 +283,7 @@ class _SamitiScreenState extends State<SamitiScreen> {
                     iconcolor: const Color(0xFF1DA1F2),
                     assetsurl: 'assets/svg/twitter.svg',
                     onTap: () {
-                      twetterLauncher();
+                      SocialLink.openTwitter();
                     },
                   ),
                   CircleIconButtonWidget(
@@ -280,7 +294,7 @@ class _SamitiScreenState extends State<SamitiScreen> {
                     isPng: true,
                     assetsurl: 'assets/icons/instagram.png',
                     onTap: () {
-                      instagramLauncher();
+                      SocialLink.openInstagram();
                     },
                   ),
                   CircleIconButtonWidget(
@@ -290,7 +304,7 @@ class _SamitiScreenState extends State<SamitiScreen> {
                     // iconcolor: Colors.white,
                     assetsurl: 'assets/svg/youtube.svg',
                     onTap: () {
-                      youtubeLauncher();
+                      SocialLink.openYoutube();
                     },
                   ),
                   CircleIconButtonWidget(
@@ -302,7 +316,7 @@ class _SamitiScreenState extends State<SamitiScreen> {
                     isModi: true,
                     assetsurl: 'assets/modi.png',
                     onTap: () {
-                      modiLauncher();
+                      SocialLink.openModi();
                     },
                   ),
                 ],
@@ -337,13 +351,10 @@ class _SamitiScreenState extends State<SamitiScreen> {
     'Well wisher target',
   ];
 
-  void facebookLauncher() async {}
-
-  void twetterLauncher() {}
-
-  void instagramLauncher() {}
-
-  void youtubeLauncher() {}
-
-  void modiLauncher() {}
+  // void getLoginCred() async {
+  //   SharedPreferences preferences = await SharedPreferences.getInstance();
+  //   setState(() {
+  //     status = preferences.getString('login');
+  //   });
+  // }
 }

@@ -5,6 +5,7 @@ import 'dart:ui';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:sonjagapp/Components/gradients.dart';
 import 'package:sonjagapp/Components/showsnackbar.dart';
 import 'package:sonjagapp/Screens/entrythroughvoterlist_screen.dart';
@@ -348,13 +349,6 @@ class _LoginScreenState extends State<LoginScreen> {
     }
   }
 
-  // bool checkUsername(String value) {
-  //   Pattern pattern =
-  //       r"^(?=.{4,20}$)(?:[a-zA-Z\d]+(?:(?:\.|-|_)[a-zA-Z\d])*)+$";
-  //   RegExp regExp = RegExp(pattern.toString());
-  //   return (!regExp.hasMatch(value)) ? false : true;
-  // }
-
   void login(BuildContext context, username, password) async {
     final http.Response response = await http
         .get(Uri.parse('${APIs.LOGIN_API}?u_name=$username&mobile=$password'));
@@ -366,7 +360,12 @@ class _LoginScreenState extends State<LoginScreen> {
         if (data['status'] == 'true') {
           // print('Data : $data');
           print('Login successfully');
-          Navigator.of(context).push(
+
+          // pageRoute(data['status']);
+
+          SharedPreferences preferences = await SharedPreferences.getInstance();
+          preferences.setBool('login', true);
+          Navigator.of(context).pushReplacement(
               MaterialPageRoute(builder: (context) => const SamitiScreen()));
         } else {
           // print(data['message']);
@@ -379,4 +378,13 @@ class _LoginScreenState extends State<LoginScreen> {
       print(e.toString());
     }
   }
+
+
+
+  // void pageRoute(String status) async {
+  //   SharedPreferences preferences = await SharedPreferences.getInstance();
+  //   await preferences.setString('login', status);
+  //   Navigator.of(context)
+  //       .push(MaterialPageRoute(builder: (context) => const SamitiScreen()));
+  // }
 }
