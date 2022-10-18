@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-orDivider({Color? borderColor}) {
+orDivider({Color? borderColor, Widget? label}) {
   return SizedBox(
     width: double.infinity,
     child: Row(
@@ -14,7 +14,7 @@ orDivider({Color? borderColor}) {
             ),
           ),
         ),
-        const Text("OR"),
+        label!,
         Expanded(
           child: Container(
             margin: const EdgeInsets.only(left: 10.0),
@@ -28,3 +28,33 @@ orDivider({Color? borderColor}) {
     ),
   );
 }
+
+orDividerShade({required Widget label, required Color lineColor}) {
+  return SizedBox(
+    width: double.infinity,
+    child: Row(
+      children: [
+        Expanded(
+          child: Container(
+            margin: const EdgeInsets.only(right: 10.0),
+            child: Divider(
+              color: lineColor,
+              height: 36,
+            ),
+          ),
+        ),
+        label,
+        Expanded(
+          child: Container(
+            margin: const EdgeInsets.only(left: 10.0),
+            child: Divider(
+              color: lineColor,
+              height: 36,
+            ),
+          ),
+        ),
+      ],
+    ),
+  );
+}
+

@@ -139,6 +139,7 @@ class FormFieldWidget extends StatelessWidget {
     this.onTap,
     this.textAlign = TextAlign.start,
     this.maxLines = 1,
+    this.autovalidateMode,
   });
 
   final String? label;
@@ -163,6 +164,7 @@ class FormFieldWidget extends StatelessWidget {
   final VoidCallback? onTap;
   final TextAlign? textAlign;
   final int? maxLines;
+  final AutovalidateMode? autovalidateMode;
 
   @override
   Widget build(BuildContext context) {
@@ -174,14 +176,14 @@ class FormFieldWidget extends StatelessWidget {
         obscureText: obscureText!,
         focusNode: focusNode,
         autofocus: autofocus!,
-        autovalidateMode: AutovalidateMode.onUserInteraction,
+        autovalidateMode: autovalidateMode,
         readOnly: readOnly!,
         decoration: InputDecoration(
           isDense: false,
           labelText: label,
           hintText: hintText,
           filled: true,
-          fillColor: Constants.kLightThemeColor,
+          fillColor: Colors.grey.shade200,
           contentPadding:
               const EdgeInsets.symmetric(horizontal: 10.0, vertical: 4.0),
           hintStyle: const TextStyle(
@@ -204,6 +206,15 @@ class FormFieldWidget extends StatelessWidget {
           border: OutlineInputBorder(
               borderRadius: BorderRadius.circular(6.0),
               borderSide: BorderSide.none),
+          focusedBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(6.0),
+              borderSide: BorderSide(color: Colors.grey.shade400, width: 1.0)),
+          errorBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(6.0),
+              borderSide: BorderSide(color: Colors.red.shade400, width: 1.0)),
+          focusedErrorBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(6.0),
+              borderSide: BorderSide(color: Colors.red.shade400, width: 1.0)),
           suffixText: suffixText,
           suffixStyle: const TextStyle(
               color: Constants.kPrimaryThemeColor,

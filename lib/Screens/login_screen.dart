@@ -2,19 +2,15 @@
 
 import 'dart:convert';
 import 'dart:ui';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:sonjagapp/Components/gradients.dart';
 import 'package:sonjagapp/Components/showsnackbar.dart';
-import 'package:sonjagapp/Screens/entrythroughvoterlist_screen.dart';
 import 'package:sonjagapp/Constants/constants.dart';
 import 'package:sonjagapp/Screens/samiti_screen.dart';
-import 'package:sonjagapp/Services/service.dart';
 import 'package:http/http.dart' as http;
 import '../Widgets/button_widget.dart';
-import '../Widgets/dropdown_widget.dart';
 import '../Widgets/textformfield_widget.dart';
 
 class LoginScreen extends StatefulWidget {
@@ -331,7 +327,7 @@ class _LoginScreenState extends State<LoginScreen> {
   String? passwordValidator(String? password) {
     if (password!.isEmpty) {
       return 'Required password';
-    } else if (password.length < 10) {
+    } else if (password.length < 6) {
       return 'Invalid password';
     } else {
       return null;
@@ -349,7 +345,7 @@ class _LoginScreenState extends State<LoginScreen> {
     }
   }
 
-  void login(BuildContext context, username, password) async {
+  void login(context, username, password) async {
     final http.Response response = await http
         .get(Uri.parse('${APIs.LOGIN_API}?u_name=$username&mobile=$password'));
 
@@ -378,8 +374,6 @@ class _LoginScreenState extends State<LoginScreen> {
       print(e.toString());
     }
   }
-
-
 
   // void pageRoute(String status) async {
   //   SharedPreferences preferences = await SharedPreferences.getInstance();

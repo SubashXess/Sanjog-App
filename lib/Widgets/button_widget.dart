@@ -24,6 +24,8 @@ class MaterialButtonWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
+      width: size.width,
+      height: size.height * 0.065,
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(6.0),
         gradient: isGradient!

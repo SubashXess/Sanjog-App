@@ -23,3 +23,11 @@ class APIs {
   static const String USER_DATA_API =
       'https://intentitsolutions.com/Ekamra/api/getVoters.php/';
 }
+
+class Links {
+  // static const String FACEBOOK_LINK = '';
+}
+
+
+// Username ---> snayak123
+// Password ---> snayak123
