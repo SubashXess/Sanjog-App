@@ -3,6 +3,7 @@
 import 'package:badges/badges.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:sonjagapp/Components/background.dart';
 import 'package:sonjagapp/Components/or_divider.dart';
 import 'package:sonjagapp/Screens/entry_through_voter_search.dart';
 import 'package:sonjagapp/Screens/entrythroughvoterlist_screen.dart';
@@ -12,6 +13,7 @@ import 'package:sonjagapp/Screens/page_samiti_list.dart';
 import 'package:sonjagapp/Screens/search_by_voter_id_screen.dart';
 import 'package:sonjagapp/Screens/search_samiti_list_screen.dart';
 import 'package:sonjagapp/Screens/search_screen.dart';
+import 'package:sonjagapp/Screens/voter_list_screen.dart';
 import 'package:sonjagapp/Screens/well_wisher_target_screen.dart';
 import 'package:sonjagapp/Services/service.dart';
 import 'package:sonjagapp/Widgets/textformfield_widget.dart';
@@ -78,7 +80,7 @@ class _SamitiScreenState extends State<SamitiScreen> {
           title: const Text('Sanjog Ekmara'),
           centerTitle: true,
           automaticallyImplyLeading: false,
-          backgroundColor: Constants.kPrimaryThemeColor,
+          // backgroundColor: Constants.kPrimaryThemeColor,
           elevation: 1.0,
           actions: [
             InkWell(
@@ -176,430 +178,456 @@ class _SamitiScreenState extends State<SamitiScreen> {
             ),
           ),
         ),
-        body: SizedBox(
-          width: double.infinity,
-          child: SingleChildScrollView(
-            child: SafeArea(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.center,
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  SizedBox(
-                    width: size.width,
-                    child: Padding(
-                      padding: const EdgeInsets.symmetric(
-                          horizontal: 10.0, vertical: 16.0),
-                      child: SizedBox(
-                        // color: Colors.red,
-                        width: size.width,
-                        child: Column(
-                          children: [
-                            Form(
-                              key: _formKey,
-                              child: Column(
-                                children: [
-                                  SizedBox(
-                                    width: size.width,
-                                    child: const Text(
-                                      'Entry through voter list',
-                                      style: TextStyle(
-                                          color: Colors.black,
-                                          fontSize: Constants.fontUltraLarge,
-                                          fontWeight: FontWeight.bold),
-                                    ),
-                                  ),
-                                  SizedBox(height: size.height * 0.02),
-                                  Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: [
-                                      const Text(
-                                        'Assembly',
+        body: Background(
+          child: SizedBox(
+            width: double.infinity,
+            child: SingleChildScrollView(
+              child: SafeArea(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    SizedBox(
+                      width: size.width,
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 10.0, vertical: 16.0),
+                        child: SizedBox(
+                          // color: Colors.red,
+                          width: size.width,
+                          child: Column(
+                            children: [
+                              Form(
+                                key: _formKey,
+                                child: Column(
+                                  children: [
+                                    SizedBox(
+                                      width: size.width,
+                                      child: const Text(
+                                        'Entry through voter list',
                                         style: TextStyle(
                                             color: Colors.black,
-                                            fontSize: 16.0,
-                                            fontWeight: FontWeight.w500),
+                                            fontSize: Constants.fontUltraLarge,
+                                            fontWeight: FontWeight.bold),
                                       ),
-                                      const SizedBox(height: 10.0),
-                                      SizedBox(
-                                        height: 50,
-                                        width: size.width,
-                                        child: Card(
-                                          color: Colors.grey.shade200,
-                                          margin: EdgeInsets.zero,
-                                          elevation: 0.0,
-                                          shape: RoundedRectangleBorder(
-                                              borderRadius:
-                                                  BorderRadius.circular(6.0)),
-                                          child: const Center(
-                                            child: Text(
-                                              'ଏକାମ୍ର ଭୁବନେଶ୍ବର',
-                                              style: TextStyle(
-                                                  color: Colors.black,
-                                                  fontSize:
-                                                      Constants.fontRegular,
-                                                  fontWeight: FontWeight.w500),
+                                    ),
+                                    SizedBox(height: size.height * 0.02),
+                                    Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        const Text(
+                                          'Assembly',
+                                          style: TextStyle(
+                                              color: Colors.black,
+                                              fontSize: 16.0,
+                                              fontWeight: FontWeight.w500),
+                                        ),
+                                        const SizedBox(height: 10.0),
+                                        SizedBox(
+                                          height: 50,
+                                          width: size.width,
+                                          child: Card(
+                                            color: Colors.grey.shade200,
+                                            margin: EdgeInsets.zero,
+                                            elevation: 0.0,
+                                            shape: RoundedRectangleBorder(
+                                                borderRadius:
+                                                    BorderRadius.circular(6.0)),
+                                            child: const Center(
+                                              child: Text(
+                                                'ଏକାମ୍ର ଭୁବନେଶ୍ବର',
+                                                style: TextStyle(
+                                                    color: Colors.black,
+                                                    fontSize:
+                                                        Constants.fontRegular,
+                                                    fontWeight:
+                                                        FontWeight.w500),
+                                              ),
                                             ),
                                           ),
                                         ),
-                                      ),
-                                    ],
+                                      ],
+                                    ),
+                                    const SizedBox(height: 10.0),
+                                    Row(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.spaceBetween,
+                                      children: [
+                                        Expanded(
+                                          child: FormFieldWidget(
+                                            controller: _boothNoController,
+                                            autovalidateMode: _autovalidateMode
+                                                ? AutovalidateMode
+                                                    .onUserInteraction
+                                                : AutovalidateMode.disabled,
+                                            focusNode: _boothNoNode,
+                                            hintText: 'Booth number',
+                                            isPrefixIcon: false,
+                                            isSuffixIcon: false,
+                                            maxLength: 3,
+                                            keyboardType: TextInputType.number,
+                                            validator: (value) {
+                                              if (value!.isEmpty) {
+                                                return 'Required';
+                                              } else {
+                                                return null;
+                                              }
+                                            },
+                                            onChanged: (value) {},
+                                          ),
+                                        ),
+                                        const SizedBox(width: 10.0),
+                                        Expanded(
+                                          child: FormFieldWidget(
+                                            controller: _pageNoController,
+                                            focusNode: _pageNoNode,
+                                            autovalidateMode: _autovalidateMode
+                                                ? AutovalidateMode
+                                                    .onUserInteraction
+                                                : AutovalidateMode.disabled,
+                                            hintText: 'Page number',
+                                            keyboardType: TextInputType.number,
+                                            maxLength: 3,
+                                            isPrefixIcon: false,
+                                            isSuffixIcon: false,
+                                            suffixText: '31',
+                                            validator: (value) {
+                                              if (value!.isEmpty) {
+                                                return 'Required';
+                                              } else {
+                                                return null;
+                                              }
+                                            },
+                                            onChanged: (value) {},
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                    SizedBox(height: size.height * 0.02),
+                                    MaterialButtonWidget(
+                                      size: size,
+                                      widget: _isLoading
+                                          ? Row(
+                                              crossAxisAlignment:
+                                                  CrossAxisAlignment.center,
+                                              mainAxisAlignment:
+                                                  MainAxisAlignment.center,
+                                              children: const [
+                                                SizedBox(
+                                                  width: 16.0,
+                                                  height: 16.0,
+                                                  child:
+                                                      CircularProgressIndicator(
+                                                    backgroundColor:
+                                                        Colors.white30,
+                                                    color: Colors.white,
+                                                    strokeWidth: 4.0,
+                                                  ),
+                                                ),
+                                                SizedBox(width: 10.0),
+                                                Text(
+                                                  'Searching...',
+                                                  style: TextStyle(
+                                                      color: Colors.white,
+                                                      fontSize: Constants
+                                                          .fontRegular),
+                                                ),
+                                              ],
+                                            )
+                                          : const Text(
+                                              'Search',
+                                              style: TextStyle(
+                                                  color: Colors.white,
+                                                  fontSize:
+                                                      Constants.fontRegular),
+                                            ),
+                                      onPressed: () {
+                                        if (_formKey.currentState!.validate()) {
+                                          setState(() {
+                                            _isLoading = true;
+                                            _autovalidateMode = false;
+                                            _boothNoNode.unfocus();
+                                            _pageNoNode.unfocus();
+                                          });
+                                          Future.delayed(
+                                            const Duration(seconds: 2),
+                                            () {
+                                              Navigator.push(
+                                                      context,
+                                                      MaterialPageRoute(
+                                                          builder: (_) =>
+                                                              const VoterListScreen()))
+                                                  .then((value) {
+                                                setState(() {
+                                                  _isLoading = false;
+                                                });
+                                              });
+                                            },
+                                          );
+                                        } else {
+                                          setState(() {
+                                            _isLoading = false;
+                                            _autovalidateMode = true;
+                                          });
+                                        }
+                                      },
+                                    ),
+                                  ],
+                                ),
+                              ),
+                              SizedBox(height: size.height * 0.02),
+                              orDivider(
+                                  label: Text(
+                                'Or',
+                                style: TextStyle(
+                                    color: Colors.grey.shade400,
+                                    fontSize: Constants.fontRegular,
+                                    fontWeight: FontWeight.w500),
+                              )),
+                              SizedBox(height: size.height * 0.02),
+                              Container(
+                                decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(6.0),
+                                  gradient: LinearGradient(
+                                    begin: Alignment.topLeft,
+                                    end: Alignment.bottomRight,
+                                    colors: [
+                                      Colors.grey.shade500,
+                                      Colors.grey.shade300
+                                    ], // Color(0xFFF97D09)
                                   ),
-                                  const SizedBox(height: 10.0),
-                                  Row(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
+                                ),
+                                child: MaterialButton(
+                                  color: Colors.transparent,
+                                  elevation: 0.0,
+                                  padding: const EdgeInsets.symmetric(
+                                      horizontal: 10.0),
+                                  shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(6.0)),
+                                  height: size.height * 0.065,
+                                  minWidth: size.width,
+                                  onPressed: () => Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                          builder: (_) =>
+                                              const SearchByVoterIdScreen())),
+                                  child: Row(
                                     mainAxisAlignment:
                                         MainAxisAlignment.spaceBetween,
-                                    children: [
-                                      Expanded(
-                                        child: FormFieldWidget(
-                                          controller: _boothNoController,
-                                          autovalidateMode: _autovalidateMode
-                                              ? AutovalidateMode
-                                                  .onUserInteraction
-                                              : AutovalidateMode.disabled,
-                                          focusNode: _boothNoNode,
-                                          hintText: 'Booth number',
-                                          isPrefixIcon: false,
-                                          isSuffixIcon: false,
-                                          maxLength: 3,
-                                          keyboardType: TextInputType.number,
-                                          validator: (value) {
-                                            if (value!.isEmpty) {
-                                              return 'Required';
-                                            } else {
-                                              return null;
-                                            }
-                                          },
-                                          onChanged: (value) {},
-                                        ),
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.center,
+                                    children: const [
+                                      Text(
+                                        'Search by Voter ID',
+                                        style: TextStyle(
+                                            color: Colors.white,
+                                            fontSize: Constants.fontRegular),
                                       ),
-                                      const SizedBox(width: 10.0),
-                                      Expanded(
-                                        child: FormFieldWidget(
-                                          controller: _pageNoController,
-                                          focusNode: _pageNoNode,
-                                          autovalidateMode: _autovalidateMode
-                                              ? AutovalidateMode
-                                                  .onUserInteraction
-                                              : AutovalidateMode.disabled,
-                                          hintText: 'Page number',
-                                          keyboardType: TextInputType.number,
-                                          maxLength: 3,
-                                          isPrefixIcon: false,
-                                          isSuffixIcon: false,
-                                          suffixText: '31',
-                                          validator: (value) {
-                                            if (value!.isEmpty) {
-                                              return 'Required';
-                                            } else {
-                                              return null;
-                                            }
-                                          },
-                                          onChanged: (value) {},
-                                        ),
+                                      SizedBox(width: 10.0),
+                                      Icon(
+                                        Icons.arrow_forward,
+                                        size: 16.0,
+                                        color: Colors.white54,
                                       ),
                                     ],
                                   ),
-                                  SizedBox(height: size.height * 0.02),
-                                  MaterialButtonWidget(
-                                    size: size,
-                                    widget: _isLoading
-                                        ? Row(
-                                            crossAxisAlignment:
-                                                CrossAxisAlignment.center,
-                                            mainAxisAlignment:
-                                                MainAxisAlignment.center,
-                                            children: const [
-                                              SizedBox(
-                                                width: 16.0,
-                                                height: 16.0,
-                                                child:
-                                                    CircularProgressIndicator(
-                                                  backgroundColor:
-                                                      Colors.white30,
-                                                  color: Colors.white,
-                                                  strokeWidth: 4.0,
-                                                ),
-                                              ),
-                                              SizedBox(width: 10.0),
-                                              Text(
-                                                'Searching...',
-                                                style: TextStyle(
-                                                    color: Colors.white,
-                                                    fontSize:
-                                                        Constants.fontRegular),
-                                              ),
-                                            ],
-                                          )
-                                        : const Text(
-                                            'Search',
-                                            style: TextStyle(
-                                                color: Colors.white,
-                                                fontSize:
-                                                    Constants.fontRegular),
-                                          ),
-                                    onPressed: () {
-                                      if (_formKey.currentState!.validate()) {
-                                        setState(() {
-                                          _isLoading = !_isLoading;
-                                          _autovalidateMode = false;
-                                          _boothNoNode.unfocus();
-                                          _pageNoNode.unfocus();
-                                        });
-                                      } else {
-                                        setState(() {
-                                          _isLoading = false;
-                                          _autovalidateMode = true;
-                                        });
-                                      }
-                                    },
+                                ),
+                              ),
+                              const SizedBox(height: 10.0),
+                              Container(
+                                decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(6.0),
+                                  gradient: LinearGradient(
+                                    begin: Alignment.topLeft,
+                                    end: Alignment.bottomRight,
+                                    colors: [
+                                      Colors.grey.shade500,
+                                      Colors.grey.shade300
+                                    ], // Color(0xFFF97D09)
                                   ),
-                                ],
-                              ),
-                            ),
-                            SizedBox(height: size.height * 0.02),
-                            orDivider(
-                                label: Text(
-                              'Or',
-                              style: TextStyle(
-                                  color: Colors.grey.shade400,
-                                  fontSize: Constants.fontRegular,
-                                  fontWeight: FontWeight.w500),
-                            )),
-                            SizedBox(height: size.height * 0.02),
-                            Container(
-                              decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(6.0),
-                                gradient: LinearGradient(
-                                  begin: Alignment.topLeft,
-                                  end: Alignment.bottomRight,
-                                  colors: [
-                                    Colors.grey.shade400,
-                                    Colors.grey.shade600
-                                  ], // Color(0xFFF97D09)
+                                ),
+                                child: MaterialButton(
+                                  color: Colors.transparent,
+                                  elevation: 0.0,
+                                  padding: const EdgeInsets.symmetric(
+                                      horizontal: 10.0),
+                                  shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(6.0)),
+                                  height: size.height * 0.065,
+                                  minWidth: size.width,
+                                  onPressed: () => Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                          builder: (_) =>
+                                              const SearchSamitiListScreen())),
+                                  child: Row(
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceBetween,
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.center,
+                                    children: const [
+                                      Text(
+                                        'Search Samiti List',
+                                        style: TextStyle(
+                                            color: Colors.white,
+                                            fontSize: Constants.fontRegular),
+                                      ),
+                                      SizedBox(width: 10.0),
+                                      Icon(
+                                        Icons.arrow_forward,
+                                        size: 16.0,
+                                        color: Colors.white54,
+                                      ),
+                                    ],
+                                  ),
                                 ),
                               ),
-                              child: MaterialButton(
-                                color: Colors.transparent,
-                                elevation: 0.0,
-                                padding: const EdgeInsets.symmetric(
-                                    horizontal: 10.0),
-                                shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(6.0)),
-                                height: size.height * 0.065,
-                                minWidth: size.width,
-                                onPressed: () => Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                        builder: (_) =>
-                                            const SearchByVoterIdScreen())),
-                                child: Row(
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceBetween,
-                                  crossAxisAlignment: CrossAxisAlignment.center,
-                                  children: const [
-                                    Text(
-                                      'Search by Voter ID',
-                                      style: TextStyle(
-                                          color: Colors.white,
-                                          fontSize: Constants.fontRegular),
-                                    ),
-                                    SizedBox(width: 10.0),
-                                    Icon(
-                                      Icons.arrow_forward,
-                                      size: 16.0,
-                                      color: Colors.white54,
-                                    ),
-                                  ],
+                              const SizedBox(height: 10.0),
+                              Container(
+                                decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(6.0),
+                                  gradient: LinearGradient(
+                                    begin: Alignment.topLeft,
+                                    end: Alignment.bottomRight,
+                                    colors: [
+                                      Colors.grey.shade500,
+                                      Colors.grey.shade300
+                                    ], // Color(0xFFF97D09)
+                                  ),
+                                ),
+                                child: MaterialButton(
+                                  color: Colors.transparent,
+                                  elevation: 0.0,
+                                  padding: const EdgeInsets.symmetric(
+                                      horizontal: 10.0),
+                                  shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(6.0)),
+                                  height: size.height * 0.065,
+                                  minWidth: size.width,
+                                  onPressed: () => Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                          builder: (_) =>
+                                              const WellWisherTargetScreen())),
+                                  child: Row(
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceBetween,
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.center,
+                                    children: const [
+                                      Text(
+                                        'Well Wisher Target',
+                                        style: TextStyle(
+                                            color: Colors.white,
+                                            fontSize: Constants.fontRegular),
+                                      ),
+                                      SizedBox(width: 10.0),
+                                      Icon(
+                                        Icons.arrow_forward,
+                                        size: 16.0,
+                                        color: Colors.white54,
+                                      ),
+                                    ],
+                                  ),
                                 ),
                               ),
-                            ),
-                            const SizedBox(height: 10.0),
-                            Container(
-                              decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(6.0),
-                                gradient: LinearGradient(
-                                  begin: Alignment.topLeft,
-                                  end: Alignment.bottomRight,
-                                  colors: [
-                                    Colors.grey.shade400,
-                                    Colors.grey.shade600
-                                  ], // Color(0xFFF97D09)
-                                ),
-                              ),
-                              child: MaterialButton(
-                                color: Colors.transparent,
-                                elevation: 0.0,
-                                padding: const EdgeInsets.symmetric(
-                                    horizontal: 10.0),
-                                shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(6.0)),
-                                height: size.height * 0.065,
-                                minWidth: size.width,
-                                onPressed: () => Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                        builder: (_) =>
-                                            const SearchSamitiListScreen())),
-                                child: Row(
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceBetween,
-                                  crossAxisAlignment: CrossAxisAlignment.center,
-                                  children: const [
-                                    Text(
-                                      'Search Samiti List',
-                                      style: TextStyle(
-                                          color: Colors.white,
-                                          fontSize: Constants.fontRegular),
-                                    ),
-                                    SizedBox(width: 10.0),
-                                    Icon(
-                                      Icons.arrow_forward,
-                                      size: 16.0,
-                                      color: Colors.white54,
-                                    ),
-                                  ],
-                                ),
-                              ),
-                            ),
-                            const SizedBox(height: 10.0),
-                            Container(
-                              decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(6.0),
-                                gradient: LinearGradient(
-                                  begin: Alignment.topLeft,
-                                  end: Alignment.bottomRight,
-                                  colors: [
-                                    Colors.grey.shade400,
-                                    Colors.grey.shade600
-                                  ], // Color(0xFFF97D09)
-                                ),
-                              ),
-                              child: MaterialButton(
-                                color: Colors.transparent,
-                                elevation: 0.0,
-                                padding: const EdgeInsets.symmetric(
-                                    horizontal: 10.0),
-                                shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(6.0)),
-                                height: size.height * 0.065,
-                                minWidth: size.width,
-                                onPressed: () => Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                        builder: (_) =>
-                                            const WellWisherTargetScreen())),
-                                child: Row(
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceBetween,
-                                  crossAxisAlignment: CrossAxisAlignment.center,
-                                  children: const [
-                                    Text(
-                                      'Well Wisher Target',
-                                      style: TextStyle(
-                                          color: Colors.white,
-                                          fontSize: Constants.fontRegular),
-                                    ),
-                                    SizedBox(width: 10.0),
-                                    Icon(
-                                      Icons.arrow_forward,
-                                      size: 16.0,
-                                      color: Colors.white54,
-                                    ),
-                                  ],
-                                ),
-                              ),
-                            ),
-                          ],
+                            ],
+                          ),
                         ),
                       ),
                     ),
-                  ),
-                  Container(
-                    width: size.width,
-                    alignment: Alignment.bottomCenter,
-                    margin: const EdgeInsets.symmetric(
-                        horizontal: 10.0, vertical: 10.0),
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      children: [
-                        SizedBox(height: size.height * 0.02),
-                        orDivider(
-                            label: const Text(
-                          'Connect with us',
-                          style: TextStyle(
-                              color: Colors.black,
-                              fontSize: Constants.fontMedium,
-                              fontWeight: FontWeight.w500),
-                        )),
-                        SizedBox(height: size.height * 0.02),
-                        Wrap(
-                          spacing: 10.0,
-                          alignment: WrapAlignment.spaceBetween,
-                          runSpacing: 10.0,
-                          children: [
-                            CircleIconButtonWidget(
-                              bgcolor: const Color(0xFFF0F3F9),
-                              bordercolor: const Color(0xFF4267B2),
-                              iconcolor: const Color(0xFF4267B2),
-                              splashColor: const Color(0xFFA6B8DE),
-                              assetsurl: 'assets/svg/facebook-f.svg',
-                              onTap: () {
-                                SocialLink.openFacebook();
-                              },
-                            ),
-                            CircleIconButtonWidget(
-                              bgcolor: const Color(0xFFECF7FE),
-                              bordercolor: const Color(0xFF1DA1F2),
-                              splashColor: const Color(0xFF8BCFF8),
-                              iconcolor: const Color(0xFF1DA1F2),
-                              assetsurl: 'assets/svg/twitter.svg',
-                              onTap: () {
-                                SocialLink.openTwitter();
-                              },
-                            ),
-                            CircleIconButtonWidget(
-                              bgcolor: const Color(0xFFF6EFFA),
-                              bordercolor: const Color(0xFF8a3ab9),
-                              splashColor: const Color(0xFFCAA2E2),
-                              // iconcolor: const Color(0xffbc2a8d),
-                              isPng: true,
-                              assetsurl: 'assets/icons/instagram.png',
-                              onTap: () {
-                                SocialLink.openInstagram();
-                              },
-                            ),
-                            CircleIconButtonWidget(
-                              bgcolor: const Color(0xFFFFEBEB),
-                              bordercolor: const Color(0xFFFF0000),
-                              splashColor: const Color(0xFFFF8585),
-                              // iconcolor: Colors.white,
-                              assetsurl: 'assets/svg/youtube.svg',
-                              onTap: () {
-                                SocialLink.openYoutube();
-                              },
-                            ),
-                            CircleIconButtonWidget(
-                              bgcolor: const Color(0xFFFEF4EB),
-                              bordercolor: const Color(0xFFF97D09),
-                              splashColor: const Color(0xFFF9BE8B),
-                              // iconcolor: Colors.blue,
-                              isPng: true,
-                              isModi: true,
-                              assetsurl: 'assets/modi.png',
-                              onTap: () {
-                                SocialLink.openModi();
-                              },
-                            ),
-                          ],
-                        ),
-                      ],
+                    Container(
+                      width: size.width,
+                      alignment: Alignment.bottomCenter,
+                      margin: const EdgeInsets.symmetric(
+                          horizontal: 10.0, vertical: 10.0),
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: [
+                          SizedBox(height: size.height * 0.02),
+                          orDivider(
+                              label: const Text(
+                            'Connect with us',
+                            style: TextStyle(
+                                color: Colors.black,
+                                fontSize: Constants.fontMedium,
+                                fontWeight: FontWeight.w500),
+                          )),
+                          SizedBox(height: size.height * 0.02),
+                          Wrap(
+                            spacing: 10.0,
+                            alignment: WrapAlignment.spaceBetween,
+                            runSpacing: 10.0,
+                            children: [
+                              CircleIconButtonWidget(
+                                // bgcolor: const Color(0xFFF0F3F9),
+                                bgcolor: Colors.white70,
+                                bordercolor: const Color(0xFF4267B2),
+                                iconcolor: const Color(0xFF4267B2),
+                                splashColor: const Color(0xFFA6B8DE),
+                                assetsurl: 'assets/svg/facebook-f.svg',
+                                onTap: () {
+                                  SocialLink.openFacebook();
+                                },
+                              ),
+                              CircleIconButtonWidget(
+                                // bgcolor: const Color(0xFFECF7FE),
+                                bgcolor: Colors.white70,
+                                bordercolor: const Color(0xFF1DA1F2),
+                                splashColor: const Color(0xFF8BCFF8),
+                                iconcolor: const Color(0xFF1DA1F2),
+                                assetsurl: 'assets/svg/twitter.svg',
+                                onTap: () {
+                                  SocialLink.openTwitter();
+                                },
+                              ),
+                              CircleIconButtonWidget(
+                                // bgcolor: const Color(0xFFF6EFFA),
+                                bgcolor: Colors.white70,
+                                bordercolor: const Color(0xFF8a3ab9),
+                                splashColor: const Color(0xFFCAA2E2),
+                                // iconcolor: const Color(0xffbc2a8d),
+                                isPng: true,
+                                assetsurl: 'assets/icons/instagram.png',
+                                onTap: () {
+                                  SocialLink.openInstagram();
+                                },
+                              ),
+                              CircleIconButtonWidget(
+                                // bgcolor: const Color(0xFFFFEBEB),
+                                bgcolor: Colors.white70,
+                                bordercolor: const Color(0xFFFF0000),
+                                splashColor: const Color(0xFFFF8585),
+                                // iconcolor: Colors.white,
+                                assetsurl: 'assets/svg/youtube.svg',
+                                onTap: () {
+                                  SocialLink.openYoutube();
+                                },
+                              ),
+                              CircleIconButtonWidget(
+                                // bgcolor: const Color(0xFFFEF4EB),
+                                bgcolor: Colors.white70,
+                                bordercolor: const Color(0xFFF97D09),
+                                splashColor: const Color(0xFFF9BE8B),
+                                // iconcolor: Colors.blue,
+                                isPng: true,
+                                isModi: true,
+                                assetsurl: 'assets/modi.png',
+                                onTap: () {
+                                  SocialLink.openModi();
+                                },
+                              ),
+                            ],
+                          ),
+                        ],
+                      ),
                     ),
-                  ),
-                ],
+                  ],
+                ),
               ),
             ),
           ),

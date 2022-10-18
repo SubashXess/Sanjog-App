@@ -7,6 +7,7 @@ import 'package:sonjagapp/Constants/constants.dart';
 
 class UserDataModel {
   String? uid;
+  String? familyId; // add
   String? status;
   String? acNo;
   String? boothNo;
@@ -28,6 +29,8 @@ class UserDataModel {
   String? bloodGroup;
   String? postBJP;
   String? socialOrg;
+  DateTime? createdAt; // add
+  DateTime? updatedAt; // add
   List<UserDataModel>? members;
 
   UserDataModel({

@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:sonjagapp/Screens/login_screen.dart';
 import 'package:sonjagapp/Screens/samiti_screen.dart';
+import 'package:sonjagapp/Screens/voter_list_screen.dart';
+import 'package:sonjagapp/Test%20Screens/test_screen.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -23,7 +25,7 @@ class MyApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       theme: ThemeData(primarySwatch: Colors.red),
       // home: isLoggedIn! ? const SamitiScreen() : const LoginScreen(),
-      home: SamitiScreen(),
+      home: VoterListScreen(),
       // home: const AddDetailsScreen(
       //   voterId: 'YXV0934471',
       //   acNo: '111',
