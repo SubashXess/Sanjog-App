@@ -20,8 +20,9 @@ class APIs {
   static const String DBAPI = 'http://192.168.0.116/sanjog_app_db/';
   static const String LOGIN_API =
       'https://intentitsolutions.com/Ekamra/api/login.php';
-  static const String USER_DATA_API =
-      'https://intentitsolutions.com/Ekamra/api/getVoters.php/';
+  // static const String USER_DATA_API = '';
+  static const String VOTER_LIST_API =
+      'https://intentitsolutions.com/Ekamra/api/getVoters.php'; // https://intentitsolutions.com/Ekamra/api/config.php
 }
 
 class Links {

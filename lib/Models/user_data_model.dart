@@ -5,6 +5,13 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:sonjagapp/Constants/constants.dart';
 
+List<UserDataModel> getVoterListFromJson(String str) =>
+    List<UserDataModel>.from(
+        json.decode(str).map((x) => UserDataModel.fromJson(x)));
+
+String getVoterListToJson(List<UserDataModel> data) =>
+    json.encode(List<dynamic>.from(data.map((e) => e.toJson())));
+
 class UserDataModel {
   String? uid;
   String? familyId; // add
@@ -35,6 +42,7 @@ class UserDataModel {
 
   UserDataModel({
     required this.uid,
+    required this.familyId,
     required this.status,
     required this.acNo,
     required this.boothNo,
@@ -56,29 +64,15 @@ class UserDataModel {
     required this.position,
     required this.postBJP,
     required this.socialOrg,
+    required this.createdAt,
+    required this.updatedAt,
     this.members,
   });
-
-  //  "id": "1",
-  //   "acNo": "1212",
-  //   "boothNo": "1",
-  //   "pageNo": "1",
-  //   "serialNo": "1",
-  //   "voterNo": "ASDG23456",
-  //   "position": "voter",
-  //   "name": "Santosh Jena",
-  //   "gender": "Male",
-  //   "category": "A",
-  //   "relationType": "Son",
-  //   "relationName": "Mohan Jena",
-  //   "mobileNo": "7682564389",
-  //   "whatsappNo": "7689878953",
-  //   "photo": null,
-  // "status": "1"
 
   factory UserDataModel.fromJson(Map<String, dynamic> json) {
     return UserDataModel(
       uid: json['id'],
+      familyId: json['family_id'],
       status: json['status'],
       acNo: json['acNo'],
       boothNo: json['boothNo'],
@@ -100,12 +94,16 @@ class UserDataModel {
       position: json['position'],
       postBJP: json['postBJP'],
       socialOrg: json['socialOrg'],
+      createdAt: json['createdAt'],
+      updatedAt: json['updateAt'],
+      members: json['members'],
     );
   }
 
   Map<String, Object?> toJson() {
     return {
-      'uid': uid,
+      'id': uid,
+      'family_id': familyId,
       'status': status,
       'acNo': acNo,
       'boothNo': boothNo,
@@ -127,15 +125,18 @@ class UserDataModel {
       'dom': dom,
       'postBJP': postBJP,
       'socialOrg': socialOrg,
+      'createdAt': createdAt,
+      'updateAt': updatedAt,
+      'members': members,
     };
   }
 
-  // Data from server
+  // test server
 
   static Future<List<UserDataModel>> getUserData(
       String boothNo, String pageNo) async {
     final http.Response response = await http.get(Uri.parse(
-        '${APIs.USER_DATA_API}?boothNo=$boothNo&pageNo=$pageNo')); // api  USER_DATA_API
+        '${APIs.VOTER_LIST_API}?boothNo=$boothNo&pageNo=$pageNo')); // api  USER_DATA_API
     try {
       if (response.statusCode == 200) {
         print('Data received');

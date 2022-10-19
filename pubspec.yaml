@@ -30,6 +30,7 @@ environment:
 # versions available, run `flutter pub outdated`.
 dependencies:
   badges: ^2.0.3
+  cached_network_image: ^3.2.2
   cupertino_icons: ^1.0.2
   flutter:
     sdk: flutter
@@ -37,6 +38,7 @@ dependencies:
   http: ^0.13.5
   image_picker: ^0.8.5+3
   intl: ^0.17.0
+  lottie: ^1.4.3
   path_provider: ^2.0.11
   provider: ^6.0.3
   shared_preferences: ^2.0.15
@@ -63,6 +65,7 @@ flutter:
     - assets/svg/
     - assets/icons/
     - assets/images/
+    - assets/raw/
   #   - images/a_dot_ham.jpeg
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware

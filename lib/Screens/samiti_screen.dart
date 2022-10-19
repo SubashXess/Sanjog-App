@@ -356,11 +356,17 @@ class _SamitiScreenState extends State<SamitiScreen> {
                                             const Duration(seconds: 2),
                                             () {
                                               Navigator.push(
-                                                      context,
-                                                      MaterialPageRoute(
-                                                          builder: (_) =>
-                                                              const VoterListScreen()))
-                                                  .then((value) {
+                                                context,
+                                                MaterialPageRoute(
+                                                  builder: (_) =>
+                                                      VoterListScreen(
+                                                    boothNo: _boothNoController
+                                                        .text
+                                                        .trim()
+                                                        .toString(),
+                                                  ),
+                                                ),
+                                              ).then((value) {
                                                 setState(() {
                                                   _isLoading = false;
                                                 });

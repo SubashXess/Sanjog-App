@@ -13,15 +13,14 @@ class _SearchScreenState extends State<SearchScreen> {
   @override
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
-    return const Scaffold(
+    return Scaffold(
       body: SizedBox(
         width: double.infinity,
         child: SafeArea(
           child: Padding(
-            padding: EdgeInsets.symmetric(horizontal: 10.0, vertical: 10.0),
-            child: Center(
-              child: Text('Search Page'),
-            ),
+            padding:
+                const EdgeInsets.symmetric(horizontal: 10.0, vertical: 10.0),
+            child: TextFormField(),
           ),
         ),
       ),

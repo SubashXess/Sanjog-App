@@ -1,12 +1,32 @@
 // ignore_for_file: avoid_print
 import 'dart:convert';
 import 'dart:io';
-
 import 'package:http/http.dart' as http;
 import 'package:http/http.dart';
+import 'package:sonjagapp/Components/showsnackbar.dart';
 import 'package:sonjagapp/Constants/constants.dart';
-import 'package:sonjagapp/Models/login_model.dart';
+import 'package:sonjagapp/Models/user_data_model.dart';
 import 'package:url_launcher/url_launcher.dart';
+
+class APIServices {
+  static Future<List<UserDataModel>?> getVoterList(context,
+      {required String boothNo}) async {
+    // int limit = 10;
+    Client client = http.Client();
+    Uri uri = Uri.parse('${APIs.VOTER_LIST_API}?boothNo=$boothNo');
+    try {
+      Response response = await client.get(uri);
+      if (response.statusCode == 200) {
+        String json = response.body;
+        return getVoterListFromJson(json);
+      } else {
+        return showSnackBar(context, 'Connection error');
+      }
+    } catch (e) {
+      throw Exception('Unexpected error occured!');
+    }
+  }
+}
 
 class ApiClient {
   static void login(String username, String password) async {
