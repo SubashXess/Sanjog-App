@@ -23,12 +23,13 @@ class APIs {
   // static const String USER_DATA_API = '';
   static const String VOTER_LIST_API =
       'https://intentitsolutions.com/Ekamra/api/getVoters.php'; // https://intentitsolutions.com/Ekamra/api/config.php
+  static const String VOTER_SEARCH_BY_NAME_LIST_API =
+      'https://intentitsolutions.com/Ekamra/api/searchVotersByName.php'; // ?name=s
 }
 
 class Links {
   // static const String FACEBOOK_LINK = '';
 }
-
 
 // Username ---> snayak123
 // Password ---> snayak123

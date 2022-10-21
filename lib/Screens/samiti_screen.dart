@@ -41,7 +41,6 @@ class _SamitiScreenState extends State<SamitiScreen> {
 
   // Variables
   String? status;
-  bool _isLoading = false;
   bool _autovalidateMode = false;
 
   @override
@@ -309,73 +308,31 @@ class _SamitiScreenState extends State<SamitiScreen> {
                                     SizedBox(height: size.height * 0.02),
                                     MaterialButtonWidget(
                                       size: size,
-                                      widget: _isLoading
-                                          ? Row(
-                                              crossAxisAlignment:
-                                                  CrossAxisAlignment.center,
-                                              mainAxisAlignment:
-                                                  MainAxisAlignment.center,
-                                              children: const [
-                                                SizedBox(
-                                                  width: 16.0,
-                                                  height: 16.0,
-                                                  child:
-                                                      CircularProgressIndicator(
-                                                    backgroundColor:
-                                                        Colors.white30,
-                                                    color: Colors.white,
-                                                    strokeWidth: 4.0,
-                                                  ),
-                                                ),
-                                                SizedBox(width: 10.0),
-                                                Text(
-                                                  'Searching...',
-                                                  style: TextStyle(
-                                                      color: Colors.white,
-                                                      fontSize: Constants
-                                                          .fontRegular),
-                                                ),
-                                              ],
-                                            )
-                                          : const Text(
-                                              'Search',
-                                              style: TextStyle(
-                                                  color: Colors.white,
-                                                  fontSize:
-                                                      Constants.fontRegular),
-                                            ),
+                                      widget: const Text(
+                                        'Search',
+                                        style: TextStyle(
+                                            color: Colors.white,
+                                            fontSize: Constants.fontRegular),
+                                      ),
                                       onPressed: () {
                                         if (_formKey.currentState!.validate()) {
                                           setState(() {
-                                            _isLoading = true;
                                             _autovalidateMode = false;
                                             _boothNoNode.unfocus();
                                             _pageNoNode.unfocus();
                                           });
-                                          Future.delayed(
-                                            const Duration(seconds: 2),
-                                            () {
-                                              Navigator.push(
-                                                context,
-                                                MaterialPageRoute(
-                                                  builder: (_) =>
-                                                      VoterListScreen(
-                                                    boothNo: _boothNoController
-                                                        .text
-                                                        .trim()
-                                                        .toString(),
-                                                  ),
-                                                ),
-                                              ).then((value) {
-                                                setState(() {
-                                                  _isLoading = false;
-                                                });
-                                              });
-                                            },
+                                          Navigator.push(
+                                            context,
+                                            MaterialPageRoute(
+                                              builder: (_) => VoterListScreen(
+                                                boothNo: _boothNoController.text
+                                                    .trim()
+                                                    .toString(),
+                                              ),
+                                            ),
                                           );
                                         } else {
                                           setState(() {
-                                            _isLoading = false;
                                             _autovalidateMode = true;
                                           });
                                         }

@@ -1,26 +1,31 @@
 // ignore_for_file: avoid_print
 
+import 'dart:io';
+
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:sonjagapp/Components/gradients.dart';
 import 'package:sonjagapp/Components/showsnackbar.dart';
+import 'package:sonjagapp/Models/user_data_model.dart';
 import 'package:sonjagapp/Widgets/textformfield_widget.dart';
 
 import '../Constants/constants.dart';
 import '../Widgets/button_widget.dart';
 
-class AddDetailsScreen extends StatefulWidget {
-  const AddDetailsScreen(
-      {super.key, required this.voterId, required this.acNo});
+class EditDetailsScreen extends StatefulWidget {
+  const EditDetailsScreen(
+      {super.key, required this.voterId, required this.acNo, this.details});
 
   final String voterId;
   final String acNo;
+  final UserDataModel? details;
 
   @override
-  State<AddDetailsScreen> createState() => _AddDetailsScreenState();
+  State<EditDetailsScreen> createState() => _EditDetailsScreenState();
 }
 
-class _AddDetailsScreenState extends State<AddDetailsScreen> {
+class _EditDetailsScreenState extends State<EditDetailsScreen> {
   // form validate global state
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
 
@@ -64,6 +69,9 @@ class _AddDetailsScreenState extends State<AddDetailsScreen> {
     'Not Applicable'
   ];
 
+  // Variables
+  File? image;
+
   @override
   void initState() {
     super.initState();
@@ -81,6 +89,7 @@ class _AddDetailsScreenState extends State<AddDetailsScreen> {
   @override
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
+
     return GestureDetector(
       onTap: () => FocusScope.of(context).unfocus(),
       child: Scaffold(
@@ -89,14 +98,23 @@ class _AddDetailsScreenState extends State<AddDetailsScreen> {
           leadingWidth: 36.0,
           titleSpacing: 0.0,
           centerTitle: true,
-          leading: InkWell(
-              onTap: () => Navigator.pop(context),
-              child: const Icon(
-                Icons.arrow_back,
-                size: 20.0,
-                color: Colors.white,
-              )),
-          title: const Text('Add Voter Details'),
+          elevation: 0.0,
+          leading: IconButton(
+            onPressed: () => Navigator.pop(context),
+            icon: const Icon(
+              Icons.arrow_back,
+              color: Colors.white,
+              size: 20.0,
+            ),
+          ),
+          title: const Text(
+            'Edit Voter Details',
+            style: TextStyle(
+              color: Colors.white,
+              fontSize: Constants.fontLarge,
+              fontWeight: FontWeight.w600,
+            ),
+          ),
           flexibleSpace: FlexibleSpaceBar(
             background: Container(
               decoration: BoxDecoration(
@@ -114,26 +132,113 @@ class _AddDetailsScreenState extends State<AddDetailsScreen> {
                 child: Form(
                   key: _formKey,
                   child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    mainAxisAlignment: MainAxisAlignment.start,
                     children: [
-                      Text(
-                        'Voter Id: ${widget.voterId}',
-                        style: const TextStyle(
-                          color: Colors.black87,
-                          fontSize: Constants.fontSmall,
-                          fontWeight: FontWeight.bold,
+                      Stack(
+                        alignment: Alignment.center,
+                        fit: StackFit.loose,
+                        children: [
+                          CircleAvatar(
+                            backgroundColor: Colors.grey.shade400,
+                            radius: size.width * 0.14,
+                            child: CircleAvatar(
+                              backgroundColor: Colors.grey.shade200,
+                              radius: size.width * 0.132,
+                              child: image != null
+                                  ? CachedNetworkImage(
+                                      imageUrl: image.toString(),
+                                      fit: BoxFit.contain,
+                                    )
+                                  : Icon(
+                                      Icons.person_rounded,
+                                      color: Colors.grey.shade400,
+                                      size: size.width * 0.12,
+                                    ),
+                            ),
+                          ),
+                          Positioned(
+                            bottom: 0,
+                            right: 0,
+                            child: CircleAvatar(
+                              backgroundColor: Colors.red,
+                              radius: 14.0,
+                              child: IconButton(
+                                onPressed: () {},
+                                padding: EdgeInsets.zero,
+                                splashRadius: 20.0,
+                                icon: const Icon(
+                                  Icons.camera_alt,
+                                  size: 15.0,
+                                  color: Colors.white,
+                                ),
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                      SizedBox(height: size.height * 0.02),
+                      SizedBox(
+                        width: size.width,
+                        child: Text(
+                          widget.details!.name.toString(),
+                          textAlign: TextAlign.center,
+                          style: const TextStyle(
+                            color: Colors.black,
+                            fontSize: Constants.fontLarge,
+                            fontWeight: FontWeight.w600,
+                          ),
                         ),
                       ),
                       const SizedBox(height: 10.0),
-                      Text(
-                        'AC No: ${widget.acNo}',
-                        style: const TextStyle(
-                          color: Colors.black87,
-                          fontSize: Constants.fontSmall,
-                          fontWeight: FontWeight.bold,
-                        ),
+                      Row(
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          const Text(
+                            'Voter Id:',
+                            style: TextStyle(
+                              color: Colors.black38,
+                              fontSize: Constants.fontRegular,
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                          const SizedBox(width: 10.0),
+                          Text(
+                            widget.voterId,
+                            style: const TextStyle(
+                              color: Colors.black54,
+                              fontSize: Constants.fontRegular,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        ],
                       ),
-                      const SizedBox(height: 16.0),
+                      const SizedBox(height: 6.0),
+                      Row(
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          const Text(
+                            'AC No:',
+                            style: TextStyle(
+                              color: Colors.black38,
+                              fontSize: Constants.fontRegular,
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                          const SizedBox(width: 6.0),
+                          Text(
+                            widget.acNo,
+                            style: const TextStyle(
+                              color: Colors.black54,
+                              fontSize: Constants.fontRegular,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        ],
+                      ),
+                      SizedBox(height: size.height * 0.04),
                       Row(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
@@ -160,7 +265,7 @@ class _AddDetailsScreenState extends State<AddDetailsScreen> {
                                       horizontal: 10.0),
                                   errorMaxLines: 2,
                                   filled: true,
-                                  fillColor: Constants.kLightThemeColor,
+                                  fillColor: Colors.grey.shade200,
                                   border: OutlineInputBorder(
                                     borderRadius: BorderRadius.circular(6.0),
                                     borderSide: BorderSide.none,
@@ -191,9 +296,9 @@ class _AddDetailsScreenState extends State<AddDetailsScreen> {
                                       ),
                                     )
                                     .toList(),
-                                icon: const Icon(
-                                  Icons.arrow_drop_down,
-                                  color: Constants.kPrimaryThemeColor,
+                                icon: Icon(
+                                  Icons.arrow_drop_down_rounded,
+                                  color: Colors.grey.shade400,
                                   size: 26.0,
                                 ),
                                 validator: (String? value) {
@@ -235,7 +340,7 @@ class _AddDetailsScreenState extends State<AddDetailsScreen> {
                                       horizontal: 10.0),
                                   errorMaxLines: 2,
                                   filled: true,
-                                  fillColor: Constants.kLightThemeColor,
+                                  fillColor: Colors.grey.shade200,
                                   border: OutlineInputBorder(
                                     borderRadius: BorderRadius.circular(6.0),
                                     borderSide: BorderSide.none,
@@ -266,9 +371,9 @@ class _AddDetailsScreenState extends State<AddDetailsScreen> {
                                       ),
                                     )
                                     .toList(),
-                                icon: const Icon(
-                                  Icons.arrow_drop_down,
-                                  color: Constants.kPrimaryThemeColor,
+                                icon: Icon(
+                                  Icons.arrow_drop_down_rounded,
+                                  color: Colors.grey.shade400,
                                   size: 26.0,
                                 ),
                                 validator: (String? value) {
@@ -373,8 +478,10 @@ class _AddDetailsScreenState extends State<AddDetailsScreen> {
                               isPrefixIcon: false,
                               isSuffixIcon: false,
                               keyboardType: TextInputType.multiline,
+                              contentPadding: const EdgeInsets.symmetric(
+                                  horizontal: 10.0, vertical: 10.0),
                               maxLength: 100,
-                              maxLines: 4,
+                              maxLines: 3,
                               validator: (value) {
                                 if (value!.isEmpty) {
                                   return 'Required';
@@ -430,7 +537,7 @@ class _AddDetailsScreenState extends State<AddDetailsScreen> {
                                             print('Date is not selected');
                                           }
                                         },
-                                        validator: dobValidator,
+                                        // validator: dobValidator,
                                       ),
                                     ],
                                   ),
@@ -478,7 +585,7 @@ class _AddDetailsScreenState extends State<AddDetailsScreen> {
                                             print('Date is not selected');
                                           }
                                         },
-                                        validator: domValidator,
+                                        // validator: domValidator,
                                       ),
                                     ],
                                   ),
@@ -521,7 +628,7 @@ class _AddDetailsScreenState extends State<AddDetailsScreen> {
                                               horizontal: 10.0),
                                       errorMaxLines: 2,
                                       filled: true,
-                                      fillColor: Constants.kLightThemeColor,
+                                      fillColor: Colors.grey.shade200,
                                       border: OutlineInputBorder(
                                         borderRadius:
                                             BorderRadius.circular(6.0),
@@ -553,12 +660,12 @@ class _AddDetailsScreenState extends State<AddDetailsScreen> {
                                           ),
                                         )
                                         .toList(),
-                                    icon: const Icon(
-                                      Icons.arrow_drop_down,
-                                      color: Constants.kPrimaryThemeColor,
+                                    icon: Icon(
+                                      Icons.arrow_drop_down_rounded,
+                                      color: Colors.grey.shade400,
                                       size: 26.0,
                                     ),
-                                    validator: bloodValidator,
+                                    // validator: bloodValidator,
                                     onChanged: (value) {
                                       bloodGroupDefaultValue = value!;
                                     },
@@ -582,7 +689,7 @@ class _AddDetailsScreenState extends State<AddDetailsScreen> {
                               isSuffixIcon: false,
                               keyboardType: TextInputType.text,
                               maxLength: 40,
-                              validator: postInBJPValidator,
+                              // validator: postInBJPValidator,
                               onChanged: (value) {},
                             ),
                             const SizedBox(height: 16.0),
@@ -621,7 +728,7 @@ class _AddDetailsScreenState extends State<AddDetailsScreen> {
                                               horizontal: 10.0),
                                       errorMaxLines: 2,
                                       filled: true,
-                                      fillColor: Constants.kLightThemeColor,
+                                      fillColor: Colors.grey.shade200,
                                       border: OutlineInputBorder(
                                         borderRadius:
                                             BorderRadius.circular(6.0),
@@ -653,12 +760,12 @@ class _AddDetailsScreenState extends State<AddDetailsScreen> {
                                           ),
                                         )
                                         .toList(),
-                                    icon: const Icon(
-                                      Icons.arrow_drop_down,
-                                      color: Constants.kPrimaryThemeColor,
+                                    icon: Icon(
+                                      Icons.arrow_drop_down_rounded,
+                                      color: Colors.grey.shade400,
                                       size: 26.0,
                                     ),
-                                    validator: socialOrgValidator,
+                                    // validator: socialOrgValidator,
                                     onChanged: (value) {
                                       socialOrgDefaultValue = value!;
                                     },
@@ -679,7 +786,8 @@ class _AddDetailsScreenState extends State<AddDetailsScreen> {
                         onPressed: () {
                           if (_formKey.currentState!.validate()) {
                             // print('Success');
-                            showSnackBar(context, 'Update success');
+                            showSnackBar(
+                                context, 'Your updates have been successfully');
                           } else {
                             print('Error');
                             showSnackBar(

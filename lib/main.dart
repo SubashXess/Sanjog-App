@@ -27,7 +27,7 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(primarySwatch: Colors.red),
       // home: isLoggedIn! ? const SamitiScreen() : const LoginScreen(),
       // home: SamitiScreen(),
-      home: TestScreen(),
+      home: SamitiScreen(),
       // home: const AddDetailsScreen(
       //   voterId: 'YXV0934471',
       //   acNo: '111',

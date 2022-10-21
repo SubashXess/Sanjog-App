@@ -10,7 +10,7 @@ import 'package:url_launcher/url_launcher.dart';
 
 class APIServices {
   static Future<List<UserDataModel>?> getVoterList(context,
-      {required String boothNo}) async {
+      {required String boothNo, required String name}) async {
     // int limit = 10;
     Client client = http.Client();
     Uri uri = Uri.parse('${APIs.VOTER_LIST_API}?boothNo=$boothNo');
@@ -18,7 +18,11 @@ class APIServices {
       Response response = await client.get(uri);
       if (response.statusCode == 200) {
         String json = response.body;
-        return getVoterListFromJson(json);
+        return getVoterListFromJson(json).where((element) {
+          final nameLower = element.name!.toLowerCase();
+          final searchLower = name.toLowerCase();
+          return nameLower.contains(searchLower);
+        }).toList();
       } else {
         return showSnackBar(context, 'Connection error');
       }
@@ -26,6 +30,32 @@ class APIServices {
       throw Exception('Unexpected error occured!');
     }
   }
+
+  // static Future<List<UserDataModel>?> getSearchVoterList(context,
+  //     {required String name}) async {
+  //   // int limit = 10;
+  //   Client client = http.Client();
+  //   Uri uri = Uri.parse('${APIs.VOTER_SEARCH_BY_NAME_LIST_API}?name=$name');
+  //   try {
+  //     Response response = await client.get(uri);
+  //     if (response.statusCode == 200) {
+  //       String json = response.body;
+
+  //       return getVoterListFromJson(json).where((items) {
+  //         final nameLower = items.name!.toLowerCase();
+  //         final searchLower = name.toLowerCase();
+  //         // final relationLower = items.relationName!.toLowerCase();
+  //         // final voterLower = items.voterNo!.toLowerCase();
+  //         return nameLower.contains(
+  //             searchLower); // add others using || relationLower || voterLower
+  //       }).toList();
+  //     } else {
+  //       return showSnackBar(context, 'Connection error');
+  //     }
+  //   } catch (e) {
+  //     throw Exception('Unexpected error occured!');
+  //   }
+  // }
 }
 
 class ApiClient {

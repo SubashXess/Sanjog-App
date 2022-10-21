@@ -11,7 +11,7 @@ import 'package:path_provider/path_provider.dart';
 import 'package:sliding_sheet/sliding_sheet.dart';
 import 'package:sonjagapp/Constants/constants.dart';
 import 'package:sonjagapp/Models/user_data_model.dart';
-import 'package:sonjagapp/Screens/add_details.dart';
+import 'package:sonjagapp/Screens/edit_voter_details.dart';
 import 'package:sonjagapp/Screens/add_family_members.dart';
 import 'package:sonjagapp/Screens/see_family_members.dart';
 import 'package:sonjagapp/Widgets/button_widget.dart';
@@ -248,9 +248,10 @@ class _VoterDetailsCardState extends State<VoterDetailsCard> {
                           Navigator.push(
                             context,
                             MaterialPageRoute(
-                              builder: (context) => AddDetailsScreen(
+                              builder: (context) => EditDetailsScreen(
                                 voterId: widget.snapshot.voterNo.toString(),
                                 acNo: widget.snapshot.acNo.toString(),
+                                
                               ),
                             ),
                           );

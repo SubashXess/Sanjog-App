@@ -1,12 +1,17 @@
 // ignore_for_file: avoid_print
 
+import 'dart:async';
+
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/src/gestures/long_press.dart';
+import 'package:sonjagapp/Components/showsnackbar.dart';
 import 'package:sonjagapp/Constants/constants.dart';
 import 'package:sonjagapp/Error%20Screens/no_data_found.dart';
 import 'package:sonjagapp/Models/user_data_model.dart';
+import 'package:sonjagapp/Screens/edit_voter_details.dart';
 import 'package:sonjagapp/Services/service.dart';
+import 'package:sonjagapp/Test%20Screens/test_screen.dart';
 
 class VoterListScreen extends StatefulWidget {
   const VoterListScreen({super.key, required this.boothNo, this.pageNo});
@@ -24,6 +29,12 @@ class _VoterListScreenState extends State<VoterListScreen> {
 // ScrollController
   final ScrollController _scrollController = ScrollController();
 
+  // TextEditingController
+  final TextEditingController _searchController = TextEditingController();
+
+  // FocusNode
+  late FocusNode _searchFocusNode;
+
   // models
   List<UserDataModel> voterItems = [];
 
@@ -31,23 +42,45 @@ class _VoterListScreenState extends State<VoterListScreen> {
   bool _isLoaded = false;
   int page = 1;
   bool _hasNoData = false;
+  String searchQuery = '';
+  List<UserDataModel> _searchResultsItems = [];
+  Timer? debouncer;
 
   @override
   void initState() {
     super.initState();
-    _scrollController.addListener(() {
-      if (_scrollController.position.maxScrollExtent ==
-          _scrollController.offset) {
-        ++page;
-        getVoterItems();
-      }
-    });
-    getVoterItems();
+    init();
+    _searchFocusNode = FocusNode()..addListener(onListen);
+    _scrollController.addListener(onListen);
+    // _scrollController.addListener(() {
+    //   if (_scrollController.position.maxScrollExtent ==
+    //       _scrollController.offset) {
+    //     ++page;
+    //     init();
+    //   }
+    // });
   }
 
-  getVoterItems() async {
-    voterItems =
-        (await APIServices.getVoterList(boothNo: widget.boothNo, context))!;
+  @override
+  void dispose() {
+    _scrollController.dispose();
+    _scrollController.removeListener(onListen);
+    _searchController.dispose();
+    _searchController.removeListener(onListen);
+    _searchFocusNode.dispose();
+    _searchFocusNode.removeListener(onListen);
+    debouncer?.cancel();
+    super.dispose();
+  }
+
+  void onListen() {
+    setState(() {});
+  }
+
+  Future init() async {
+    voterItems = (await APIServices.getVoterList(
+        boothNo: widget.boothNo, context, name: ''))!;
+
     if (voterItems.isNotEmpty) {
       setState(() {
         _hasNoData = false;
@@ -61,90 +94,157 @@ class _VoterListScreenState extends State<VoterListScreen> {
     }
   }
 
+  void debounce(VoidCallback callback,
+      {Duration duration = const Duration(milliseconds: 1000)}) {
+    if (debouncer != null) {
+      debouncer!.cancel();
+    }
+    debouncer = Timer(duration, callback);
+  }
+
   @override
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
-
+    print('object');
     return GestureDetector(
       onTap: () => FocusScope.of(context).unfocus(),
       child: Scaffold(
         backgroundColor: Colors.grey.shade50,
-        appBar: AppBar(
-          elevation: 1.0,
-          title: const Text(
-            'Voter List',
-            style: TextStyle(
-              color: Colors.white,
-              fontSize: Constants.fontLarge,
-              fontWeight: FontWeight.bold,
-            ),
-          ),
-          centerTitle: true,
-          automaticallyImplyLeading: false,
-          leading: IconButton(
-            icon: const Icon(
-              Icons.arrow_back,
-              size: 20.0,
-              color: Colors.white,
-            ),
-            onPressed: () => Navigator.pop(context),
-          ),
-          flexibleSpace: FlexibleSpaceBar(
-            background: Container(
-              decoration: const BoxDecoration(
-                gradient: LinearGradient(
-                  begin: Alignment.topLeft,
-                  end: Alignment.bottomRight,
-                  colors: [
-                    Constants.kPrimaryThemeColor,
-                    Color(0xFFF97D09)
-                  ], // Color(0xFFF97D09)
-                ),
-              ),
-            ),
-          ),
-          actions: [
-            IconButton(
-              onPressed: () {},
-              icon: const Icon(
-                Icons.search,
-                size: 20.0,
-                color: Colors.white,
-              ),
-            ),
-          ],
-        ),
-        body: _isLoaded
-            ? SizedBox(
-                width: double.infinity,
-                child: SingleChildScrollView(
-                  physics: const BouncingScrollPhysics(),
-                  child: SafeArea(
-                    child: Padding(
-                      padding: const EdgeInsets.only(
-                          right: 10.0, left: 10.0, top: 16.0, bottom: 6.0),
-                      child: Column(
-                        children: [
-                          ListView.builder(
-                            itemCount: voterItems.length,
-                            shrinkWrap: true,
-                            padding: EdgeInsets.zero,
-                            controller: _scrollController,
-                            itemBuilder: (context, index) {
-                              return _buildVoterCard(size, voterItems[index]);
-                            },
+        body: !_hasNoData
+            ? CustomScrollView(
+                shrinkWrap: true,
+                slivers: [
+                  SliverAppBar(
+                    backgroundColor: Constants.kPrimaryThemeColor,
+                    floating: true,
+                    pinned: true,
+                    snap: false,
+                    centerTitle: true,
+                    automaticallyImplyLeading: false,
+                    elevation: 0.0,
+                    toolbarHeight: kToolbarHeight * 0.8,
+                    leading: IconButton(
+                      onPressed: () => Navigator.pop(context),
+                      icon: const Icon(
+                        Icons.arrow_back,
+                        color: Colors.white,
+                        size: 20.0,
+                      ),
+                    ),
+                    title: const Text(
+                      'Voter List',
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontSize: Constants.fontLarge,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                    bottom: AppBar(
+                      automaticallyImplyLeading: false,
+                      titleSpacing: 0.0,
+                      leadingWidth: 0.0,
+                      elevation: 0.0,
+                      backgroundColor: Constants.kPrimaryThemeColor,
+                      title: Container(
+                        width: size.width,
+                        height: 40.0,
+                        margin: const EdgeInsets.symmetric(horizontal: 10.0),
+                        child: TextFormField(
+                          controller: _searchController,
+                          maxLines: 1,
+                          focusNode: _searchFocusNode,
+                          decoration: InputDecoration(
+                            hintText: 'Search by name',
+                            filled: true,
+                            fillColor: _searchFocusNode.hasFocus
+                                ? Colors.white60
+                                : Colors.white24,
+                            isDense: true,
+                            prefixIcon: const Icon(
+                              Icons.search_rounded,
+                              size: 20.0,
+                              color: Colors.white70,
+                            ),
+                            suffixIcon: _searchController.text.isEmpty
+                                ? Container(width: 0.0)
+                                : IconButton(
+                                    onPressed: () => setState(
+                                        () => _searchController.clear()),
+                                    icon: const Icon(
+                                      Icons.clear,
+                                      size: 20.0,
+                                      color: Colors.white70,
+                                    ),
+                                  ),
+                            contentPadding: EdgeInsets.zero,
+                            hintStyle: const TextStyle(
+                                color: Colors.white70,
+                                fontSize: Constants.fontSmall,
+                                fontWeight: FontWeight.w500),
+                            border: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(6.0),
+                                borderSide: BorderSide.none),
+                            enabledBorder: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(6.0),
+                                borderSide: BorderSide.none),
                           ),
-                        ],
+                          onChanged: searchVoterId,
+                        ),
                       ),
                     ),
                   ),
-                ),
+                  _isLoaded
+                      ? SliverToBoxAdapter(
+                          child: SizedBox(
+                          width: double.infinity,
+                          child: SingleChildScrollView(
+                            physics: const BouncingScrollPhysics(),
+                            child: Padding(
+                              padding: const EdgeInsets.only(
+                                  right: 10.0,
+                                  left: 10.0,
+                                  top: 10.0,
+                                  bottom: 0.0),
+                              child: Column(
+                                children: [
+                                  ListView.builder(
+                                    itemCount: _searchController.text.isEmpty
+                                        ? voterItems.length
+                                        : _searchResultsItems.length,
+                                    shrinkWrap: true,
+                                    padding: EdgeInsets.zero,
+                                    controller: _scrollController,
+                                    itemBuilder: (context, index) {
+                                      if (_searchResultsItems.isEmpty ||
+                                          _searchController.text.isEmpty) {
+                                        return _buildVoterCard(
+                                            size, voterItems[index]);
+                                      } else {
+                                        print(_searchResultsItems.length);
+                                        return _buildVoterCard(
+                                            size, _searchResultsItems[index]);
+                                      }
+                                    },
+                                  )
+                                ],
+                              ),
+                            ),
+                          ),
+                        ))
+                      : const SliverFillRemaining(
+                          child: Center(
+                            child: CircularProgressIndicator(),
+                          ),
+                        ),
+                ],
               )
-            : !_hasNoData
-                ? const Center(
-                    child: CircularProgressIndicator(),
-                  )
-                : const ErrorNoDataFound(),
+            : ErrorNoDataFound(
+                onPressed: () => Navigator.pop(context),
+                assets: 'assets/raw/nodata.json',
+                header: 'No Data',
+                desc: 'Maybe go back and try a different Booth number?',
+                btnlabel: 'Go back',
+                btnicon: Icons.arrow_back),
       ),
     );
   }
@@ -213,7 +313,15 @@ class _VoterListScreenState extends State<VoterListScreen> {
                 splashColor: Colors.transparent,
                 highlightColor: Colors.transparent,
                 onTap: () {
-                  print('Edit');
+                  Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (_) => EditDetailsScreen(
+                          voterId: data.voterNo.toString(),
+                          acNo: data.acNo.toString(),
+                          details: data,
+                        ),
+                      ));
                 },
                 child: Container(
                   constraints: const BoxConstraints(minWidth: 100.0),
@@ -583,4 +691,18 @@ class _VoterListScreenState extends State<VoterListScreen> {
       child: Text(label.toString()),
     );
   }
+
+  Future searchVoterId(String query) async => debounce(() async {
+        final searchResult =
+            // await APIServices.getSearchVoterList(context, name: query);
+            await APIServices.getVoterList(context,
+                boothNo: widget.boothNo, name: query);
+
+        if (!mounted) return;
+
+        setState(() {
+          searchQuery = query;
+          _searchResultsItems = searchResult!;
+        });
+      });
 }

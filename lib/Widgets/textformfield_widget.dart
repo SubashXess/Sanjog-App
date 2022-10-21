@@ -140,6 +140,8 @@ class FormFieldWidget extends StatelessWidget {
     this.textAlign = TextAlign.start,
     this.maxLines = 1,
     this.autovalidateMode,
+    this.contentPadding =
+        const EdgeInsets.symmetric(horizontal: 10.0, vertical: 4.0),
   });
 
   final String? label;
@@ -165,6 +167,7 @@ class FormFieldWidget extends StatelessWidget {
   final TextAlign? textAlign;
   final int? maxLines;
   final AutovalidateMode? autovalidateMode;
+  final EdgeInsetsGeometry? contentPadding;
 
   @override
   Widget build(BuildContext context) {
@@ -184,8 +187,7 @@ class FormFieldWidget extends StatelessWidget {
           hintText: hintText,
           filled: true,
           fillColor: Colors.grey.shade200,
-          contentPadding:
-              const EdgeInsets.symmetric(horizontal: 10.0, vertical: 4.0),
+          contentPadding: contentPadding,
           hintStyle: const TextStyle(
               color: Colors.black45,
               fontSize: Constants.fontRegular,

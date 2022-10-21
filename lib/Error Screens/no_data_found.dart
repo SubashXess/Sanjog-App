@@ -3,7 +3,21 @@ import 'package:lottie/lottie.dart';
 import 'package:sonjagapp/Constants/constants.dart';
 
 class ErrorNoDataFound extends StatelessWidget {
-  const ErrorNoDataFound({super.key});
+  const ErrorNoDataFound(
+      {super.key,
+      required this.btnlabel,
+      required this.header,
+      required this.desc,
+      required this.assets,
+      required this.btnicon,
+      required this.onPressed});
+
+  final String btnlabel;
+  final String header;
+  final String desc;
+  final String assets;
+  final IconData btnicon;
+  final VoidCallback onPressed;
 
   @override
   Widget build(BuildContext context) {
@@ -11,25 +25,26 @@ class ErrorNoDataFound extends StatelessWidget {
     return SizedBox(
       width: size.width,
       child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 10.0, vertical: 16.0),
+        padding: const EdgeInsets.symmetric(horizontal: 10.0, vertical: 10.0),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.center,
-          mainAxisAlignment: MainAxisAlignment.center,
+          mainAxisAlignment: MainAxisAlignment.start,
           children: [
-            Lottie.asset('assets/raw/nodata.json',
-                repeat: true, width: size.width),
-            const Text(
-              'No Data',
-              style: TextStyle(
+            SizedBox(height: size.height * 0.12),
+            Lottie.asset(assets.toString(),
+                repeat: true, width: size.width, height: size.height * 0.36),
+            Text(
+              header.toString(),
+              style: const TextStyle(
                   color: Colors.black54,
                   fontSize: Constants.fontUltraLarge,
                   fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: 6.0),
-            const Text(
-              'Maybe go back and try a different Booth number?',
+            Text(
+              desc.toString(),
               textAlign: TextAlign.center,
-              style: TextStyle(
+              style: const TextStyle(
                   color: Colors.black26,
                   fontSize: Constants.fontMedium,
                   fontWeight: FontWeight.w500),
@@ -46,24 +61,24 @@ class ErrorNoDataFound extends StatelessWidget {
               highlightElevation: 0.0,
               highlightColor: Constants.kPrimaryThemeColor.withOpacity(0.26),
               splashColor: Constants.kPrimaryThemeColor.withOpacity(0.26),
-              onPressed: () => Navigator.pop(context),
+              onPressed: onPressed,
               child: Row(
                 crossAxisAlignment: CrossAxisAlignment.center,
                 mainAxisAlignment: MainAxisAlignment.center,
                 mainAxisSize: MainAxisSize.min,
-                children: const [
+                children: [
                   Icon(
-                    Icons.arrow_back,
+                    btnicon,
                     size: 16.0,
                     color: Constants.kPrimaryThemeColor,
                   ),
-                  SizedBox(width: 6.0),
+                  const SizedBox(width: 6.0),
                   Text(
-                    'Go back',
-                    style: TextStyle(
+                    btnlabel.toString(),
+                    style: const TextStyle(
                       color: Constants.kPrimaryThemeColor,
                       fontWeight: FontWeight.w500,
-                      fontSize: Constants.fontRegular,
+                      fontSize: Constants.fontSmall,
                     ),
                   ),
                 ],
