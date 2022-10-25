@@ -201,7 +201,7 @@ class _VoterDetailsCardState extends State<VoterDetailsCard> {
                             ),
                             Text(
                               'Category: ${widget.snapshot.category.toString()}',
-                              style: TextStyle(
+                              style: const TextStyle(
                                 color: Colors.black87,
                                 fontSize: Constants.fontSmall,
                                 fontWeight: FontWeight.bold,
@@ -209,7 +209,7 @@ class _VoterDetailsCardState extends State<VoterDetailsCard> {
                             ),
                             Text(
                               'Relation Type: ${widget.snapshot.relationType.toString()}',
-                              style: TextStyle(
+                              style: const TextStyle(
                                 color: Colors.black87,
                                 fontSize: Constants.fontSmall,
                                 fontWeight: FontWeight.bold,
@@ -217,7 +217,7 @@ class _VoterDetailsCardState extends State<VoterDetailsCard> {
                             ),
                             Text(
                               'Relation Name: ${widget.snapshot.relationName.toString()}',
-                              style: TextStyle(
+                              style: const TextStyle(
                                 color: Colors.black87,
                                 fontSize: Constants.fontSmall,
                                 fontWeight: FontWeight.bold,
@@ -225,7 +225,7 @@ class _VoterDetailsCardState extends State<VoterDetailsCard> {
                             ),
                             Text(
                               'Mobile No: ${widget.snapshot.mobileNo.toString()}',
-                              style: TextStyle(
+                              style: const TextStyle(
                                 color: Colors.black87,
                                 fontSize: Constants.fontSmall,
                                 fontWeight: FontWeight.bold,
@@ -233,7 +233,7 @@ class _VoterDetailsCardState extends State<VoterDetailsCard> {
                             ),
                             Text(
                               'Whatsapp No: ${widget.snapshot.whatsappNo.toString()}',
-                              style: TextStyle(
+                              style: const TextStyle(
                                 color: Colors.black87,
                                 fontSize: Constants.fontSmall,
                                 fontWeight: FontWeight.bold,
@@ -408,7 +408,7 @@ class _VoterDetailsCardState extends State<VoterDetailsCard> {
                                   context,
                                   MaterialPageRoute(
                                       builder: (context) =>
-                                          SeeFamilyMembers()));
+                                          const SeeFamilyMembers()));
                               // seeFamilyDetailsBuildSheet(context);
                               // showModalBottomSheet(
                               //   context: context,
@@ -822,7 +822,7 @@ class _VoterDetailsCardState extends State<VoterDetailsCard> {
               Expanded(
                 // width: size.width / 3.4,
                 child: TextFormField(
-                  decoration: InputDecoration(
+                  decoration: const InputDecoration(
                     isDense: true,
                     contentPadding: EdgeInsets.zero,
                     hintText: 'AC number',
@@ -835,7 +835,7 @@ class _VoterDetailsCardState extends State<VoterDetailsCard> {
               Expanded(
                 // width: size.width / 3.4,
                 child: TextFormField(
-                  decoration: InputDecoration(
+                  decoration: const InputDecoration(
                     isDense: true,
                     contentPadding: EdgeInsets.zero,
                     hintText: 'Booth number',

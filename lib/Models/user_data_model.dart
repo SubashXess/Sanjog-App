@@ -2,9 +2,6 @@
 
 import 'dart:convert';
 
-import 'package:http/http.dart' as http;
-import 'package:sonjagapp/Constants/constants.dart';
-
 List<UserDataModel> getVoterListFromJson(String str) =>
     List<UserDataModel>.from(
         json.decode(str).map((x) => UserDataModel.fromJson(x)));
@@ -14,13 +11,14 @@ String getVoterListToJson(List<UserDataModel> data) =>
 
 class UserDataModel {
   String? uid;
-  String? familyId; // add
+  String? familyId; // add\
   String? status;
   String? acNo;
   String? boothNo;
   String? pageNo;
   String? serialNo;
   String? voterNo;
+  String? adharNo;
   String? position;
   String? name;
   String? gender;
@@ -49,6 +47,7 @@ class UserDataModel {
     required this.pageNo,
     required this.serialNo,
     required this.voterNo,
+    required this.adharNo,
     required this.name,
     required this.gender,
     required this.category,
@@ -79,6 +78,7 @@ class UserDataModel {
       pageNo: json['pageNo'],
       serialNo: json['serialNo'],
       voterNo: json['voterNo'],
+      adharNo: json['adharNo'],
       name: json['name'],
       gender: json['gender'],
       category: json['category'],
@@ -88,14 +88,14 @@ class UserDataModel {
       whatsappNo: json['whatsappNo'],
       photo: json['photo'],
       address: json['address'],
-      bloodGroup: json['bloodGroup'],
+      bloodGroup: json['blood_group'],
       dob: json['dob'],
       dom: json['dom'],
       position: json['position'],
       postBJP: json['postBJP'],
-      socialOrg: json['socialOrg'],
+      socialOrg: json['soc_org'],
       createdAt: json['createdAt'],
-      updatedAt: json['updateAt'],
+      updatedAt: json['upd_date'],
       members: json['members'],
     );
   }
@@ -110,6 +110,7 @@ class UserDataModel {
       'pageNo': pageNo,
       'serialNo': serialNo,
       'voterNo': voterNo,
+      'adharNo': adharNo,
       'name': name,
       'gender': gender,
       'category': category,
@@ -119,37 +120,37 @@ class UserDataModel {
       'whatsappNo': whatsappNo,
       'photo': photo,
       'address': address,
-      'bloodGroup': bloodGroup,
+      'blood_group': bloodGroup,
       'position': position,
       'dob': dob,
       'dom': dom,
       'postBJP': postBJP,
-      'socialOrg': socialOrg,
+      'soc_org': socialOrg,
       'createdAt': createdAt,
-      'updateAt': updatedAt,
+      'upd_date': updatedAt,
       'members': members,
     };
   }
 
   // test server
 
-  static Future<List<UserDataModel>> getUserData(
-      String boothNo, String pageNo) async {
-    final http.Response response = await http.get(Uri.parse(
-        '${APIs.VOTER_LIST_API}?boothNo=$boothNo&pageNo=$pageNo')); // api  USER_DATA_API
-    try {
-      if (response.statusCode == 200) {
-        print('Data received');
-        List serverResponse = json.decode(response.body);
-        print('Server Response : $serverResponse');
-        return serverResponse
-            .map((data) => UserDataModel.fromJson(data))
-            .toList();
-      } else {
-        return throw Exception('Unexpected error occured!');
-      }
-    } catch (e) {
-      return throw Exception(e.toString());
-    }
-  }
+  // static Future<List<UserDataModel>> getUserData(
+  //     String boothNo, String pageNo) async {
+  //   final http.Response response = await http.get(Uri.parse(
+  //       '${APIs.VOTER_LIST_API}?boothNo=$boothNo&pageNo=$pageNo')); // api  USER_DATA_API
+  //   try {
+  //     if (response.statusCode == 200) {
+  //       print('Data received');
+  //       List serverResponse = json.decode(response.body);
+  //       print('Server Response : $serverResponse');
+  //       return serverResponse
+  //           .map((data) => UserDataModel.fromJson(data))
+  //           .toList();
+  //     } else {
+  //       return throw Exception('Unexpected error occured!');
+  //     }
+  //   } catch (e) {
+  //     return throw Exception(e.toString());
+  //   }
+  // }
 }

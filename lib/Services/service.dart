@@ -1,33 +1,111 @@
 // ignore_for_file: avoid_print
 import 'dart:convert';
 import 'dart:io';
+import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:http/http.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:sonjagapp/Components/showsnackbar.dart';
 import 'package:sonjagapp/Constants/constants.dart';
 import 'package:sonjagapp/Models/user_data_model.dart';
+import 'package:sonjagapp/Screens/login_screen.dart';
+import 'package:sonjagapp/Screens/samiti_screen.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class APIServices {
-  static Future<List<UserDataModel>?> getVoterList(context,
-      {required String boothNo, required String name}) async {
+  static Future<List<UserDataModel>?> getVoterList(
+    context, {
+    required String boothNo,
+    String? name,
+  }) async {
     // int limit = 10;
     Client client = http.Client();
-    Uri uri = Uri.parse('${APIs.VOTER_LIST_API}?boothNo=$boothNo');
+    Uri uri = Uri.parse(APIs.VOTER_LIST_API);
     try {
       Response response = await client.get(uri);
       if (response.statusCode == 200) {
         String json = response.body;
-        return getVoterListFromJson(json).where((element) {
-          final nameLower = element.name!.toLowerCase();
-          final searchLower = name.toLowerCase();
-          return nameLower.contains(searchLower);
+        return getVoterListFromJson(json).where((items) {
+          final String nameLower = items.name!.toLowerCase().toString();
+          final String boothNoLower = items.boothNo!.toLowerCase().toString();
+          final String searchLower = name!.toLowerCase().toString();
+
+          return nameLower.contains(searchLower) &&
+              boothNoLower.contains(boothNo);
         }).toList();
       } else {
-        return showSnackBar(context, 'Connection error');
+        print(response.statusCode);
+        return Future.error('Connection Error');
       }
     } catch (e) {
-      throw Exception('Unexpected error occured!');
+      return Future.error('Unexpected Error $e');
+    }
+  }
+
+  static Future<List<UserDataModel>?> getVoterIdSearchResult(context,
+      {required String voterId}) async {
+    Client client = http.Client();
+    Uri uri = Uri.parse(APIs.VOTER_LIST_API);
+    try {
+      Response response = await client.get(uri);
+      if (response.statusCode == 200) {
+        String json = response.body;
+        return getVoterListFromJson(json).where((items) {
+          final String voterIdLower =
+              items.voterNo!.trim().toLowerCase().toString();
+          final String searchVoterId = voterId.trim().toLowerCase().toString();
+          return voterIdLower.contains(searchVoterId);
+        }).toList();
+      } else {
+        return Future.error('Connection Error');
+      }
+    } catch (e) {
+      return Future.error('Unexpected Error $e');
+    }
+  }
+
+  static Future<List<UserDataModel>?> getPageSamitiSearchResult(context,
+      {required String boothNo}) async {
+    Client client = http.Client();
+    Uri uri = Uri.parse(APIs.VOTER_LIST_API);
+    try {
+      Response response = await client.get(uri);
+      if (response.statusCode == 200) {
+        String json = response.body;
+        return getVoterListFromJson(json).where((items) {
+          final String boothNoLower =
+              items.boothNo!.trim().toLowerCase().toString();
+          final String searchBoothNo = boothNo.trim().toLowerCase().toString();
+          return boothNoLower.contains(searchBoothNo);
+        }).toList();
+      } else {
+        return Future.error('Connection Error');
+      }
+    } catch (e) {
+      return Future.error(showSnackBar(context, 'Unexpected Error $e'));
+    }
+  }
+
+  static Future<List<UserDataModel>?> updateUserData(context,
+      {required String address}) async {
+    Client client = http.Client();
+    Uri uri = Uri.parse(APIs.USER_DATA_UPDATE);
+    try {
+      Response response = await client.post(
+        uri,
+        body: jsonEncode(<String, dynamic>{
+          'address': address,
+        }),
+      );
+      if (response.statusCode == 200) {
+        String json = response.body;
+        print(response.body);
+        return getVoterListFromJson(json);
+      } else {
+        return Future.error('Connection Error');
+      }
+    } catch (e) {
+      return Future.error('Unexpected Error $e');
     }
   }
 
@@ -59,20 +137,41 @@ class APIServices {
 }
 
 class ApiClient {
-  static void login(String username, String password) async {
-    final http.Response response = await http
-        .get(Uri.parse('${APIs.LOGIN_API}?u_name=$username&mobile=$password'));
-    try {
-      var data = jsonDecode(response.body.toString());
+  static Future<void> login(context, username, password) async {
+    final http.Response response = await http.get(
+        Uri.parse('${APIs.LOGIN_API}?username=$username&password=$password'));
 
+    var data = jsonDecode(response.body.toString());
+    try {
       if (response.statusCode == 200) {
-        print(data['message']);
+        if (data['status'] == '1') {
+          SharedPreferences preferences = await SharedPreferences.getInstance();
+          preferences.setBool('login', true);
+          Navigator.of(context).pushAndRemoveUntil(
+            MaterialPageRoute(builder: (context) => const SamitiScreen()),
+            (route) => false,
+          );
+        } else {
+          showSnackBar(context, 'Username and password is incorrect');
+        }
       } else {
-        print(data['message']);
+        showSnackBar(context, 'Connection Error');
       }
     } catch (e) {
       print(e.toString());
     }
+  }
+
+  static Future<void> logout(context) async {
+    SharedPreferences preferences = await SharedPreferences.getInstance();
+    Navigator.of(context)
+        .pushAndRemoveUntil(
+      MaterialPageRoute(builder: (_) => const LoginScreen()),
+      (route) => false,
+    )
+        .then((value) {
+      preferences.setBool('login', false);
+    });
   }
 }
 

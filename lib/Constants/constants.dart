@@ -19,12 +19,15 @@ class Constants {
 class APIs {
   static const String DBAPI = 'http://192.168.0.116/sanjog_app_db/';
   static const String LOGIN_API =
-      'https://intentitsolutions.com/Ekamra/api/login.php';
+      'https://intentitsolutions.com/Ekamra/api/login_user.php';
   // static const String USER_DATA_API = '';
   static const String VOTER_LIST_API =
-      'https://intentitsolutions.com/Ekamra/api/getVoters.php'; // https://intentitsolutions.com/Ekamra/api/config.php
+      'https://intentitsolutions.com/Ekamra/api/getVoter.php'; // https://intentitsolutions.com/Ekamra/api/config.php
   static const String VOTER_SEARCH_BY_NAME_LIST_API =
       'https://intentitsolutions.com/Ekamra/api/searchVotersByName.php'; // ?name=s
+
+  static const String USER_DATA_UPDATE =
+      'https://intentitsolutions.com/Ekamra/api/updatevoter.php';
 }
 
 class Links {

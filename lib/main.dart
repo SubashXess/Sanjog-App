@@ -3,6 +3,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:sonjagapp/Error%20Screens/no_data_found.dart';
 import 'package:sonjagapp/Screens/login_screen.dart';
 import 'package:sonjagapp/Screens/samiti_screen.dart';
+import 'package:sonjagapp/Screens/search_by_voter_id_screen.dart';
 import 'package:sonjagapp/Screens/voter_list_screen.dart';
 import 'package:sonjagapp/Test%20Screens/test_screen.dart';
 

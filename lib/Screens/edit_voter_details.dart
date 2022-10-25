@@ -1,15 +1,20 @@
 // ignore_for_file: avoid_print
 
 import 'dart:io';
-
+import 'package:path/path.dart';
+import 'package:http_parser/http_parser.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
+import 'package:path_provider/path_provider.dart';
 import 'package:sonjagapp/Components/gradients.dart';
 import 'package:sonjagapp/Components/showsnackbar.dart';
 import 'package:sonjagapp/Models/user_data_model.dart';
+import 'package:sonjagapp/Services/service.dart';
 import 'package:sonjagapp/Widgets/textformfield_widget.dart';
-
+import 'package:http/http.dart' as http;
 import '../Constants/constants.dart';
 import '../Widgets/button_widget.dart';
 
@@ -70,11 +75,14 @@ class _EditDetailsScreenState extends State<EditDetailsScreen> {
   ];
 
   // Variables
+  // Image add
   File? image;
+  String? loadImage;
 
   @override
   void initState() {
     super.initState();
+    init();
   }
 
   @override
@@ -84,6 +92,32 @@ class _EditDetailsScreenState extends State<EditDetailsScreen> {
     _whatsappNoController.dispose();
     _addressController.dispose();
     _postBJPController.dispose();
+  }
+
+  void init() {
+    _mobileNoController.text = (widget.details!.mobileNo.toString() != 'null'
+        ? widget.details!.mobileNo.toString()
+        : _mobileNoController.text);
+
+    _whatsappNoController.text =
+        (widget.details!.whatsappNo.toString() != 'null'
+            ? widget.details!.whatsappNo.toString()
+            : _whatsappNoController.text);
+
+    _addressController.text = (widget.details!.address.toString() != 'null'
+        ? widget.details!.address.toString()
+        : _addressController.text);
+    _dobController.text = (widget.details!.dob.toString() != 'null'
+        ? widget.details!.dob.toString()
+        : _dobController.text);
+
+    _domController.text = (widget.details!.dom.toString() != 'null'
+        ? widget.details!.dom.toString()
+        : _domController.text);
+
+    _postBJPController.text = (widget.details!.postBJP.toString() != 'null'
+        ? widget.details!.postBJP.toString()
+        : _postBJPController.text);
   }
 
   @override
@@ -142,20 +176,28 @@ class _EditDetailsScreenState extends State<EditDetailsScreen> {
                           CircleAvatar(
                             backgroundColor: Colors.grey.shade400,
                             radius: size.width * 0.14,
-                            child: CircleAvatar(
-                              backgroundColor: Colors.grey.shade200,
-                              radius: size.width * 0.132,
-                              child: image != null
-                                  ? CachedNetworkImage(
-                                      imageUrl: image.toString(),
-                                      fit: BoxFit.contain,
-                                    )
-                                  : Icon(
-                                      Icons.person_rounded,
-                                      color: Colors.grey.shade400,
-                                      size: size.width * 0.12,
-                                    ),
-                            ),
+                            child: image != null
+                                ? CircleAvatar(
+                                    backgroundColor: Colors.grey.shade200,
+                                    radius: size.width * 0.132,
+                                    backgroundImage: FileImage(image!),
+                                  )
+                                : widget.details!.photo != null
+                                    ? CircleAvatar(
+                                        backgroundColor: Colors.grey.shade200,
+                                        radius: size.width * 0.132,
+                                        backgroundImage: NetworkImage(
+                                            widget.details!.photo.toString()),
+                                      )
+                                    : CircleAvatar(
+                                        backgroundColor: Colors.grey.shade200,
+                                        radius: size.width * 0.132,
+                                        child: Icon(
+                                          Icons.person_rounded,
+                                          color: Colors.grey.shade400,
+                                          size: size.width * 0.12,
+                                        ),
+                                      ),
                           ),
                           Positioned(
                             bottom: 0,
@@ -164,7 +206,16 @@ class _EditDetailsScreenState extends State<EditDetailsScreen> {
                               backgroundColor: Colors.red,
                               radius: 14.0,
                               child: IconButton(
-                                onPressed: () {},
+                                onPressed: () {
+                                  showModalBottomSheet(
+                                      backgroundColor: Colors.transparent,
+                                      isDismissible: true,
+                                      enableDrag: true,
+                                      context: context,
+                                      builder: (context) {
+                                        return bottomSheet(context);
+                                      });
+                                },
                                 padding: EdgeInsets.zero,
                                 splashRadius: 20.0,
                                 icon: const Icon(
@@ -248,7 +299,9 @@ class _EditDetailsScreenState extends State<EditDetailsScreen> {
                               child: DropdownButtonFormField<String>(
                                 value: positionDefaultValue.isNotEmpty
                                     ? positionDefaultValue
-                                    : null,
+                                    : widget.details!.position != null
+                                        ? widget.details!.position!.toString()
+                                        : null,
                                 hint: const Text(
                                   'Position',
                                   style: TextStyle(
@@ -303,15 +356,9 @@ class _EditDetailsScreenState extends State<EditDetailsScreen> {
                                 ),
                                 validator: (String? value) {
                                   return null;
-                                  // if (value == null) {
-                                  //   return 'Required';
-                                  // } else {
-                                  //   return null;
-                                  // }
                                 },
                                 onChanged: (value) {
                                   positionDefaultValue = value!;
-                                  // print(defaultValue);
                                 },
                               ),
                             ),
@@ -323,7 +370,9 @@ class _EditDetailsScreenState extends State<EditDetailsScreen> {
                               child: DropdownButtonFormField<String>(
                                 value: categoryDefaultValue.isNotEmpty
                                     ? categoryDefaultValue
-                                    : null,
+                                    : widget.details!.category != null
+                                        ? widget.details!.category!.toString()
+                                        : null,
                                 hint: const Text(
                                   'Category',
                                   style: TextStyle(
@@ -376,13 +425,13 @@ class _EditDetailsScreenState extends State<EditDetailsScreen> {
                                   color: Colors.grey.shade400,
                                   size: 26.0,
                                 ),
-                                validator: (String? value) {
-                                  if (value == null) {
-                                    return 'Required';
-                                  } else {
-                                    return null;
-                                  }
-                                },
+                                // validator: (String? value) {
+                                //   if (value == null) {
+                                //     return 'Required';
+                                //   } else {
+                                //     return null;
+                                //   }
+                                // },
                                 onChanged: (value) {
                                   categoryDefaultValue = value!;
                                   // print(defaultValue);
@@ -425,7 +474,9 @@ class _EditDetailsScreenState extends State<EditDetailsScreen> {
                                         keyboardType: TextInputType.phone,
                                         maxLength: 10,
                                         validator: mobileValidator,
-                                        onChanged: (value) {},
+                                        onChanged: (value) {
+                                          print(value);
+                                        },
                                       ),
                                     ],
                                   ),
@@ -482,13 +533,13 @@ class _EditDetailsScreenState extends State<EditDetailsScreen> {
                                   horizontal: 10.0, vertical: 10.0),
                               maxLength: 100,
                               maxLines: 3,
-                              validator: (value) {
-                                if (value!.isEmpty) {
-                                  return 'Required';
-                                } else {
-                                  return null;
-                                }
-                              },
+                              // validator: (value) {
+                              //   if (value!.isEmpty) {
+                              //     return 'Required';
+                              //   } else {
+                              //     return null;
+                              //   }
+                              // },
                               onChanged: (value) {},
                             ),
                             const SizedBox(height: 16.0),
@@ -610,7 +661,11 @@ class _EditDetailsScreenState extends State<EditDetailsScreen> {
                                   child: DropdownButtonFormField<String>(
                                     value: bloodGroupDefaultValue.isNotEmpty
                                         ? bloodGroupDefaultValue
-                                        : null,
+                                        : widget.details!.bloodGroup != null
+                                            ? widget.details!.bloodGroup!
+                                                .toString()
+                                            : null,
+
                                     hint: const Text(
                                       'Select your blood group',
                                       style: TextStyle(
@@ -710,7 +765,11 @@ class _EditDetailsScreenState extends State<EditDetailsScreen> {
                                   child: DropdownButtonFormField<String>(
                                     value: socialOrgDefaultValue.isNotEmpty
                                         ? socialOrgDefaultValue
-                                        : null,
+                                        : widget.details!.socialOrg != null
+                                            ? widget.details!.socialOrg!
+                                                .toString()
+                                            : null,
+
                                     hint: const Text(
                                       'Select social organisation',
                                       style: TextStyle(
@@ -745,7 +804,7 @@ class _EditDetailsScreenState extends State<EditDetailsScreen> {
                                               DropdownMenuItem<String>(
                                             alignment: Alignment.centerLeft,
                                             value: value,
-                                            // enabled: value == 'Ekamra Bhubaneswar',
+                                            // enabled: value == 'SHG',
                                             child: Text(
                                               value,
                                               style: const TextStyle(
@@ -786,6 +845,8 @@ class _EditDetailsScreenState extends State<EditDetailsScreen> {
                         onPressed: () {
                           if (_formKey.currentState!.validate()) {
                             // print('Success');
+                            // APIServices.updateUserData(context,
+                            //     address: _addressController.text.toString());
                             showSnackBar(
                                 context, 'Your updates have been successfully');
                           } else {
@@ -879,5 +940,119 @@ class _EditDetailsScreenState extends State<EditDetailsScreen> {
     } else {
       return null;
     }
+  }
+
+  Widget bottomSheet(BuildContext context) {
+    Size size = MediaQuery.of(context).size;
+    return Container(
+      height: size.height * 0.25,
+      width: double.infinity,
+      padding: const EdgeInsets.symmetric(vertical: 16.0, horizontal: 12.0),
+      decoration: const BoxDecoration(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(6.0)),
+        color: Colors.white,
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.center,
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          const Text(
+            'Choose profile photo',
+            style: TextStyle(
+              fontSize: Constants.fontLarge,
+              color: Colors.black,
+              fontWeight: FontWeight.w600,
+            ),
+          ),
+          const Divider(height: 24.0),
+          Expanded(
+            child: InkWell(
+              onTap: () => pickImage(ImageSource.camera, context),
+              child: Row(
+                children: [
+                  CircleAvatar(
+                    radius: size.height * 0.024,
+                    backgroundColor: Constants.kPrimaryThemeColor,
+                    child: const Icon(
+                      Icons.camera_alt_rounded,
+                      color: Colors.white,
+                      size: 20.0,
+                    ),
+                  ),
+                  const Padding(
+                    padding: EdgeInsets.only(left: 12.0),
+                    child: Text(
+                      'Camera',
+                      style: TextStyle(
+                        color: Colors.black87,
+                        fontSize: Constants.fontRegular,
+                        fontWeight: FontWeight.normal,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+          SizedBox(height: size.height * 0.006),
+          Expanded(
+            child: InkWell(
+              onTap: () => pickImage(ImageSource.gallery, context),
+              child: Row(
+                children: [
+                  CircleAvatar(
+                    radius: size.height * 0.024,
+                    backgroundColor: Colors.green.shade800,
+                    child: const Icon(
+                      Icons.image_rounded,
+                      color: Colors.white,
+                      size: 20.0,
+                    ),
+                  ),
+                  const Padding(
+                    padding: EdgeInsets.only(left: 12.0),
+                    child: Text(
+                      'Gallery',
+                      style: TextStyle(
+                        color: Colors.black87,
+                        fontSize: Constants.fontRegular,
+                        fontWeight: FontWeight.normal,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Future pickImage(ImageSource source, BuildContext context) async {
+    try {
+      final image = await ImagePicker().pickImage(source: source);
+      if (image == null) return;
+
+      // permanent image
+      final imagePermanent = await saveImagePermanently(image.path);
+
+      setState(() {
+        // this.image = imageTemporary;
+        this.image = imagePermanent;
+        loadImage = imagePermanent.toString();
+        print("Load Image : $loadImage");
+        Navigator.of(context).pop();
+      });
+    } on PlatformException catch (e) {
+      print('Failed to pick image : $e');
+    }
+  }
+
+  Future<File> saveImagePermanently(String imagePath) async {
+    final directory = await getApplicationDocumentsDirectory();
+    final name = basename(imagePath);
+    final image = File('${directory.path}/$name');
+    return File(imagePath).copy(image.path);
   }
 }

@@ -10,6 +10,7 @@ import 'package:sonjagapp/Components/showsnackbar.dart';
 import 'package:sonjagapp/Constants/constants.dart';
 import 'package:sonjagapp/Screens/samiti_screen.dart';
 import 'package:http/http.dart' as http;
+import 'package:sonjagapp/Services/service.dart';
 import '../Widgets/button_widget.dart';
 import '../Widgets/textformfield_widget.dart';
 
@@ -130,81 +131,101 @@ class _LoginScreenState extends State<LoginScreen> {
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.center,
                           children: [
+                            // SizedBox(
+                            //   width: size.width,
+                            //   child: DropdownButtonFormField<String>(
+                            //     value: defaultValue.isNotEmpty
+                            //         ? defaultValue
+                            //         : null,
+                            //     hint: const Text(
+                            //       'User level',
+                            //       style: TextStyle(
+                            //           color: Colors.black45,
+                            //           fontSize: Constants.fontRegular,
+                            //           fontWeight: FontWeight.w500),
+                            //     ),
+                            //     isExpanded: true,
+                            //     autovalidateMode:
+                            //         AutovalidateMode.onUserInteraction,
+                            //     isDense: true,
+                            //     decoration: InputDecoration(
+                            //       contentPadding: const EdgeInsets.symmetric(
+                            //           horizontal: 10.0),
+                            //       errorMaxLines: 2,
+                            //       filled: true,
+                            //       fillColor: Constants.kLightThemeColor,
+                            //       prefixIcon: Container(
+                            //         padding: const EdgeInsets.all(12.0),
+                            //         child: SvgPicture.asset(
+                            //           'assets/svg/bjp-india.svg',
+                            //           // color: Constants.kPrimaryThemeColor,
+                            //           height: 12,
+                            //           width: 12,
+                            //         ),
+                            //       ),
+                            //       border: OutlineInputBorder(
+                            //         borderRadius: BorderRadius.circular(6.0),
+                            //         borderSide: BorderSide.none,
+                            //       ),
+                            //       errorStyle: const TextStyle(
+                            //           color: Colors.red,
+                            //           fontSize: Constants.fontSmall,
+                            //           fontWeight: FontWeight.normal),
+                            //     ),
+                            //     selectedItemBuilder: (context) => items
+                            //         .map((e) => Text(
+                            //               e,
+                            //               style: const TextStyle(
+                            //                   fontSize: Constants.fontRegular,
+                            //                   color: Colors.black,
+                            //                   fontWeight: FontWeight.normal),
+                            //             ))
+                            //         .toList(),
+                            //     items: items
+                            //         .map(
+                            //           (e) => DropdownMenuItem<String>(
+                            //             alignment: Alignment.centerLeft,
+                            //             value: e,
+                            //             child: Text(e),
+                            //           ),
+                            //         )
+                            //         .toList(),
+                            //     icon: const Icon(
+                            //       Icons.arrow_drop_down,
+                            //       color: Constants.kPrimaryThemeColor,
+                            //       size: 26.0,
+                            //     ),
+                            //     validator: (String? value) {
+                            //       if (value == null) {
+                            //         return 'Required user level';
+                            //       } else {
+                            //         return null;
+                            //       }
+                            //     },
+                            //     onChanged: (value) {
+                            //       defaultValue = value!;
+                            //       print(defaultValue);
+                            //     },
+                            //   ),
+                            // ),
                             SizedBox(
                               width: size.width,
-                              child: DropdownButtonFormField<String>(
-                                value: defaultValue.isNotEmpty
-                                    ? defaultValue
-                                    : null,
-                                hint: const Text(
-                                  'User level',
-                                  style: TextStyle(
-                                      color: Colors.black45,
-                                      fontSize: Constants.fontRegular,
-                                      fontWeight: FontWeight.w500),
-                                ),
-                                isExpanded: true,
-                                autovalidateMode:
-                                    AutovalidateMode.onUserInteraction,
-                                isDense: true,
-                                decoration: InputDecoration(
-                                  contentPadding: const EdgeInsets.symmetric(
-                                      horizontal: 10.0),
-                                  errorMaxLines: 2,
-                                  filled: true,
-                                  fillColor: Constants.kLightThemeColor,
-                                  prefixIcon: Container(
-                                    padding: const EdgeInsets.all(12.0),
-                                    child: SvgPicture.asset(
-                                      'assets/svg/bjp-india.svg',
-                                      // color: Constants.kPrimaryThemeColor,
-                                      height: 12,
-                                      width: 12,
-                                    ),
+                              height: size.height * 0.06,
+                              child: Card(
+                                margin: EdgeInsets.zero,
+                                elevation: 0.0,
+                                shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(6.0)),
+                                color: Colors.grey.shade200,
+                                child: const Center(
+                                  child: Text(
+                                    'Assembly',
+                                    style: TextStyle(
+                                        color: Colors.black54,
+                                        fontWeight: FontWeight.w500,
+                                        fontSize: Constants.fontRegular),
                                   ),
-                                  border: OutlineInputBorder(
-                                    borderRadius: BorderRadius.circular(6.0),
-                                    borderSide: BorderSide.none,
-                                  ),
-                                  errorStyle: const TextStyle(
-                                      color: Colors.red,
-                                      fontSize: Constants.fontSmall,
-                                      fontWeight: FontWeight.normal),
                                 ),
-                                selectedItemBuilder: (context) => items
-                                    .map((e) => Text(
-                                          e,
-                                          style: const TextStyle(
-                                              fontSize: Constants.fontRegular,
-                                              color: Colors.black,
-                                              fontWeight: FontWeight.normal),
-                                        ))
-                                    .toList(),
-                                items: items
-                                    .map(
-                                      (e) => DropdownMenuItem<String>(
-                                        alignment: Alignment.centerLeft,
-                                        value: e,
-                                        child: Text(e),
-                                      ),
-                                    )
-                                    .toList(),
-                                icon: const Icon(
-                                  Icons.arrow_drop_down,
-                                  color: Constants.kPrimaryThemeColor,
-                                  size: 26.0,
-                                ),
-                                validator: (String? value) {
-                                  if (value == null) {
-                                    return 'Required user level';
-                                  } else {
-                                    return null;
-                                  }
-                                },
-                                onChanged: (value) {
-                                  defaultValue = value!;
-                                  print(defaultValue);
-                                },
                               ),
                             ),
                             SizedBox(height: size.height * 0.010),
@@ -272,7 +293,7 @@ class _LoginScreenState extends State<LoginScreen> {
                                     ),
                               onPressed: () {
                                 if (_formKey.currentState!.validate()) {
-                                  login(
+                                  ApiClient.login(
                                       context,
                                       _userNameController.text
                                           .trim()
@@ -285,22 +306,6 @@ class _LoginScreenState extends State<LoginScreen> {
                                 } else {
                                   print('Error');
                                 }
-                                // if (_formKey.currentState!.validate()) {
-                                //   setState(() {
-                                //     _isLoading = true;
-                                //   });
-                                //   Future.delayed(const Duration(seconds: 2),
-                                //       () {
-                                //     Navigator.of(context).push(
-                                //         MaterialPageRoute(
-                                //             builder: (context) =>
-                                //                 const SamitiScreen()));
-                                //   }).then((value) {
-                                //     setState(() {
-                                //       _isLoading = false;
-                                //     });
-                                //   });
-                                // } else {}
                               },
                             ),
                           ],
@@ -344,41 +349,4 @@ class _LoginScreenState extends State<LoginScreen> {
       return null;
     }
   }
-
-  void login(context, username, password) async {
-    final http.Response response = await http
-        .get(Uri.parse('${APIs.LOGIN_API}?u_name=$username&mobile=$password'));
-
-    var data = jsonDecode(response.body.toString());
-    try {
-      if (response.statusCode == 200) {
-        print('Data : ${data['status']}');
-        if (data['status'] == 'true') {
-          // print('Data : $data');
-          print('Login successfully');
-
-          // pageRoute(data['status']);
-
-          SharedPreferences preferences = await SharedPreferences.getInstance();
-          preferences.setBool('login', true);
-          Navigator.of(context).pushReplacement(
-              MaterialPageRoute(builder: (context) => const SamitiScreen()));
-        } else {
-          // print(data['message']);
-          showSnackBar(context, 'ok1 ${data['message']}');
-        }
-      } else {
-        showSnackBar(context, 'ok2 ${data['message']}');
-      }
-    } catch (e) {
-      print(e.toString());
-    }
-  }
-
-  // void pageRoute(String status) async {
-  //   SharedPreferences preferences = await SharedPreferences.getInstance();
-  //   await preferences.setString('login', status);
-  //   Navigator.of(context)
-  //       .push(MaterialPageRoute(builder: (context) => const SamitiScreen()));
-  // }
 }

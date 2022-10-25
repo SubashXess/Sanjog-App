@@ -8,7 +8,9 @@ import 'package:flutter/src/gestures/long_press.dart';
 import 'package:sonjagapp/Components/showsnackbar.dart';
 import 'package:sonjagapp/Constants/constants.dart';
 import 'package:sonjagapp/Error%20Screens/no_data_found.dart';
+import 'package:sonjagapp/Models/search_model.dart';
 import 'package:sonjagapp/Models/user_data_model.dart';
+import 'package:sonjagapp/Providers/voter_list_provider.dart';
 import 'package:sonjagapp/Screens/edit_voter_details.dart';
 import 'package:sonjagapp/Services/service.dart';
 import 'package:sonjagapp/Test%20Screens/test_screen.dart';
@@ -37,13 +39,13 @@ class _VoterListScreenState extends State<VoterListScreen> {
 
   // models
   List<UserDataModel> voterItems = [];
+  List<UserDataModel> _searchResultsItems = [];
 
   // Variables
   bool _isLoaded = false;
   int page = 1;
-  bool _hasNoData = false;
   String searchQuery = '';
-  List<UserDataModel> _searchResultsItems = [];
+  bool _hasNoData = false;
   Timer? debouncer;
 
   @override
@@ -52,13 +54,6 @@ class _VoterListScreenState extends State<VoterListScreen> {
     init();
     _searchFocusNode = FocusNode()..addListener(onListen);
     _scrollController.addListener(onListen);
-    // _scrollController.addListener(() {
-    //   if (_scrollController.position.maxScrollExtent ==
-    //       _scrollController.offset) {
-    //     ++page;
-    //     init();
-    //   }
-    // });
   }
 
   @override
@@ -79,17 +74,20 @@ class _VoterListScreenState extends State<VoterListScreen> {
 
   Future init() async {
     voterItems = (await APIServices.getVoterList(
-        boothNo: widget.boothNo, context, name: ''))!;
+            boothNo: widget.boothNo, context, name: ''))!
+        .where((element) {
+      final lowerBoothNo = element.boothNo!.trim().toLowerCase().toString();
+      final filterData = widget.boothNo.trim().toLowerCase().toString();
+      return lowerBoothNo.contains(filterData);
+    }).toList();
 
     if (voterItems.isNotEmpty) {
       setState(() {
-        _hasNoData = false;
         _isLoaded = true;
       });
     } else {
       setState(() {
         _isLoaded = false;
-        _hasNoData = true;
       });
     }
   }
@@ -105,12 +103,12 @@ class _VoterListScreenState extends State<VoterListScreen> {
   @override
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
-    print('object');
+
     return GestureDetector(
       onTap: () => FocusScope.of(context).unfocus(),
       child: Scaffold(
         backgroundColor: Colors.grey.shade50,
-        body: !_hasNoData
+        body: _isLoaded
             ? CustomScrollView(
                 shrinkWrap: true,
                 slivers: [
@@ -193,58 +191,48 @@ class _VoterListScreenState extends State<VoterListScreen> {
                       ),
                     ),
                   ),
-                  _isLoaded
-                      ? SliverToBoxAdapter(
-                          child: SizedBox(
-                          width: double.infinity,
-                          child: SingleChildScrollView(
-                            physics: const BouncingScrollPhysics(),
-                            child: Padding(
-                              padding: const EdgeInsets.only(
-                                  right: 10.0,
-                                  left: 10.0,
-                                  top: 10.0,
-                                  bottom: 0.0),
-                              child: Column(
-                                children: [
-                                  ListView.builder(
-                                    itemCount: _searchController.text.isEmpty
-                                        ? voterItems.length
-                                        : _searchResultsItems.length,
-                                    shrinkWrap: true,
-                                    padding: EdgeInsets.zero,
-                                    controller: _scrollController,
-                                    itemBuilder: (context, index) {
-                                      if (_searchResultsItems.isEmpty ||
-                                          _searchController.text.isEmpty) {
-                                        return _buildVoterCard(
-                                            size, voterItems[index]);
-                                      } else {
-                                        print(_searchResultsItems.length);
-                                        return _buildVoterCard(
-                                            size, _searchResultsItems[index]);
-                                      }
-                                    },
-                                  )
-                                ],
+                  // _isLoaded
+                  //     ?
+                  SliverToBoxAdapter(
+                    child: SizedBox(
+                      width: double.infinity,
+                      child: SingleChildScrollView(
+                        physics: const BouncingScrollPhysics(),
+                        child: Padding(
+                          padding: const EdgeInsets.only(
+                              right: 10.0, left: 10.0, top: 10.0, bottom: 0.0),
+                          child: Column(
+                            children: [
+                              ListView.builder(
+                                itemCount: _searchController.text.isEmpty
+                                    ? voterItems.length
+                                    : _searchResultsItems.length,
+                                shrinkWrap: true,
+                                padding: EdgeInsets.zero,
+                                controller: _scrollController,
+                                itemBuilder: (context, index) {
+                                  if (_searchResultsItems.isEmpty ||
+                                      _searchController.text.isEmpty) {
+                                    return _buildVoterCard(
+                                        size, voterItems[index]);
+                                  } else {
+                                    print(_searchResultsItems.length);
+                                    return _buildVoterCard(
+                                        size, _searchResultsItems[index]);
+                                  }
+                                },
                               ),
-                            ),
-                          ),
-                        ))
-                      : const SliverFillRemaining(
-                          child: Center(
-                            child: CircularProgressIndicator(),
+                            ],
                           ),
                         ),
+                      ),
+                    ),
+                  ),
                 ],
               )
-            : ErrorNoDataFound(
-                onPressed: () => Navigator.pop(context),
-                assets: 'assets/raw/nodata.json',
-                header: 'No Data',
-                desc: 'Maybe go back and try a different Booth number?',
-                btnlabel: 'Go back',
-                btnicon: Icons.arrow_back),
+            : const Center(
+                child: CircularProgressIndicator(),
+              ),
       ),
     );
   }
@@ -355,25 +343,25 @@ class _VoterListScreenState extends State<VoterListScreen> {
               )
             ],
           ),
-          const SizedBox(height: 10.0),
-          Wrap(
-            runSpacing: 10.0,
-            spacing: 10.0,
-            children: [
-              data.boothNo == null || data.boothNo == '0'
-                  ? const SizedBox(width: 0.0)
-                  : _buildCardItems(
-                      label: 'Booth No:', labelData: data.boothNo.toString()),
-              data.pageNo == null || data.pageNo == '0'
-                  ? const SizedBox(width: 0.0)
-                  : _buildCardItems(
-                      label: 'Page No:', labelData: data.pageNo.toString()),
-              data.serialNo == null || data.serialNo == '0'
-                  ? const SizedBox(width: 0.0)
-                  : _buildCardItems(
-                      label: 'Serial No:', labelData: data.serialNo.toString()),
-            ],
-          ),
+          // const SizedBox(height: 10.0),
+          // Wrap(
+          //   runSpacing: 10.0,
+          //   spacing: 10.0,
+          //   children: [
+          //     data.boothNo == null || data.boothNo == '0'
+          //         ? const SizedBox(width: 0.0)
+          //         : _buildCardItems(
+          //             label: 'Booth No:', labelData: data.boothNo.toString()),
+          //     data.pageNo == null || data.pageNo == '0'
+          //         ? const SizedBox(width: 0.0)
+          //         : _buildCardItems(
+          //             label: 'Page No:', labelData: data.pageNo.toString()),
+          //     data.serialNo == null || data.serialNo == '0'
+          //         ? const SizedBox(width: 0.0)
+          //         : _buildCardItems(
+          //             label: 'Serial No:', labelData: data.serialNo.toString()),
+          //   ],
+          // ),
           const SizedBox(height: 10.0),
           Row(
             mainAxisAlignment: MainAxisAlignment.start,
@@ -382,34 +370,23 @@ class _VoterListScreenState extends State<VoterListScreen> {
               SizedBox(
                 width: 100.0,
                 height: 100.0,
-                child: ClipRRect(
-                  borderRadius: BorderRadius.circular(4.0),
+                child: Card(
+                  margin: EdgeInsets.zero,
+                  color: Colors.grey.shade200,
+                  elevation: 0.0,
                   clipBehavior: Clip.antiAliasWithSaveLayer,
-                  child: InkWell(
-                    highlightColor: Colors.transparent,
-                    splashColor: Colors.transparent,
-                    onTap: () {
-                      print('Change photo');
-                    },
-                    child: Card(
-                      margin: EdgeInsets.zero,
-                      color: Colors.grey.shade200,
-                      elevation: 0.0,
-                      clipBehavior: Clip.antiAliasWithSaveLayer,
-                      shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(4.0)),
-                      child: data.photo == null
-                          ? Icon(
-                              Icons.person_rounded,
-                              color: Colors.grey.shade400,
-                              size: 46.0,
-                            )
-                          : CachedNetworkImage(
-                              imageUrl: data.photo.toString(),
-                              fit: BoxFit.contain,
-                            ),
-                    ),
-                  ),
+                  shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(4.0)),
+                  child: data.photo == null
+                      ? Icon(
+                          Icons.person_rounded,
+                          color: Colors.grey.shade400,
+                          size: 46.0,
+                        )
+                      : CachedNetworkImage(
+                          imageUrl: data.photo.toString(),
+                          fit: BoxFit.contain,
+                        ),
                 ),
               ),
               const SizedBox(width: 10.0),
@@ -437,8 +414,17 @@ class _VoterListScreenState extends State<VoterListScreen> {
                     const SizedBox(height: 4.0),
                     Row(
                       children: [
+                        const Text(
+                          'Voter No:',
+                          style: TextStyle(
+                            color: Colors.black38,
+                            fontWeight: FontWeight.w500,
+                            fontSize: Constants.fontRegular,
+                          ),
+                        ),
+                        const SizedBox(width: 6.0),
                         Text(
-                          data.voterNo.toString(),
+                          data.voterNo != null ? data.voterNo.toString() : '',
                           style: const TextStyle(
                             color: Colors.black,
                             fontWeight: FontWeight.bold,
@@ -451,8 +437,10 @@ class _VoterListScreenState extends State<VoterListScreen> {
                             : Card(
                                 margin: EdgeInsets.zero,
                                 elevation: 0.0,
-                                color: Constants.kSecondaryThemeColor
-                                    .withOpacity(0.8),
+                                color: data.position == 'PP'
+                                    ? Constants.kSecondaryThemeColor
+                                        .withOpacity(0.8)
+                                    : Colors.green.shade300,
                                 shape: RoundedRectangleBorder(
                                     borderRadius: BorderRadius.circular(2.0)),
                                 child: Padding(
@@ -469,6 +457,34 @@ class _VoterListScreenState extends State<VoterListScreen> {
                                   ),
                                 ),
                               ),
+                      ],
+                    ),
+                    const SizedBox(height: 4.0),
+                    Row(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      children: [
+                        const Text(
+                          'Aadhar No:',
+                          style: TextStyle(
+                            color: Colors.black38,
+                            fontWeight: FontWeight.w500,
+                            fontSize: Constants.fontRegular,
+                          ),
+                        ),
+                        const SizedBox(width: 6.0),
+                        Expanded(
+                          child: Text(
+                            data.adharNo != null
+                                ? data.adharNo.toString()
+                                : '123456789012',
+                            style: const TextStyle(
+                              color: Colors.black,
+                              fontWeight: FontWeight.bold,
+                              fontSize: Constants.fontRegular,
+                            ),
+                          ),
+                        ),
                       ],
                     ),
                   ],
@@ -548,7 +564,7 @@ class _VoterListScreenState extends State<VoterListScreen> {
             children: [
               Expanded(
                 child: _buildTextButtonWidget(
-                  onPressed: () {},
+                  onPressed: () => _draggableScrollableSheet(),
                   label: 'Add Family Members',
                   bgColor: Constants.kLightThemeColor,
                   textColor: Constants.kSecondaryThemeColor,
@@ -692,14 +708,32 @@ class _VoterListScreenState extends State<VoterListScreen> {
     );
   }
 
+  Widget _draggableScrollableSheet() {
+    return DraggableScrollableSheet(
+        initialChildSize: 0.3,
+        minChildSize: 0.13,
+        maxChildSize: 0.9,
+        builder: (context, scrollController) {
+          return Padding(
+            padding: EdgeInsets.all(10.0),
+            child: Container(
+              child: ListView.builder(
+                itemCount: 20,
+                controller: scrollController,
+                shrinkWrap: true,
+                itemBuilder: (context, index) {
+                  return Text('Data : $index');
+                },
+              ),
+            ),
+          );
+        });
+  }
+
   Future searchVoterId(String query) async => debounce(() async {
-        final searchResult =
-            // await APIServices.getSearchVoterList(context, name: query);
-            await APIServices.getVoterList(context,
-                boothNo: widget.boothNo, name: query);
-
+        final searchResult = await APIServices.getVoterList(context,
+            boothNo: widget.boothNo, name: query);
         if (!mounted) return;
-
         setState(() {
           searchQuery = query;
           _searchResultsItems = searchResult!;
