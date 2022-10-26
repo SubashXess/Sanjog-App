@@ -4,16 +4,15 @@ import 'dart:async';
 
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/src/gestures/long_press.dart';
-import 'package:sonjagapp/Components/showsnackbar.dart';
+import 'package:flutter/services.dart';
+import 'package:sonjagapp/Components/or_divider.dart';
 import 'package:sonjagapp/Constants/constants.dart';
-import 'package:sonjagapp/Error%20Screens/no_data_found.dart';
-import 'package:sonjagapp/Models/search_model.dart';
 import 'package:sonjagapp/Models/user_data_model.dart';
-import 'package:sonjagapp/Providers/voter_list_provider.dart';
 import 'package:sonjagapp/Screens/edit_voter_details.dart';
 import 'package:sonjagapp/Services/service.dart';
-import 'package:sonjagapp/Test%20Screens/test_screen.dart';
+import 'package:sonjagapp/Services/textinputformatter_services.dart';
+import 'package:sonjagapp/Widgets/button_widget.dart';
+import 'package:sonjagapp/Widgets/textformfield_widget.dart';
 
 class VoterListScreen extends StatefulWidget {
   const VoterListScreen({super.key, required this.boothNo, this.pageNo});
@@ -26,6 +25,11 @@ class VoterListScreen extends StatefulWidget {
 }
 
 class _VoterListScreenState extends State<VoterListScreen> {
+  // form validate global state
+  final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
+  final GlobalKey<FormState> _formKey2 = GlobalKey<FormState>();
+  final GlobalKey<FormState> _formKey3 = GlobalKey<FormState>();
+
 // AnimationController
 
 // ScrollController
@@ -33,9 +37,17 @@ class _VoterListScreenState extends State<VoterListScreen> {
 
   // TextEditingController
   final TextEditingController _searchController = TextEditingController();
+  final TextEditingController _voterNoController = TextEditingController();
+  final TextEditingController _nameController = TextEditingController();
+  final TextEditingController _relationNameController = TextEditingController();
+  final TextEditingController _aadharController = TextEditingController();
 
   // FocusNode
   late FocusNode _searchFocusNode;
+  late FocusNode _voterNoNode;
+  late FocusNode _nameNode;
+  late FocusNode _relNameNode;
+  late FocusNode _aadharNoNode;
 
   // models
   List<UserDataModel> voterItems = [];
@@ -45,8 +57,8 @@ class _VoterListScreenState extends State<VoterListScreen> {
   bool _isLoaded = false;
   int page = 1;
   String searchQuery = '';
-  bool _hasNoData = false;
   Timer? debouncer;
+  final bool _autovalidateMode = false;
 
   @override
   void initState() {
@@ -54,6 +66,14 @@ class _VoterListScreenState extends State<VoterListScreen> {
     init();
     _searchFocusNode = FocusNode()..addListener(onListen);
     _scrollController.addListener(onListen);
+    _voterNoController.addListener(onListen);
+    _aadharController.addListener(onListen);
+    _nameController.addListener(onListen);
+    _relationNameController.addListener(onListen);
+    _voterNoNode = FocusNode()..addListener(onListen);
+    _nameNode = FocusNode()..addListener(onListen);
+    _relNameNode = FocusNode()..addListener(onListen);
+    _aadharNoNode = FocusNode()..addListener(onListen);
   }
 
   @override
@@ -65,6 +85,23 @@ class _VoterListScreenState extends State<VoterListScreen> {
     _searchFocusNode.dispose();
     _searchFocusNode.removeListener(onListen);
     debouncer?.cancel();
+
+    _voterNoController.dispose();
+    _voterNoController.removeListener(onListen);
+    _aadharController.dispose();
+    _aadharController.removeListener(onListen);
+    _nameController.dispose();
+    _nameController.removeListener(onListen);
+    _relationNameController.dispose();
+    _relationNameController.removeListener(onListen);
+    _voterNoNode.dispose();
+    _voterNoNode.removeListener(onListen);
+    _nameNode.dispose();
+    _nameNode.removeListener(onListen);
+    _aadharNoNode.dispose();
+    _aadharNoNode.removeListener(onListen);
+    _relNameNode.dispose();
+    _relNameNode.removeListener(onListen);
     super.dispose();
   }
 
@@ -301,6 +338,7 @@ class _VoterListScreenState extends State<VoterListScreen> {
                 splashColor: Colors.transparent,
                 highlightColor: Colors.transparent,
                 onTap: () {
+                  print(data.position);
                   Navigator.push(
                       context,
                       MaterialPageRoute(
@@ -377,7 +415,7 @@ class _VoterListScreenState extends State<VoterListScreen> {
                   clipBehavior: Clip.antiAliasWithSaveLayer,
                   shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(4.0)),
-                  child: data.photo == null
+                  child: data.photo == '' || data.photo == null
                       ? Icon(
                           Icons.person_rounded,
                           color: Colors.grey.shade400,
@@ -475,9 +513,7 @@ class _VoterListScreenState extends State<VoterListScreen> {
                         const SizedBox(width: 6.0),
                         Expanded(
                           child: Text(
-                            data.adharNo != null
-                                ? data.adharNo.toString()
-                                : '123456789012',
+                            data.adharNo != null ? data.adharNo.toString() : '',
                             style: const TextStyle(
                               color: Colors.black,
                               fontWeight: FontWeight.bold,
@@ -564,7 +600,7 @@ class _VoterListScreenState extends State<VoterListScreen> {
             children: [
               Expanded(
                 child: _buildTextButtonWidget(
-                  onPressed: () => _draggableScrollableSheet(),
+                  onPressed: () => _draggableScrollableSheet(context),
                   label: 'Add Family Members',
                   bgColor: Constants.kLightThemeColor,
                   textColor: Constants.kSecondaryThemeColor,
@@ -708,26 +744,169 @@ class _VoterListScreenState extends State<VoterListScreen> {
     );
   }
 
-  Widget _draggableScrollableSheet() {
-    return DraggableScrollableSheet(
-        initialChildSize: 0.3,
-        minChildSize: 0.13,
-        maxChildSize: 0.9,
-        builder: (context, scrollController) {
-          return Padding(
-            padding: EdgeInsets.all(10.0),
-            child: Container(
-              child: ListView.builder(
-                itemCount: 20,
-                controller: scrollController,
+  Future _draggableScrollableSheet(context) {
+    Size size = MediaQuery.of(context).size;
+    return showModalBottomSheet(
+      context: context,
+      backgroundColor: Colors.transparent,
+      isDismissible: true,
+      enableDrag: true,
+      useSafeArea: true,
+      isScrollControlled: true, // set this to true
+      builder: (context) {
+        return GestureDetector(
+          onTap: () => FocusScope.of(context).unfocus(),
+          child: Card(
+              color: Colors.white,
+              margin: EdgeInsets.zero,
+              shape: const RoundedRectangleBorder(
+                  borderRadius:
+                      BorderRadius.vertical(top: Radius.circular(6.0))),
+              child: ListView(
                 shrinkWrap: true,
-                itemBuilder: (context, index) {
-                  return Text('Data : $index');
-                },
-              ),
-            ),
-          );
-        });
+                controller: _scrollController,
+                padding: EdgeInsets.only(
+                    top: 10.0,
+                    right: 10.0,
+                    left: 10.0,
+                    bottom: MediaQuery.of(context).viewInsets.bottom + 10.0),
+                children: [
+                  SizedBox(
+                    width: size.width,
+                    child: const Text(
+                      'Search Family Members',
+                      textAlign: TextAlign.center,
+                      style: TextStyle(
+                        color: Colors.black,
+                        fontSize: Constants.fontLarge,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 20.0),
+                  SizedBox(
+                    width: size.width,
+                    child: Form(
+                      key: _formKey,
+                      child: FormFieldWidget(
+                        controller: _voterNoController,
+                        autovalidateMode: _autovalidateMode
+                            ? AutovalidateMode.onUserInteraction
+                            : AutovalidateMode.disabled,
+                        focusNode: _voterNoNode,
+                        hintText: 'Search by Voter ID',
+                        isPrefixIcon: false,
+                        isSuffixIcon: false,
+                        // maxLength: 10,
+                        keyboardType: TextInputType.text,
+                        textCapitalization: TextCapitalization.characters,
+                        inputFormatters: <TextInputFormatter>[
+                          // UpperCaseTextFormatter(),
+                          // FilteringTextInputFormatter.allow(
+                          // RegExp("[0-9a-zA-Z]"))
+                          FilteringTextInputFormatter.allow(
+                              RegExp(r'^[A-Za-z]{1,3}')),
+                          FilteringTextInputFormatter.allow(
+                              RegExp(r'[0-9]{1,7}$')),
+                        ],
+                        onChanged: (value) {
+                          print(value);
+                        },
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 10.0),
+                  orDivider(
+                      label: const Text('Or'),
+                      borderColor: Colors.grey.shade400),
+                  const SizedBox(height: 10.0),
+                  SizedBox(
+                    width: size.width,
+                    child: Form(
+                      key: _formKey2,
+                      child: FormFieldWidget(
+                        controller: _aadharController,
+                        autovalidateMode: _autovalidateMode
+                            ? AutovalidateMode.onUserInteraction
+                            : AutovalidateMode.disabled,
+                        focusNode: _aadharNoNode,
+                        hintText: 'Search by Aadhar Number',
+                        isPrefixIcon: false,
+                        isSuffixIcon: false,
+                        maxLength: 12,
+                        keyboardType: TextInputType.number,
+                        onChanged: (value) {},
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 10.0),
+                  orDivider(
+                      label: const Text('Or'),
+                      borderColor: Colors.grey.shade400),
+                  const SizedBox(height: 10.0),
+                  SizedBox(
+                    width: size.width,
+                    child: Form(
+                      key: _formKey3,
+                      child: Row(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Expanded(
+                            child: FormFieldWidget(
+                              controller: _nameController,
+                              autovalidateMode: _autovalidateMode
+                                  ? AutovalidateMode.onUserInteraction
+                                  : AutovalidateMode.disabled,
+                              focusNode: _nameNode,
+                              hintText: 'Name',
+                              isPrefixIcon: false,
+                              isSuffixIcon: false,
+                              keyboardType: TextInputType.name,
+                              onChanged: (value) {},
+                            ),
+                          ),
+                          const SizedBox(width: 10.0),
+                          Expanded(
+                            child: FormFieldWidget(
+                              controller: _relationNameController,
+                              autovalidateMode: _autovalidateMode
+                                  ? AutovalidateMode.onUserInteraction
+                                  : AutovalidateMode.disabled,
+                              focusNode: _relNameNode,
+                              hintText: 'Relation Name',
+                              isPrefixIcon: false,
+                              isSuffixIcon: false,
+                              keyboardType: TextInputType.name,
+                              onChanged: (value) {},
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 16.0),
+                  MaterialButtonWidget(
+                    size: size,
+                    widget: const Text(
+                      'Search',
+                      style: TextStyle(color: Colors.white),
+                    ),
+                    onPressed: () {
+                      if (_formKey.currentState!.validate() ||
+                          _formKey2.currentState!.validate() ||
+                          _formKey3.currentState!.validate()) {
+                        print('Success');
+                      } else {
+                        print('Error');
+                      }
+                    },
+                  ),
+                ],
+              )),
+        );
+      },
+    );
   }
 
   Future searchVoterId(String query) async => debounce(() async {

@@ -10,7 +10,8 @@ String getVoterListToJson(List<UserDataModel> data) =>
     json.encode(List<dynamic>.from(data.map((e) => e.toJson())));
 
 class UserDataModel {
-  String? uid;
+  String? id;
+  String? userId;
   String? familyId; // add\
   String? status;
   String? acNo;
@@ -39,7 +40,8 @@ class UserDataModel {
   List<UserDataModel>? members;
 
   UserDataModel({
-    required this.uid,
+    required this.id,
+    required this.userId,
     required this.familyId,
     required this.status,
     required this.acNo,
@@ -70,7 +72,8 @@ class UserDataModel {
 
   factory UserDataModel.fromJson(Map<String, dynamic> json) {
     return UserDataModel(
-      uid: json['id'],
+      id: json['id'],
+      userId: json['user_id'],
       familyId: json['family_id'],
       status: json['status'],
       acNo: json['acNo'],
@@ -102,7 +105,8 @@ class UserDataModel {
 
   Map<String, Object?> toJson() {
     return {
-      'id': uid,
+      'id': id,
+      'user_id' : userId,
       'family_id': familyId,
       'status': status,
       'acNo': acNo,

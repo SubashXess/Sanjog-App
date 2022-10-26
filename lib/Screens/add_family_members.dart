@@ -3,6 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:sonjagapp/Components/gradients.dart';
 import 'package:sonjagapp/Components/or_divider.dart';
 import 'package:sonjagapp/Constants/constants.dart';
+import 'package:sonjagapp/Services/textinputformatter_services.dart';
 import 'package:sonjagapp/Widgets/button_widget.dart';
 import 'package:sonjagapp/Widgets/textformfield_widget.dart';
 
@@ -386,10 +387,10 @@ class _AddFamilyMembersState extends State<AddFamilyMembers> {
   }
 }
 
-class UpperCaseTextFormatter extends TextInputFormatter {
-  @override
-  TextEditingValue formatEditUpdate(
-      TextEditingValue oldValue, TextEditingValue newValue) {
-    return newValue.copyWith(text: newValue.text.toUpperCase());
-  }
-}
+// class UpperCaseTextFormatter extends TextInputFormatter {
+//   @override
+//   TextEditingValue formatEditUpdate(
+//       TextEditingValue oldValue, TextEditingValue newValue) {
+//     return newValue.copyWith(text: newValue.text.toUpperCase());
+//   }
+// }

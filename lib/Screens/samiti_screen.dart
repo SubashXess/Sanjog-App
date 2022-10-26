@@ -518,9 +518,7 @@ class _SamitiScreenState extends State<SamitiScreen> {
                               iconcolor: const Color(0xFF4267B2),
                               splashColor: const Color(0xFFA6B8DE),
                               assetsurl: 'assets/svg/facebook-f.svg',
-                              onTap: () {
-                                SocialLink.openFacebook();
-                              },
+                              onTap: ()=> SocialLink.openFacebook(),
                             ),
                             CircleIconButtonWidget(
                               // bgcolor: const Color(0xFFECF7FE),
@@ -529,9 +527,7 @@ class _SamitiScreenState extends State<SamitiScreen> {
                               splashColor: const Color(0xFF8BCFF8),
                               iconcolor: const Color(0xFF1DA1F2),
                               assetsurl: 'assets/svg/twitter.svg',
-                              onTap: () {
-                                SocialLink.openTwitter();
-                              },
+                              onTap: () => SocialLink.openTwitter(),
                             ),
                             CircleIconButtonWidget(
                               // bgcolor: const Color(0xFFF6EFFA),
@@ -541,9 +537,7 @@ class _SamitiScreenState extends State<SamitiScreen> {
                               // iconcolor: const Color(0xffbc2a8d),
                               isPng: true,
                               assetsurl: 'assets/icons/instagram.png',
-                              onTap: () {
-                                SocialLink.openInstagram();
-                              },
+                              onTap: ()=> SocialLink.openInstagram(),
                             ),
                             CircleIconButtonWidget(
                               // bgcolor: const Color(0xFFFFEBEB),
@@ -552,9 +546,7 @@ class _SamitiScreenState extends State<SamitiScreen> {
                               splashColor: const Color(0xFFFF8585),
                               // iconcolor: Colors.white,
                               assetsurl: 'assets/svg/youtube.svg',
-                              onTap: () {
-                                SocialLink.openYoutube();
-                              },
+                              onTap: () =>  SocialLink.openYoutube(),
                             ),
                             CircleIconButtonWidget(
                               // bgcolor: const Color(0xFFFEF4EB),
@@ -565,9 +557,7 @@ class _SamitiScreenState extends State<SamitiScreen> {
                               isPng: true,
                               isModi: true,
                               assetsurl: 'assets/modi.png',
-                              onTap: () {
-                                SocialLink.openModi();
-                              },
+                              onTap: () =>  SocialLink.openModi(),
                             ),
                           ],
                         ),

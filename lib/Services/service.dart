@@ -86,21 +86,44 @@ class APIServices {
     }
   }
 
-  static Future<List<UserDataModel>?> updateUserData(context,
-      {required String address}) async {
+  static Future<String> updateUserData(
+    context, {
+    required String address,
+    required String id,
+    required String loginUserId,
+    required String photo,
+    required String position,
+    required String category,
+    required String mobile,
+    required String wpNumber,
+    required String dob,
+    required String dom,
+    required String bloodGroup,
+    required String postBJP,
+    required String socialOrg,
+  }) async {
     Client client = http.Client();
     Uri uri = Uri.parse(APIs.USER_DATA_UPDATE);
     try {
-      Response response = await client.post(
-        uri,
-        body: jsonEncode(<String, dynamic>{
-          'address': address,
-        }),
-      );
+      Response response = await client.post(uri, body: <String, String>{
+        'id': id, // voter user for each
+        'user_id':
+            loginUserId, // assembly user id who is update this / login user
+        'photo': photo,
+        'position': position,
+        'category': category,
+        'mobileNo': mobile,
+        'whatsappNo': wpNumber,
+        'address': address,
+        'dob': dob,
+        'dom': dom,
+        'blood_group': bloodGroup,
+        'postBJP': postBJP,
+        'soc_org': socialOrg,
+      });
       if (response.statusCode == 200) {
-        String json = response.body;
-        print(response.body);
-        return getVoterListFromJson(json);
+        var jsonResponse = json.decode(response.body);
+        return jsonResponse;
       } else {
         return Future.error('Connection Error');
       }
@@ -108,32 +131,6 @@ class APIServices {
       return Future.error('Unexpected Error $e');
     }
   }
-
-  // static Future<List<UserDataModel>?> getSearchVoterList(context,
-  //     {required String name}) async {
-  //   // int limit = 10;
-  //   Client client = http.Client();
-  //   Uri uri = Uri.parse('${APIs.VOTER_SEARCH_BY_NAME_LIST_API}?name=$name');
-  //   try {
-  //     Response response = await client.get(uri);
-  //     if (response.statusCode == 200) {
-  //       String json = response.body;
-
-  //       return getVoterListFromJson(json).where((items) {
-  //         final nameLower = items.name!.toLowerCase();
-  //         final searchLower = name.toLowerCase();
-  //         // final relationLower = items.relationName!.toLowerCase();
-  //         // final voterLower = items.voterNo!.toLowerCase();
-  //         return nameLower.contains(
-  //             searchLower); // add others using || relationLower || voterLower
-  //       }).toList();
-  //     } else {
-  //       return showSnackBar(context, 'Connection error');
-  //     }
-  //   } catch (e) {
-  //     throw Exception('Unexpected error occured!');
-  //   }
-  // }
 }
 
 class ApiClient {

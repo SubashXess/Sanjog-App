@@ -2,8 +2,6 @@
 
 import 'dart:io';
 import 'package:path/path.dart';
-import 'package:http_parser/http_parser.dart';
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:image_picker/image_picker.dart';
@@ -14,7 +12,6 @@ import 'package:sonjagapp/Components/showsnackbar.dart';
 import 'package:sonjagapp/Models/user_data_model.dart';
 import 'package:sonjagapp/Services/service.dart';
 import 'package:sonjagapp/Widgets/textformfield_widget.dart';
-import 'package:http/http.dart' as http;
 import '../Constants/constants.dart';
 import '../Widgets/button_widget.dart';
 
@@ -49,10 +46,10 @@ class _EditDetailsScreenState extends State<EditDetailsScreen> {
   String? marriage;
 
   // Initial Selected Value
-  String positionDefaultValue = '';
-  String categoryDefaultValue = '';
-  String bloodGroupDefaultValue = '';
-  String socialOrgDefaultValue = '';
+  String? positionDefaultValue;
+  String? categoryDefaultValue;
+  String? bloodGroupDefaultValue;
+  String? socialOrgDefaultValue;
 
   // List of items in our dropdown menu
   List<String> positionItems = ['PP', 'PC'];
@@ -95,6 +92,18 @@ class _EditDetailsScreenState extends State<EditDetailsScreen> {
   }
 
   void init() {
+    // positionDefaultValue = widget.details!.position != 'null'
+    //     ? widget.details!.position.toString()
+    //     : '';
+    // categoryDefaultValue = widget.details!.category != 'null'
+    //     ? widget.details!.category.toString()
+    //     : '';
+    // bloodGroupDefaultValue = widget.details!.bloodGroup != 'null'
+    //     ? widget.details!.position.toString()
+    //     : '';
+    // socialOrgDefaultValue = widget.details!.socialOrg != 'null'
+    //     ? widget.details!.socialOrg.toString()
+    //     : '';
     _mobileNoController.text = (widget.details!.mobileNo.toString() != 'null'
         ? widget.details!.mobileNo.toString()
         : _mobileNoController.text);
@@ -123,6 +132,7 @@ class _EditDetailsScreenState extends State<EditDetailsScreen> {
   @override
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
+    print(_mobileNoController.text);
 
     return GestureDetector(
       onTap: () => FocusScope.of(context).unfocus(),
@@ -271,6 +281,32 @@ class _EditDetailsScreenState extends State<EditDetailsScreen> {
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
                           const Text(
+                            'Aadhar No:',
+                            style: TextStyle(
+                              color: Colors.black38,
+                              fontSize: Constants.fontRegular,
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                          const SizedBox(width: 10.0),
+                          Text(
+                            widget.details!.adharNo != null
+                                ? widget.details!.adharNo.toString()
+                                : '',
+                            style: const TextStyle(
+                              color: Colors.black54,
+                              fontSize: Constants.fontRegular,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 6.0),
+                      Row(
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          const Text(
                             'AC No:',
                             style: TextStyle(
                               color: Colors.black38,
@@ -297,11 +333,15 @@ class _EditDetailsScreenState extends State<EditDetailsScreen> {
                             child: SizedBox(
                               width: size.width,
                               child: DropdownButtonFormField<String>(
-                                value: positionDefaultValue.isNotEmpty
-                                    ? positionDefaultValue
-                                    : widget.details!.position != null
-                                        ? widget.details!.position!.toString()
-                                        : null,
+                                // value: positionDefaultValue.isNotEmpty ||
+                                //         positionDefaultValue != ''
+                                //     ? positionDefaultValue
+                                //     : widget.details!.position != null ||
+                                //             widget.details!.position != ''
+                                //         ? widget.details!.position!.toString()
+                                //         : null,
+                                value: positionDefaultValue ??
+                                    widget.details!.position,
                                 hint: const Text(
                                   'Position',
                                   style: TextStyle(
@@ -328,6 +368,7 @@ class _EditDetailsScreenState extends State<EditDetailsScreen> {
                                       fontSize: Constants.fontSmall,
                                       fontWeight: FontWeight.normal),
                                 ),
+                                borderRadius: BorderRadius.circular(6.0),
                                 items: positionItems
                                     .map(
                                       (String value) =>
@@ -343,9 +384,6 @@ class _EditDetailsScreenState extends State<EditDetailsScreen> {
                                             fontWeight: FontWeight.w500,
                                           ),
                                         ),
-                                        onTap: () {
-                                          print(value);
-                                        },
                                       ),
                                     )
                                     .toList(),
@@ -354,11 +392,9 @@ class _EditDetailsScreenState extends State<EditDetailsScreen> {
                                   color: Colors.grey.shade400,
                                   size: 26.0,
                                 ),
-                                validator: (String? value) {
-                                  return null;
-                                },
                                 onChanged: (value) {
                                   positionDefaultValue = value!;
+                                  print(positionDefaultValue);
                                 },
                               ),
                             ),
@@ -368,11 +404,15 @@ class _EditDetailsScreenState extends State<EditDetailsScreen> {
                             child: SizedBox(
                               width: size.width,
                               child: DropdownButtonFormField<String>(
-                                value: categoryDefaultValue.isNotEmpty
-                                    ? categoryDefaultValue
-                                    : widget.details!.category != null
-                                        ? widget.details!.category!.toString()
-                                        : null,
+                                // value: categoryDefaultValue.isNotEmpty ||
+                                //         categoryDefaultValue != ''
+                                //     ? categoryDefaultValue
+                                //     : widget.details!.category != null ||
+                                //             widget.details!.category != ''
+                                //         ? widget.details!.category!.toString()
+                                //         : null,
+                                value: categoryDefaultValue,
+
                                 hint: const Text(
                                   'Category',
                                   style: TextStyle(
@@ -399,6 +439,7 @@ class _EditDetailsScreenState extends State<EditDetailsScreen> {
                                       fontSize: Constants.fontSmall,
                                       fontWeight: FontWeight.normal),
                                 ),
+                                borderRadius: BorderRadius.circular(6.0),
                                 items: categoryItems
                                     .map(
                                       (String value) =>
@@ -414,9 +455,6 @@ class _EditDetailsScreenState extends State<EditDetailsScreen> {
                                             fontWeight: FontWeight.w500,
                                           ),
                                         ),
-                                        onTap: () {
-                                          print(value);
-                                        },
                                       ),
                                     )
                                     .toList(),
@@ -425,16 +463,9 @@ class _EditDetailsScreenState extends State<EditDetailsScreen> {
                                   color: Colors.grey.shade400,
                                   size: 26.0,
                                 ),
-                                // validator: (String? value) {
-                                //   if (value == null) {
-                                //     return 'Required';
-                                //   } else {
-                                //     return null;
-                                //   }
-                                // },
                                 onChanged: (value) {
                                   categoryDefaultValue = value!;
-                                  // print(defaultValue);
+                                  print(categoryDefaultValue);
                                 },
                               ),
                             ),
@@ -659,13 +690,15 @@ class _EditDetailsScreenState extends State<EditDetailsScreen> {
                                 SizedBox(
                                   width: size.width,
                                   child: DropdownButtonFormField<String>(
-                                    value: bloodGroupDefaultValue.isNotEmpty
-                                        ? bloodGroupDefaultValue
-                                        : widget.details!.bloodGroup != null
-                                            ? widget.details!.bloodGroup!
-                                                .toString()
-                                            : null,
-
+                                    // value: bloodGroupDefaultValue.isNotEmpty ||
+                                    //         bloodGroupDefaultValue != ''
+                                    //     ? bloodGroupDefaultValue
+                                    //     : widget.details!.bloodGroup != null ||
+                                    //             widget.details!.bloodGroup != ''
+                                    //         ? widget.details!.bloodGroup!
+                                    //             .toString()
+                                    //         : null,
+                                    value: bloodGroupDefaultValue,
                                     hint: const Text(
                                       'Select your blood group',
                                       style: TextStyle(
@@ -694,6 +727,7 @@ class _EditDetailsScreenState extends State<EditDetailsScreen> {
                                           fontSize: Constants.fontSmall,
                                           fontWeight: FontWeight.normal),
                                     ),
+                                    borderRadius: BorderRadius.circular(6.0),
                                     items: bloodGroupItems
                                         .map(
                                           (String value) =>
@@ -709,9 +743,6 @@ class _EditDetailsScreenState extends State<EditDetailsScreen> {
                                                 fontWeight: FontWeight.w500,
                                               ),
                                             ),
-                                            onTap: () {
-                                              print(value);
-                                            },
                                           ),
                                         )
                                         .toList(),
@@ -723,6 +754,7 @@ class _EditDetailsScreenState extends State<EditDetailsScreen> {
                                     // validator: bloodValidator,
                                     onChanged: (value) {
                                       bloodGroupDefaultValue = value!;
+                                      print(bloodGroupDefaultValue);
                                     },
                                   ),
                                 ),
@@ -763,12 +795,15 @@ class _EditDetailsScreenState extends State<EditDetailsScreen> {
                                 SizedBox(
                                   width: size.width,
                                   child: DropdownButtonFormField<String>(
-                                    value: socialOrgDefaultValue.isNotEmpty
-                                        ? socialOrgDefaultValue
-                                        : widget.details!.socialOrg != null
-                                            ? widget.details!.socialOrg!
-                                                .toString()
-                                            : null,
+                                    // value: socialOrgDefaultValue.isNotEmpty ||
+                                    //         socialOrgDefaultValue != ''
+                                    //     ? socialOrgDefaultValue
+                                    //     : widget.details!.socialOrg != null ||
+                                    //             widget.details!.socialOrg != ''
+                                    //         ? widget.details!.socialOrg
+                                    //             .toString()
+                                    //         : null,
+                                    value: socialOrgDefaultValue,
 
                                     hint: const Text(
                                       'Select social organisation',
@@ -798,13 +833,13 @@ class _EditDetailsScreenState extends State<EditDetailsScreen> {
                                           fontSize: Constants.fontSmall,
                                           fontWeight: FontWeight.normal),
                                     ),
+                                    borderRadius: BorderRadius.circular(6.0),
                                     items: socialOrgItems
                                         .map(
                                           (String value) =>
                                               DropdownMenuItem<String>(
                                             alignment: Alignment.centerLeft,
                                             value: value,
-                                            // enabled: value == 'SHG',
                                             child: Text(
                                               value,
                                               style: const TextStyle(
@@ -827,6 +862,7 @@ class _EditDetailsScreenState extends State<EditDetailsScreen> {
                                     // validator: socialOrgValidator,
                                     onChanged: (value) {
                                       socialOrgDefaultValue = value!;
+                                      print(socialOrgDefaultValue);
                                     },
                                   ),
                                 ),
@@ -845,8 +881,37 @@ class _EditDetailsScreenState extends State<EditDetailsScreen> {
                         onPressed: () {
                           if (_formKey.currentState!.validate()) {
                             // print('Success');
-                            // APIServices.updateUserData(context,
-                            //     address: _addressController.text.toString());
+                            APIServices.updateUserData(
+                              context,
+                              id: widget.details!.id.toString(),
+                              loginUserId: widget.details!.userId.toString(),
+                              photo: image.toString(),
+                              position: widget.details!.position != null &&
+                                      widget.details!.position ==
+                                          positionDefaultValue
+                                  ? widget.details!.position.toString()
+                                  : positionDefaultValue.toString(),
+                              category:  categoryDefaultValue.toString(),
+                              mobile: _mobileNoController.text.trim().toString(),
+                              wpNumber: widget.details!.whatsappNo !=
+                                          null && // server true && ui true = no update
+                                      widget.details!
+                                              .whatsappNo == // server false && ui false =
+                                          _whatsappNoController.text
+                                              .trim()
+                                              .toString()
+                                  ? widget.details!.whatsappNo.toString()
+                                  : _whatsappNoController.text
+                                      .trim()
+                                      .toString(),
+                              address: _addressController.text.toString(),
+                              dob: _dobController.text.toString(),
+                              dom: _domController.text.toString(),
+                              bloodGroup: bloodGroupDefaultValue.toString(),
+                              postBJP: _postBJPController.text.toString(),
+                              socialOrg: socialOrgDefaultValue.toString(),
+                            );
+
                             showSnackBar(
                                 context, 'Your updates have been successfully');
                           } else {
