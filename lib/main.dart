@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:sonjagapp/Error%20Screens/no_data_found.dart';
+import 'package:sonjagapp/Screens/add_family_members.dart';
 import 'package:sonjagapp/Screens/login_screen.dart';
 import 'package:sonjagapp/Screens/samiti_screen.dart';
 import 'package:sonjagapp/Screens/search_by_voter_id_screen.dart';
@@ -28,7 +29,7 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(primarySwatch: Colors.red),
       // home: isLoggedIn! ? const SamitiScreen() : const LoginScreen(),
       // home: SamitiScreen(),
-      home: SamitiScreen(),
+      home: AddFamilyMembers(),
       // home: const AddDetailsScreen(
       //   voterId: 'YXV0934471',
       //   acNo: '111',

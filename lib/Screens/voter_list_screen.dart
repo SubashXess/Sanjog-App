@@ -8,6 +8,7 @@ import 'package:flutter/services.dart';
 import 'package:sonjagapp/Components/or_divider.dart';
 import 'package:sonjagapp/Constants/constants.dart';
 import 'package:sonjagapp/Models/user_data_model.dart';
+import 'package:sonjagapp/Screens/add_family_members.dart';
 import 'package:sonjagapp/Screens/edit_voter_details.dart';
 import 'package:sonjagapp/Services/service.dart';
 import 'package:sonjagapp/Services/textinputformatter_services.dart';
@@ -600,7 +601,11 @@ class _VoterListScreenState extends State<VoterListScreen> {
             children: [
               Expanded(
                 child: _buildTextButtonWidget(
-                  onPressed: () => _draggableScrollableSheet(context),
+                  // onPressed: () => _draggableScrollableSheet(context),
+                  onPressed: () => Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (_) => const AddFamilyMembers())),
                   label: 'Add Family Members',
                   bgColor: Constants.kLightThemeColor,
                   textColor: Constants.kSecondaryThemeColor,
@@ -751,7 +756,7 @@ class _VoterListScreenState extends State<VoterListScreen> {
       backgroundColor: Colors.transparent,
       isDismissible: true,
       enableDrag: true,
-      useSafeArea: true,
+      // useSafeArea: true,
       isScrollControlled: true, // set this to true
       builder: (context) {
         return GestureDetector(
