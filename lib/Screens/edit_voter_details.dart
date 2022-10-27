@@ -10,6 +10,7 @@ import 'package:path_provider/path_provider.dart';
 import 'package:sonjagapp/Components/gradients.dart';
 import 'package:sonjagapp/Components/showsnackbar.dart';
 import 'package:sonjagapp/Models/user_data_model.dart';
+import 'package:sonjagapp/Screens/voter_list_screen.dart';
 import 'package:sonjagapp/Services/service.dart';
 import 'package:sonjagapp/Widgets/textformfield_widget.dart';
 import '../Constants/constants.dart';
@@ -17,10 +18,15 @@ import '../Widgets/button_widget.dart';
 
 class EditDetailsScreen extends StatefulWidget {
   const EditDetailsScreen(
-      {super.key, required this.voterId, required this.acNo, this.details});
+      {super.key,
+      required this.voterId,
+      required this.acNo,
+      this.details,
+      required this.boothNo});
 
   final String voterId;
   final String acNo;
+  final String boothNo;
   final UserDataModel? details;
 
   @override
@@ -46,10 +52,10 @@ class _EditDetailsScreenState extends State<EditDetailsScreen> {
   String? marriage;
 
   // Initial Selected Value
-  String? positionDefaultValue;
-  String? categoryDefaultValue;
-  String? bloodGroupDefaultValue;
-  String? socialOrgDefaultValue;
+  String positionDefaultValue = '';
+  String categoryDefaultValue = '';
+  String bloodGroupDefaultValue = '';
+  String socialOrgDefaultValue = '';
 
   // List of items in our dropdown menu
   List<String> positionItems = ['PP', 'PC'];
@@ -62,13 +68,13 @@ class _EditDetailsScreenState extends State<EditDetailsScreen> {
     'B+',
     'B-',
     'AB+',
-    'AB-'
+    'AB-',
   ];
   List<String> socialOrgItems = [
     'SHG',
     'NGO',
     'Village or Ward level committee',
-    'Not Applicable'
+    'Not Applicable',
   ];
 
   // Variables
@@ -92,39 +98,27 @@ class _EditDetailsScreenState extends State<EditDetailsScreen> {
   }
 
   void init() {
-    // positionDefaultValue = widget.details!.position != 'null'
-    //     ? widget.details!.position.toString()
-    //     : '';
-    // categoryDefaultValue = widget.details!.category != 'null'
-    //     ? widget.details!.category.toString()
-    //     : '';
-    // bloodGroupDefaultValue = widget.details!.bloodGroup != 'null'
-    //     ? widget.details!.position.toString()
-    //     : '';
-    // socialOrgDefaultValue = widget.details!.socialOrg != 'null'
-    //     ? widget.details!.socialOrg.toString()
-    //     : '';
-    _mobileNoController.text = (widget.details!.mobileNo.toString() != 'null'
+    _mobileNoController.text = (widget.details!.mobileNo.toString() != 'NA'
         ? widget.details!.mobileNo.toString()
         : _mobileNoController.text);
 
-    _whatsappNoController.text =
-        (widget.details!.whatsappNo.toString() != 'null'
-            ? widget.details!.whatsappNo.toString()
-            : _whatsappNoController.text);
+    _whatsappNoController.text = (widget.details!.whatsappNo.toString() != 'NA'
+        ? widget.details!.whatsappNo.toString()
+        : _whatsappNoController.text);
 
-    _addressController.text = (widget.details!.address.toString() != 'null'
-        ? widget.details!.address.toString()
+    _addressController.text = (widget.details!.address.isNotEmpty
+        ? widget.details!.address
         : _addressController.text);
-    _dobController.text = (widget.details!.dob.toString() != 'null'
+
+    _dobController.text = (widget.details!.dob.toString() != 'NA'
         ? widget.details!.dob.toString()
         : _dobController.text);
 
-    _domController.text = (widget.details!.dom.toString() != 'null'
+    _domController.text = (widget.details!.dom.toString() != 'NA'
         ? widget.details!.dom.toString()
         : _domController.text);
 
-    _postBJPController.text = (widget.details!.postBJP.toString() != 'null'
+    _postBJPController.text = (widget.details!.postBJP.toString() != 'NA'
         ? widget.details!.postBJP.toString()
         : _postBJPController.text);
   }
@@ -132,7 +126,7 @@ class _EditDetailsScreenState extends State<EditDetailsScreen> {
   @override
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
-    print(_mobileNoController.text);
+    print(_addressController.text);
 
     return GestureDetector(
       onTap: () => FocusScope.of(context).unfocus(),
@@ -192,7 +186,7 @@ class _EditDetailsScreenState extends State<EditDetailsScreen> {
                                     radius: size.width * 0.132,
                                     backgroundImage: FileImage(image!),
                                   )
-                                : widget.details!.photo != null
+                                : widget.details!.photo!.isNotEmpty
                                     ? CircleAvatar(
                                         backgroundColor: Colors.grey.shade200,
                                         radius: size.width * 0.132,
@@ -290,7 +284,7 @@ class _EditDetailsScreenState extends State<EditDetailsScreen> {
                           ),
                           const SizedBox(width: 10.0),
                           Text(
-                            widget.details!.adharNo != null
+                            widget.details!.adharNo!.isNotEmpty
                                 ? widget.details!.adharNo.toString()
                                 : '',
                             style: const TextStyle(
@@ -330,144 +324,174 @@ class _EditDetailsScreenState extends State<EditDetailsScreen> {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Expanded(
-                            child: SizedBox(
-                              width: size.width,
-                              child: DropdownButtonFormField<String>(
-                                // value: positionDefaultValue.isNotEmpty ||
-                                //         positionDefaultValue != ''
-                                //     ? positionDefaultValue
-                                //     : widget.details!.position != null ||
-                                //             widget.details!.position != ''
-                                //         ? widget.details!.position!.toString()
-                                //         : null,
-                                value: positionDefaultValue ??
-                                    widget.details!.position,
-                                hint: const Text(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              mainAxisAlignment: MainAxisAlignment.start,
+                              children: [
+                                const Text(
                                   'Position',
                                   style: TextStyle(
-                                      color: Colors.black45,
-                                      fontSize: Constants.fontRegular,
-                                      fontWeight: FontWeight.w500),
-                                ),
-                                isExpanded: true,
-                                autovalidateMode:
-                                    AutovalidateMode.onUserInteraction,
-                                isDense: true,
-                                decoration: InputDecoration(
-                                  contentPadding: const EdgeInsets.symmetric(
-                                      horizontal: 10.0),
-                                  errorMaxLines: 2,
-                                  filled: true,
-                                  fillColor: Colors.grey.shade200,
-                                  border: OutlineInputBorder(
-                                    borderRadius: BorderRadius.circular(6.0),
-                                    borderSide: BorderSide.none,
+                                    color: Colors.black87,
+                                    fontSize: Constants.fontSmall,
+                                    fontWeight: FontWeight.bold,
                                   ),
-                                  errorStyle: const TextStyle(
-                                      color: Colors.red,
-                                      fontSize: Constants.fontSmall,
-                                      fontWeight: FontWeight.normal),
                                 ),
-                                borderRadius: BorderRadius.circular(6.0),
-                                items: positionItems
-                                    .map(
-                                      (String value) =>
-                                          DropdownMenuItem<String>(
-                                        alignment: Alignment.centerLeft,
-                                        value: value,
-                                        // enabled: value == 'Ekamra Bhubaneswar',
-                                        child: Text(
-                                          value,
-                                          style: const TextStyle(
-                                            color: Colors.black,
-                                            fontSize: Constants.fontRegular,
-                                            fontWeight: FontWeight.w500,
-                                          ),
-                                        ),
+                                const SizedBox(height: 10.0),
+                                SizedBox(
+                                  width: size.width,
+                                  child: DropdownButtonFormField<String>(
+                                    value:
+                                        widget.details!.position!.isNotEmpty &&
+                                                widget.details!.position! ==
+                                                    positionDefaultValue
+                                            ? widget.details!.position
+                                            : positionDefaultValue,
+                                    hint: const Text(
+                                      'Position',
+                                      style: TextStyle(
+                                          color: Colors.black45,
+                                          fontSize: Constants.fontRegular,
+                                          fontWeight: FontWeight.w500),
+                                    ),
+                                    isExpanded: true,
+                                    autovalidateMode:
+                                        AutovalidateMode.onUserInteraction,
+                                    isDense: true,
+                                    decoration: InputDecoration(
+                                      contentPadding:
+                                          const EdgeInsets.symmetric(
+                                              horizontal: 10.0),
+                                      errorMaxLines: 2,
+                                      filled: true,
+                                      fillColor: Colors.grey.shade200,
+                                      border: OutlineInputBorder(
+                                        borderRadius:
+                                            BorderRadius.circular(6.0),
+                                        borderSide: BorderSide.none,
                                       ),
-                                    )
-                                    .toList(),
-                                icon: Icon(
-                                  Icons.arrow_drop_down_rounded,
-                                  color: Colors.grey.shade400,
-                                  size: 26.0,
+                                      errorStyle: const TextStyle(
+                                          color: Colors.red,
+                                          fontSize: Constants.fontSmall,
+                                          fontWeight: FontWeight.normal),
+                                    ),
+                                    borderRadius: BorderRadius.circular(6.0),
+                                    items: positionItems
+                                        .map(
+                                          (String value) =>
+                                              DropdownMenuItem<String>(
+                                            alignment: Alignment.centerLeft,
+                                            value: value,
+                                            // enabled: value == 'Ekamra Bhubaneswar',
+                                            child: Text(
+                                              value,
+                                              style: const TextStyle(
+                                                color: Colors.black,
+                                                fontSize: Constants.fontRegular,
+                                                fontWeight: FontWeight.w500,
+                                              ),
+                                            ),
+                                          ),
+                                        )
+                                        .toList(),
+                                    icon: Icon(
+                                      Icons.arrow_drop_down_rounded,
+                                      color: Colors.grey.shade400,
+                                      size: 26.0,
+                                    ),
+                                    onChanged: (value) {
+                                      positionDefaultValue = value!;
+                                      print(positionDefaultValue);
+                                    },
+                                  ),
                                 ),
-                                onChanged: (value) {
-                                  positionDefaultValue = value!;
-                                  print(positionDefaultValue);
-                                },
-                              ),
+                              ],
                             ),
                           ),
                           const SizedBox(width: 10.0),
                           Expanded(
-                            child: SizedBox(
-                              width: size.width,
-                              child: DropdownButtonFormField<String>(
-                                // value: categoryDefaultValue.isNotEmpty ||
-                                //         categoryDefaultValue != ''
-                                //     ? categoryDefaultValue
-                                //     : widget.details!.category != null ||
-                                //             widget.details!.category != ''
-                                //         ? widget.details!.category!.toString()
-                                //         : null,
-                                value: categoryDefaultValue,
-
-                                hint: const Text(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              mainAxisAlignment: MainAxisAlignment.start,
+                              children: [
+                                const Text(
                                   'Category',
                                   style: TextStyle(
-                                      color: Colors.black45,
-                                      fontSize: Constants.fontRegular,
-                                      fontWeight: FontWeight.w500),
-                                ),
-                                isExpanded: true,
-                                autovalidateMode:
-                                    AutovalidateMode.onUserInteraction,
-                                isDense: true,
-                                decoration: InputDecoration(
-                                  contentPadding: const EdgeInsets.symmetric(
-                                      horizontal: 10.0),
-                                  errorMaxLines: 2,
-                                  filled: true,
-                                  fillColor: Colors.grey.shade200,
-                                  border: OutlineInputBorder(
-                                    borderRadius: BorderRadius.circular(6.0),
-                                    borderSide: BorderSide.none,
+                                    color: Colors.black87,
+                                    fontSize: Constants.fontSmall,
+                                    fontWeight: FontWeight.bold,
                                   ),
-                                  errorStyle: const TextStyle(
-                                      color: Colors.red,
-                                      fontSize: Constants.fontSmall,
-                                      fontWeight: FontWeight.normal),
                                 ),
-                                borderRadius: BorderRadius.circular(6.0),
-                                items: categoryItems
-                                    .map(
-                                      (String value) =>
-                                          DropdownMenuItem<String>(
-                                        alignment: Alignment.centerLeft,
-                                        value: value,
-                                        // enabled: value == 'Ekamra Bhubaneswar',
-                                        child: Text(
-                                          value,
-                                          style: const TextStyle(
-                                            color: Colors.black,
-                                            fontSize: Constants.fontRegular,
-                                            fontWeight: FontWeight.w500,
-                                          ),
-                                        ),
+                                const SizedBox(height: 10.0),
+                                SizedBox(
+                                  width: size.width,
+                                  child: DropdownButtonFormField<String>(
+                                    // value: categoryDefaultValue.isNotEmpty ||
+                                    //         categoryDefaultValue != ''
+                                    //     ? categoryDefaultValue
+                                    //     : widget.details!.category != null ||
+                                    //             widget.details!.category != ''
+                                    //         ? widget.details!.category!.toString()
+                                    //         : null,
+                                    value: widget.details!.category,
+                                    hint: const Text(
+                                      'Category',
+                                      style: TextStyle(
+                                          color: Colors.black45,
+                                          fontSize: Constants.fontRegular,
+                                          fontWeight: FontWeight.w500),
+                                    ),
+                                    isExpanded: true,
+                                    autovalidateMode:
+                                        AutovalidateMode.onUserInteraction,
+                                    isDense: true,
+                                    decoration: InputDecoration(
+                                      contentPadding:
+                                          const EdgeInsets.symmetric(
+                                              horizontal: 10.0),
+                                      errorMaxLines: 2,
+                                      filled: true,
+                                      fillColor: Colors.grey.shade200,
+                                      border: OutlineInputBorder(
+                                        borderRadius:
+                                            BorderRadius.circular(6.0),
+                                        borderSide: BorderSide.none,
                                       ),
-                                    )
-                                    .toList(),
-                                icon: Icon(
-                                  Icons.arrow_drop_down_rounded,
-                                  color: Colors.grey.shade400,
-                                  size: 26.0,
+                                      errorStyle: const TextStyle(
+                                          color: Colors.red,
+                                          fontSize: Constants.fontSmall,
+                                          fontWeight: FontWeight.normal),
+                                    ),
+                                    borderRadius: BorderRadius.circular(6.0),
+                                    items: categoryItems
+                                        .map(
+                                          (String value) =>
+                                              DropdownMenuItem<String>(
+                                            alignment: Alignment.centerLeft,
+                                            value: value,
+                                            // enabled: value == 'Ekamra Bhubaneswar',
+                                            child: Text(
+                                              value,
+                                              style: const TextStyle(
+                                                color: Colors.black,
+                                                fontSize: Constants.fontRegular,
+                                                fontWeight: FontWeight.w500,
+                                              ),
+                                            ),
+                                          ),
+                                        )
+                                        .toList(),
+                                    icon: Icon(
+                                      Icons.arrow_drop_down_rounded,
+                                      color: Colors.grey.shade400,
+                                      size: 26.0,
+                                    ),
+                                    onChanged: (value) {
+                                      categoryDefaultValue = value!;
+                                      print(categoryDefaultValue);
+                                    },
+                                  ),
                                 ),
-                                onChanged: (value) {
-                                  categoryDefaultValue = value!;
-                                  print(categoryDefaultValue);
-                                },
-                              ),
+                              ],
                             ),
                           ),
                         ],
@@ -504,7 +528,7 @@ class _EditDetailsScreenState extends State<EditDetailsScreen> {
                                         isSuffixIcon: false,
                                         keyboardType: TextInputType.phone,
                                         maxLength: 10,
-                                        validator: mobileValidator,
+                                        // validator: mobileValidator,
                                         onChanged: (value) {
                                           print(value);
                                         },
@@ -698,7 +722,7 @@ class _EditDetailsScreenState extends State<EditDetailsScreen> {
                                     //         ? widget.details!.bloodGroup!
                                     //             .toString()
                                     //         : null,
-                                    value: bloodGroupDefaultValue,
+                                    value: widget.details!.bloodGroup,
                                     hint: const Text(
                                       'Select your blood group',
                                       style: TextStyle(
@@ -803,8 +827,7 @@ class _EditDetailsScreenState extends State<EditDetailsScreen> {
                                     //         ? widget.details!.socialOrg
                                     //             .toString()
                                     //         : null,
-                                    value: socialOrgDefaultValue,
-
+                                    value: widget.details!.socialOrg,
                                     hint: const Text(
                                       'Select social organisation',
                                       style: TextStyle(
@@ -880,19 +903,32 @@ class _EditDetailsScreenState extends State<EditDetailsScreen> {
                         ),
                         onPressed: () {
                           if (_formKey.currentState!.validate()) {
-                            // print('Success');
+                            print('Success');
                             APIServices.updateUserData(
                               context,
                               id: widget.details!.id.toString(),
                               loginUserId: widget.details!.userId.toString(),
-                              photo: image.toString(),
-                              position: widget.details!.position != null &&
+                              photo: widget.details!.photo != null &&
+                                      widget.details!.photo == image.toString()
+                                  ? widget.details!.photo.toString()
+                                  : image.toString(),
+                              position: widget.details!.position != 'None' &&
                                       widget.details!.position ==
                                           positionDefaultValue
                                   ? widget.details!.position.toString()
-                                  : positionDefaultValue.toString(),
-                              category:  categoryDefaultValue.toString(),
-                              mobile: _mobileNoController.text.trim().toString(),
+                                  : positionDefaultValue,
+                              category: widget.details!.category != 'None' &&
+                                      widget.details!.category ==
+                                          categoryDefaultValue
+                                  ? widget.details!.category.toString()
+                                  : categoryDefaultValue,
+                              mobile: widget.details!.mobileNo != 'null' &&
+                                      widget.details!.mobileNo ==
+                                          _mobileNoController.text
+                                              .trim()
+                                              .toString()
+                                  ? widget.details!.mobileNo.toString()
+                                  : _mobileNoController.text.trim().toString(),
                               wpNumber: widget.details!.whatsappNo !=
                                           null && // server true && ui true = no update
                                       widget.details!
@@ -904,13 +940,47 @@ class _EditDetailsScreenState extends State<EditDetailsScreen> {
                                   : _whatsappNoController.text
                                       .trim()
                                       .toString(),
-                              address: _addressController.text.toString(),
-                              dob: _dobController.text.toString(),
-                              dom: _domController.text.toString(),
-                              bloodGroup: bloodGroupDefaultValue.toString(),
-                              postBJP: _postBJPController.text.toString(),
-                              socialOrg: socialOrgDefaultValue.toString(),
-                            );
+                              address: widget.details!.address.isNotEmpty &&
+                                      widget.details!.address ==
+                                          _addressController.text
+                                  ? widget.details!.address
+                                  : _addressController.text,
+                              dob: widget.details!.dob != null &&
+                                      widget.details!.dob ==
+                                          _dobController.text.toString()
+                                  ? widget.details!.dob.toString()
+                                  : _dobController.text.toString(),
+                              dom: widget.details!.dom != null &&
+                                      widget.details!.dom ==
+                                          _domController.text.toString()
+                                  ? widget.details!.dom.toString()
+                                  : _domController.text.toString(),
+                              bloodGroup:
+                                  widget.details!.bloodGroup != 'None' &&
+                                          widget.details!.bloodGroup ==
+                                              bloodGroupDefaultValue
+                                      ? widget.details!.bloodGroup.toString()
+                                      : bloodGroupDefaultValue,
+                              postBJP: widget.details!.postBJP != null &&
+                                      widget.details!.postBJP ==
+                                          _postBJPController.text.toString()
+                                  ? widget.details!.postBJP.toString()
+                                  : null,
+                              // : _postBJPController.text.toString(),
+                              socialOrg: widget.details!.socialOrg != 'None' &&
+                                      widget.details!.socialOrg ==
+                                          socialOrgDefaultValue
+                                  ? widget.details!.socialOrg.toString()
+                                  : socialOrgDefaultValue,
+                            ).then((value) {
+                              setState(() {});
+                            });
+                            // Navigator.pushReplacement(
+                            //   context,
+                            //   MaterialPageRoute(
+                            //       builder: (_) =>
+                            //           VoterListScreen(boothNo: widget.boothNo)),
+                            // );
 
                             showSnackBar(
                                 context, 'Your updates have been successfully');

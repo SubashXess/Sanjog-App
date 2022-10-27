@@ -266,6 +266,7 @@ class _SearchByVoterIdScreenState extends State<SearchByVoterIdScreen> {
                         builder: (_) => EditDetailsScreen(
                           voterId: data.voterNo.toString(),
                           acNo: data.acNo.toString(),
+                          boothNo: '',
                           details: data,
                         ),
                       ));

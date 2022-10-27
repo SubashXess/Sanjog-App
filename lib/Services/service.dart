@@ -64,7 +64,7 @@ class APIServices {
     }
   }
 
-  static Future<List<UserDataModel>?> getPageSamitiSearchResult(context,
+  static Future<List<UserDataModel>>? getPageSamitiSearchResult(context,
       {required String boothNo}) async {
     Client client = http.Client();
     Uri uri = Uri.parse(APIs.VOTER_LIST_API);
@@ -88,39 +88,50 @@ class APIServices {
 
   static Future<String> updateUserData(
     context, {
-    required String address,
-    required String id,
-    required String loginUserId,
-    required String photo,
-    required String position,
-    required String category,
-    required String mobile,
-    required String wpNumber,
-    required String dob,
-    required String dom,
-    required String bloodGroup,
-    required String postBJP,
-    required String socialOrg,
+    String? address,
+    String? id,
+    String? loginUserId,
+    String? photo,
+    String? position,
+    String? category,
+    String? mobile,
+    String? wpNumber,
+    String? dob,
+    String? dom,
+    String? bloodGroup,
+    String? postBJP,
+    String? socialOrg,
   }) async {
     Client client = http.Client();
     Uri uri = Uri.parse(APIs.USER_DATA_UPDATE);
     try {
       Response response = await client.post(uri, body: <String, String>{
-        'id': id, // voter user for each
-        'user_id':
-            loginUserId, // assembly user id who is update this / login user
-        'photo': photo,
-        'position': position,
-        'category': category,
-        'mobileNo': mobile,
-        'whatsappNo': wpNumber,
-        'address': address,
-        'dob': dob,
-        'dom': dom,
-        'blood_group': bloodGroup,
-        'postBJP': postBJP,
-        'soc_org': socialOrg,
+        'id': id.toString(), // voter user for each
+        'user_id': loginUserId
+            .toString(), // assembly user id who is update this / login user
+        'photo': photo.toString(),
+        'position': position.toString(),
+        'category': category.toString(),
+        'mobileNo': mobile.toString(),
+        'whatsappNo': wpNumber.toString(),
+        'address': address.toString(),
+        'dob': dob.toString(),
+        'dom': dom.toString(),
+        'blood_group': bloodGroup.toString(),
+        'postBJP': postBJP.toString(),
+        'soc_org': socialOrg.toString(),
       });
+      print(address);
+      print(position);
+      print(category);
+      print(mobile);
+      print(wpNumber);
+      print(dob);
+      print(dom);
+      print(bloodGroup);
+      print(postBJP);
+      print(socialOrg);
+
       if (response.statusCode == 200) {
         var jsonResponse = json.decode(response.body);
         return jsonResponse;

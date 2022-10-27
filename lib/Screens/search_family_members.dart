@@ -5,17 +5,19 @@ import 'package:flutter/services.dart';
 import 'package:sonjagapp/Components/gradients.dart';
 import 'package:sonjagapp/Components/or_divider.dart';
 import 'package:sonjagapp/Constants/constants.dart';
+import 'package:sonjagapp/Screens/add_family_members_list_screen.dart';
 import 'package:sonjagapp/Widgets/button_widget.dart';
 import 'package:sonjagapp/Widgets/textformfield_widget.dart';
 
-class AddFamilyMembers extends StatefulWidget {
-  const AddFamilyMembers({super.key});
+class SearchFamilyMemberScreen extends StatefulWidget {
+  const SearchFamilyMemberScreen({super.key});
 
   @override
-  State<AddFamilyMembers> createState() => _AddFamilyMembersState();
+  State<SearchFamilyMemberScreen> createState() =>
+      _SearchFamilyMemberScreenState();
 }
 
-class _AddFamilyMembersState extends State<AddFamilyMembers> {
+class _SearchFamilyMemberScreenState extends State<SearchFamilyMemberScreen> {
   // form validate global state
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   final GlobalKey<FormState> _formKey2 = GlobalKey<FormState>();
@@ -114,7 +116,7 @@ class _AddFamilyMembersState extends State<AddFamilyMembers> {
             ),
           ),
           title: const Text(
-            'Add Family Members',
+            'Search Family Members',
             style: TextStyle(
               color: Colors.white,
               fontSize: Constants.fontLarge,
@@ -281,6 +283,11 @@ class _AddFamilyMembersState extends State<AddFamilyMembers> {
                         _formKey2.currentState!.validate() ||
                         _formKey3.currentState!.validate()) {
                       print('Success');
+                      Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (_) =>
+                                  const AddFamilyMemberListScreen()));
                     } else {
                       print('Error');
                     }

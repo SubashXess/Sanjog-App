@@ -12,7 +12,7 @@ import 'package:sliding_sheet/sliding_sheet.dart';
 import 'package:sonjagapp/Constants/constants.dart';
 import 'package:sonjagapp/Models/user_data_model.dart';
 import 'package:sonjagapp/Screens/edit_voter_details.dart';
-import 'package:sonjagapp/Screens/add_family_members.dart';
+import 'package:sonjagapp/Screens/search_family_members.dart';
 import 'package:sonjagapp/Screens/see_family_members.dart';
 import 'package:sonjagapp/Widgets/button_widget.dart';
 import 'package:sonjagapp/Widgets/card_widget.dart';
@@ -245,16 +245,16 @@ class _VoterDetailsCardState extends State<VoterDetailsCard> {
                       SizedBox(height: size.height * 0.012),
                       MaterialButton(
                         onPressed: () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => EditDetailsScreen(
-                                voterId: widget.snapshot.voterNo.toString(),
-                                acNo: widget.snapshot.acNo.toString(),
+                          // Navigator.push(
+                          //   context,
+                          //   MaterialPageRoute(
+                          //     builder: (context) => EditDetailsScreen(
+                          //       voterId: widget.snapshot.voterNo.toString(),
+                          //       acNo: widget.snapshot.acNo.toString(),
                                 
-                              ),
-                            ),
-                          );
+                          //     ),
+                          //   ),
+                          // );
                         },
                         color: Constants.kPrimaryThemeColor,
                         height: size.height * 0.04,
@@ -380,7 +380,7 @@ class _VoterDetailsCardState extends State<VoterDetailsCard> {
                                     context,
                                     MaterialPageRoute(
                                       builder: (context) =>
-                                          const AddFamilyMembers(),
+                                          const SearchFamilyMemberScreen(),
                                     ),
                                   );
                                 },

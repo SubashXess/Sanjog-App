@@ -3,6 +3,7 @@
 import 'package:flutter/animation.dart';
 
 class Constants {
+  static const double fontExtraSmall = 12.0;
   static const double fontSmall = 13.0;
   static const double fontRegular = 14.0;
   static const double fontMedium = 16.0;

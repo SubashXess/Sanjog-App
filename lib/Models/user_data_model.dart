@@ -2,6 +2,8 @@
 
 import 'dart:convert';
 
+import 'package:flutter/material.dart';
+
 List<UserDataModel> getVoterListFromJson(String str) =>
     List<UserDataModel>.from(
         json.decode(str).map((x) => UserDataModel.fromJson(x)));
@@ -29,14 +31,14 @@ class UserDataModel {
   String? mobileNo;
   String? whatsappNo;
   String? photo;
-  String? address;
+  String address;
   String? dob;
   String? dom;
   String? bloodGroup;
   String? postBJP;
   String? socialOrg;
-  DateTime? createdAt; // add
-  DateTime? updatedAt; // add
+  String? createdAt; // add
+  String? updatedAt; // add
   List<UserDataModel>? members;
 
   UserDataModel({
@@ -76,29 +78,29 @@ class UserDataModel {
       userId: json['user_id'],
       familyId: json['family_id'],
       status: json['status'],
-      acNo: json['acNo'],
-      boothNo: json['boothNo'],
-      pageNo: json['pageNo'],
-      serialNo: json['serialNo'],
-      voterNo: json['voterNo'],
-      adharNo: json['adharNo'],
-      name: json['name'],
-      gender: json['gender'],
-      category: json['category'],
-      relationType: json['relationType'],
-      relationName: json['relationName'],
-      mobileNo: json['mobileNo'],
-      whatsappNo: json['whatsappNo'],
-      photo: json['photo'],
-      address: json['address'],
-      bloodGroup: json['blood_group'],
-      dob: json['dob'],
-      dom: json['dom'],
-      position: json['position'],
-      postBJP: json['postBJP'],
-      socialOrg: json['soc_org'],
-      createdAt: json['createdAt'],
-      updatedAt: json['upd_date'],
+      acNo: json['acNo'] ?? '',
+      boothNo: json['boothNo'] ?? '',
+      pageNo: json['pageNo'] ?? '',
+      serialNo: json['serialNo'] ?? '',
+      voterNo: json['voterNo'] ?? '',
+      adharNo: json['adharNo'] ?? '',
+      name: json['name'] ?? '',
+      gender: json['gender'] ?? '',
+      category: json['category'] ?? '',
+      relationType: json['relationType'] ?? '',
+      relationName: json['relationName'] ?? '',
+      mobileNo: json['mobileNo'] ?? '',
+      whatsappNo: json['whatsappNo'] ?? '',
+      photo: json['photo'] ?? '',
+      address: json['address'] ?? '',
+      bloodGroup: json['blood_group'] ?? '',
+      dob: json['dob'] ?? '',
+      dom: json['dom'] ?? '',
+      position: json['position'] ?? '',
+      postBJP: json['postBJP'] ?? '',
+      socialOrg: json['soc_org'] ?? '',
+      createdAt: json['createdAt'] ?? '',
+      updatedAt: json['upd_date'] ?? '',
       members: json['members'],
     );
   }
@@ -106,7 +108,7 @@ class UserDataModel {
   Map<String, Object?> toJson() {
     return {
       'id': id,
-      'user_id' : userId,
+      'user_id': userId,
       'family_id': familyId,
       'status': status,
       'acNo': acNo,
