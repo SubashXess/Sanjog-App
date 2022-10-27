@@ -31,12 +31,14 @@ environment:
 dependencies:
   badges: ^2.0.3
   cached_network_image: ^3.2.2
+  connectivity_plus: ^3.0.2
   cupertino_icons: ^1.0.2
   flutter:
     sdk: flutter
   flutter_svg: ^1.1.5
   http: ^0.13.5
   image_picker: ^0.8.5+3
+  internet_connection_checker: ^1.0.0+1
   intl: ^0.17.0
   lottie: ^1.4.3
   path_provider: ^2.0.11

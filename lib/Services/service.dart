@@ -29,7 +29,6 @@ class APIServices {
           final String nameLower = items.name!.toLowerCase().toString();
           final String boothNoLower = items.boothNo!.toLowerCase().toString();
           final String searchLower = name!.toLowerCase().toString();
-
           return nameLower.contains(searchLower) &&
               boothNoLower.contains(boothNo);
         }).toList();

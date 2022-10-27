@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:sonjagapp/Error%20Screens/no_data_found.dart';
+import 'package:sonjagapp/Error%20Screens/no_internet_connection.dart';
+import 'package:sonjagapp/Providers/connection_provider.dart';
 import 'package:sonjagapp/Screens/add_family_members_list_screen.dart';
 import 'package:sonjagapp/Screens/search_family_members.dart';
 import 'package:sonjagapp/Screens/login_screen.dart';
@@ -24,32 +27,22 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Sanjog App',
-      debugShowCheckedModeBanner: false,
-      theme: ThemeData(primarySwatch: Colors.red),
-      // home: isLoggedIn! ? const SamitiScreen() : const LoginScreen(),
-      // home: SamitiScreen(),
-      home: SamitiScreen(),
-      // home: const AddDetailsScreen(
-      //   voterId: 'YXV0934471',
-      //   acNo: '111',
-      // ),
+    return MultiProvider(
+      providers: [
+        ChangeNotifierProvider(create: (context) => ConnectivityProvider()),
+      ],
+      builder: (context, child) => MaterialApp(
+        title: 'Sanjog App',
+        debugShowCheckedModeBanner: false,
+        theme: ThemeData(primarySwatch: Colors.red),
+        // home: isLoggedIn! ? const SamitiScreen() : const LoginScreen(),
+        // home: SamitiScreen(),
+        home: const SamitiScreen(),
+        // home: const AddDetailsScreen(
+        //   voterId: 'YXV0934471',
+        //   acNo: '111',
+        // ),
+      ),
     );
   }
-
-  // Future<String> checkLogin() async {
-  //   SharedPreferences preferences = await SharedPreferences.getInstance();
-  //   String? value = preferences.getString('login');
-  //   if (value!.isNotEmpty) {
-  //     return value;
-  //     // await Navigator.push(context,
-  //     //     MaterialPageRoute(builder: (context) => const SamitiScreen()));
-  //   } else {
-  //     return value;
-  //     // Navigator.push(context,
-  //     //     MaterialPageRoute(builder: (context) => const LoginScreen()));
-  //   }
-  //   // return value;
-  // }
 }

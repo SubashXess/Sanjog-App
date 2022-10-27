@@ -1,17 +1,20 @@
 // ignore_for_file: avoid_print
 
 import 'dart:async';
-
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:provider/provider.dart';
 import 'package:sonjagapp/Components/or_divider.dart';
+import 'package:sonjagapp/Components/showsnackbar.dart';
 import 'package:sonjagapp/Constants/constants.dart';
+import 'package:sonjagapp/Error%20Screens/no_data_found.dart';
+import 'package:sonjagapp/Error%20Screens/no_internet_connection.dart';
 import 'package:sonjagapp/Models/user_data_model.dart';
+import 'package:sonjagapp/Providers/connection_provider.dart';
 import 'package:sonjagapp/Screens/search_family_members.dart';
 import 'package:sonjagapp/Screens/edit_voter_details.dart';
 import 'package:sonjagapp/Services/service.dart';
-import 'package:sonjagapp/Services/textinputformatter_services.dart';
 import 'package:sonjagapp/Widgets/button_widget.dart';
 import 'package:sonjagapp/Widgets/textformfield_widget.dart';
 
@@ -64,6 +67,7 @@ class _VoterListScreenState extends State<VoterListScreen> {
   @override
   void initState() {
     super.initState();
+    Provider.of<ConnectivityProvider>(context, listen: false).startMonitoring();
     init();
     _searchFocusNode = FocusNode()..addListener(onListen);
     _scrollController.addListener(onListen);
@@ -86,7 +90,6 @@ class _VoterListScreenState extends State<VoterListScreen> {
     _searchFocusNode.dispose();
     _searchFocusNode.removeListener(onListen);
     debouncer?.cancel();
-
     _voterNoController.dispose();
     _voterNoController.removeListener(onListen);
     _aadharController.dispose();
@@ -110,24 +113,14 @@ class _VoterListScreenState extends State<VoterListScreen> {
     setState(() {});
   }
 
-  Future init() async {
-    voterItems = (await APIServices.getVoterList(
+  Future<List<UserDataModel>> init() async {
+    return voterItems = (await APIServices.getVoterList(
             boothNo: widget.boothNo, context, name: ''))!
         .where((element) {
       final lowerBoothNo = element.boothNo!.trim().toLowerCase().toString();
       final filterData = widget.boothNo.trim().toLowerCase().toString();
       return lowerBoothNo.contains(filterData);
     }).toList();
-
-    if (voterItems.isNotEmpty) {
-      setState(() {
-        _isLoaded = true;
-      });
-    } else {
-      setState(() {
-        _isLoaded = false;
-      });
-    }
   }
 
   void debounce(VoidCallback callback,
@@ -141,136 +134,172 @@ class _VoterListScreenState extends State<VoterListScreen> {
   @override
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
-
+    print('reload');
     return GestureDetector(
       onTap: () => FocusScope.of(context).unfocus(),
       child: Scaffold(
         backgroundColor: Colors.grey.shade50,
-        body: _isLoaded
-            ? CustomScrollView(
-                shrinkWrap: true,
-                slivers: [
-                  SliverAppBar(
-                    backgroundColor: Constants.kPrimaryThemeColor,
-                    floating: true,
-                    pinned: true,
-                    snap: false,
-                    centerTitle: true,
-                    automaticallyImplyLeading: false,
-                    elevation: 0.0,
-                    toolbarHeight: kToolbarHeight * 0.8,
-                    leading: IconButton(
-                      onPressed: () => Navigator.pop(context),
-                      icon: const Icon(
-                        Icons.arrow_back,
-                        color: Colors.white,
-                        size: 20.0,
-                      ),
-                    ),
-                    title: const Text(
-                      'Voter List',
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontSize: Constants.fontLarge,
-                        fontWeight: FontWeight.w600,
-                      ),
-                    ),
-                    bottom: AppBar(
-                      automaticallyImplyLeading: false,
-                      titleSpacing: 0.0,
-                      leadingWidth: 0.0,
-                      elevation: 0.0,
-                      backgroundColor: Constants.kPrimaryThemeColor,
-                      title: Container(
-                        width: size.width,
-                        height: 40.0,
-                        margin: const EdgeInsets.symmetric(horizontal: 10.0),
-                        child: TextFormField(
-                          controller: _searchController,
-                          maxLines: 1,
-                          focusNode: _searchFocusNode,
-                          decoration: InputDecoration(
-                            hintText: 'Search by name',
-                            filled: true,
-                            fillColor: _searchFocusNode.hasFocus
-                                ? Colors.white60
-                                : Colors.white24,
-                            isDense: true,
-                            prefixIcon: const Icon(
-                              Icons.search_rounded,
-                              size: 20.0,
-                              color: Colors.white70,
-                            ),
-                            suffixIcon: _searchController.text.isEmpty
-                                ? Container(width: 0.0)
-                                : IconButton(
-                                    onPressed: () => setState(
-                                        () => _searchController.clear()),
-                                    icon: const Icon(
-                                      Icons.clear,
-                                      size: 20.0,
-                                      color: Colors.white70,
+        body: Consumer<ConnectivityProvider>(builder: (context, value, child) {
+          if (value.isOnline != null) {
+            return value.isOnline!
+                ? FutureBuilder<List<UserDataModel>>(
+                    future: init(),
+                    builder: (context, snapshot) {
+                      if (snapshot.hasData) {
+                        if (snapshot.data!.isNotEmpty) {
+                          return CustomScrollView(
+                            shrinkWrap: true,
+                            slivers: [
+                              SliverAppBar(
+                                backgroundColor: Constants.kPrimaryThemeColor,
+                                floating: true,
+                                pinned: true,
+                                snap: false,
+                                centerTitle: true,
+                                automaticallyImplyLeading: false,
+                                elevation: 0.0,
+                                toolbarHeight: kToolbarHeight * 0.8,
+                                leading: IconButton(
+                                  onPressed: () => Navigator.pop(context),
+                                  icon: const Icon(
+                                    Icons.arrow_back,
+                                    color: Colors.white,
+                                    size: 20.0,
+                                  ),
+                                ),
+                                title: const Text(
+                                  'Voter List',
+                                  style: TextStyle(
+                                    color: Colors.white,
+                                    fontSize: Constants.fontLarge,
+                                    fontWeight: FontWeight.w600,
+                                  ),
+                                ),
+                                bottom: AppBar(
+                                  automaticallyImplyLeading: false,
+                                  titleSpacing: 0.0,
+                                  leadingWidth: 0.0,
+                                  elevation: 0.0,
+                                  backgroundColor: Constants.kPrimaryThemeColor,
+                                  title: Container(
+                                    width: size.width,
+                                    height: 40.0,
+                                    margin: const EdgeInsets.symmetric(
+                                        horizontal: 10.0),
+                                    child: TextFormField(
+                                      controller: _searchController,
+                                      maxLines: 1,
+                                      focusNode: _searchFocusNode,
+                                      decoration: InputDecoration(
+                                        hintText: 'Search by name',
+                                        filled: true,
+                                        fillColor: _searchFocusNode.hasFocus
+                                            ? Colors.white60
+                                            : Colors.white24,
+                                        isDense: true,
+                                        prefixIcon: const Icon(
+                                          Icons.search_rounded,
+                                          size: 20.0,
+                                          color: Colors.white70,
+                                        ),
+                                        suffixIcon: _searchController
+                                                .text.isEmpty
+                                            ? Container(width: 0.0)
+                                            : IconButton(
+                                                onPressed: () => setState(() =>
+                                                    _searchController.clear()),
+                                                icon: const Icon(
+                                                  Icons.clear,
+                                                  size: 20.0,
+                                                  color: Colors.white70,
+                                                ),
+                                              ),
+                                        contentPadding: EdgeInsets.zero,
+                                        hintStyle: const TextStyle(
+                                            color: Colors.white70,
+                                            fontSize: Constants.fontSmall,
+                                            fontWeight: FontWeight.w500),
+                                        border: OutlineInputBorder(
+                                            borderRadius:
+                                                BorderRadius.circular(6.0),
+                                            borderSide: BorderSide.none),
+                                        enabledBorder: OutlineInputBorder(
+                                            borderRadius:
+                                                BorderRadius.circular(6.0),
+                                            borderSide: BorderSide.none),
+                                      ),
+                                      onChanged: searchVoterId,
                                     ),
                                   ),
-                            contentPadding: EdgeInsets.zero,
-                            hintStyle: const TextStyle(
-                                color: Colors.white70,
-                                fontSize: Constants.fontSmall,
-                                fontWeight: FontWeight.w500),
-                            border: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(6.0),
-                                borderSide: BorderSide.none),
-                            enabledBorder: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(6.0),
-                                borderSide: BorderSide.none),
-                          ),
-                          onChanged: searchVoterId,
-                        ),
-                      ),
-                    ),
-                  ),
-                  // _isLoaded
-                  //     ?
-                  SliverToBoxAdapter(
-                    child: SizedBox(
-                      width: double.infinity,
-                      child: SingleChildScrollView(
-                        physics: const BouncingScrollPhysics(),
-                        child: Padding(
-                          padding: const EdgeInsets.only(
-                              right: 10.0, left: 10.0, top: 10.0, bottom: 0.0),
-                          child: Column(
-                            children: [
-                              ListView.builder(
-                                itemCount: _searchController.text.isEmpty
-                                    ? voterItems.length
-                                    : _searchResultsItems.length,
-                                shrinkWrap: true,
-                                padding: EdgeInsets.zero,
-                                controller: _scrollController,
-                                itemBuilder: (context, index) {
-                                  if (_searchResultsItems.isEmpty ||
-                                      _searchController.text.isEmpty) {
-                                    return _buildVoterCard(
-                                        size, voterItems[index]);
-                                  } else {
-                                    print(_searchResultsItems.length);
-                                    return _buildVoterCard(
-                                        size, _searchResultsItems[index]);
-                                  }
-                                },
+                                ),
+                              ),
+                              SliverToBoxAdapter(
+                                child: SizedBox(
+                                  width: double.infinity,
+                                  child: SingleChildScrollView(
+                                    physics: const BouncingScrollPhysics(),
+                                    child: Padding(
+                                      padding: const EdgeInsets.only(
+                                          right: 10.0,
+                                          left: 10.0,
+                                          top: 10.0,
+                                          bottom: 0.0),
+                                      child: Column(
+                                        children: [
+                                          ListView.builder(
+                                            itemCount: _searchController
+                                                    .text.isEmpty
+                                                ? voterItems.length
+                                                : _searchResultsItems.length,
+                                            shrinkWrap: true,
+                                            padding: EdgeInsets.zero,
+                                            controller: _scrollController,
+                                            itemBuilder: (context, index) {
+                                              if (_searchResultsItems.isEmpty ||
+                                                  _searchController
+                                                      .text.isEmpty) {
+                                                return _buildVoterCard(
+                                                    size, voterItems[index]);
+                                              } else {
+                                                print(
+                                                    _searchResultsItems.length);
+                                                return _buildVoterCard(size,
+                                                    _searchResultsItems[index]);
+                                              }
+                                            },
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                  ),
+                                ),
                               ),
                             ],
-                          ),
-                        ),
-                      ),
-                    ),
-                  ),
-                ],
-              )
-            : const Center(
-                child: CircularProgressIndicator(),
-              ),
+                          );
+                        } else {
+                          return ErrorNoDataFound(
+                            btnlabel: 'Go back',
+                            header: 'No Data Found',
+                            desc:
+                                'We can\'t find any item matching\nyour search.',
+                            assets: 'assets/raw/nodata.json',
+                            btnicon: Icons.arrow_back_rounded,
+                            onPressed: () => Navigator.pop(context),
+                          );
+                        }
+                      } else {
+                        return const Center(
+                          child: CircularProgressIndicator(),
+                        );
+                      }
+                    })
+                : const NoInternetConnectionError();
+          } else {
+            return const Center(
+              child: CircularProgressIndicator(),
+            );
+          }
+        }),
       ),
     );
   }

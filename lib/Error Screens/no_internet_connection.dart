@@ -2,22 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:lottie/lottie.dart';
 import 'package:sonjagapp/Constants/constants.dart';
 
-class ErrorNoDataFound extends StatelessWidget {
-  const ErrorNoDataFound(
-      {super.key,
-      required this.btnlabel,
-      required this.header,
-      required this.desc,
-      required this.assets,
-      required this.btnicon,
-      required this.onPressed});
-
-  final String btnlabel;
-  final String header;
-  final String desc;
-  final String assets;
-  final IconData btnicon;
-  final VoidCallback onPressed;
+class NoInternetConnectionError extends StatelessWidget {
+  const NoInternetConnectionError({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -45,20 +31,26 @@ class ErrorNoDataFound extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.center,
             mainAxisAlignment: MainAxisAlignment.start,
             children: [
-              Lottie.asset(assets.toString(),
-                  repeat: true, width: size.width, height: size.height * 0.36),
-              Text(
-                header.toString(),
-                style: const TextStyle(
+              const SizedBox(height: 20.0),
+              Lottie.asset(
+                'assets/raw/no_internet.json',
+                repeat: true,
+                width: size.width,
+                height: size.height * 0.26,
+              ),
+              SizedBox(height: size.height * 0.12),
+              const Text(
+                'No Internet Connection',
+                style: TextStyle(
                     color: Colors.black,
                     fontSize: Constants.fontUltraLarge,
                     fontWeight: FontWeight.bold),
               ),
               const SizedBox(height: 10.0),
-              Text(
-                desc.toString(),
+              const Text(
+                'Please check your internet connection\nand try again.',
                 textAlign: TextAlign.center,
-                style: const TextStyle(
+                style: TextStyle(
                     color: Colors.black38,
                     fontSize: Constants.fontMedium,
                     fontWeight: FontWeight.normal),
@@ -75,27 +67,14 @@ class ErrorNoDataFound extends StatelessWidget {
                 highlightElevation: 0.0,
                 highlightColor: Constants.kPrimaryThemeColor.withOpacity(0.26),
                 splashColor: Constants.kPrimaryThemeColor.withOpacity(0.26),
-                onPressed: onPressed,
-                child: Row(
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Icon(
-                      btnicon,
-                      size: 16.0,
-                      color: Constants.kPrimaryThemeColor,
-                    ),
-                    const SizedBox(width: 6.0),
-                    Text(
-                      btnlabel.toString(),
-                      style: const TextStyle(
-                        color: Constants.kPrimaryThemeColor,
-                        fontWeight: FontWeight.w500,
-                        fontSize: Constants.fontSmall,
-                      ),
-                    ),
-                  ],
+                onPressed: () {},
+                child: const Text(
+                  'Try Again',
+                  style: TextStyle(
+                    color: Constants.kPrimaryThemeColor,
+                    fontWeight: FontWeight.w500,
+                    fontSize: Constants.fontSmall,
+                  ),
                 ),
               ),
             ],
