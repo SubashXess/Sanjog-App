@@ -92,6 +92,7 @@ class APIServices {
       Response response = await client.get(uri);
       if (response.statusCode == 200) {
         String json = response.body;
+        print(json);
         return getVoterListFromJson(json);
       } else {
         return Future.error('Connection Error');

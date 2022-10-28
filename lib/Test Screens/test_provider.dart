@@ -19,7 +19,7 @@ class TestProvider with ChangeNotifier {
   bool _isOnline = false;
   bool get isOnline => _isOnline;
 
-  getVoterData(context, String booth) async {
+  void getVoterData(context, String booth) async {
     _isLoading = true;
     _data = (await TestService.getData(context, booth))!.where((boothNo) {
       final String boothNoLower = boothNo.boothNo!.toLowerCase().toString();
@@ -27,7 +27,7 @@ class TestProvider with ChangeNotifier {
       return boothNoLower.contains(booth);
     }).toList();
     _isLoading = false;
-    connectionAvailable();
+    // connectionAvailable();
     hasNoDataFound();
     notifyListeners();
   }

@@ -11,6 +11,7 @@ import 'package:sonjagapp/Error%20Screens/no_data_found.dart';
 import 'package:sonjagapp/Error%20Screens/no_internet_connection.dart';
 import 'package:sonjagapp/Models/user_data_model.dart';
 import 'package:sonjagapp/Providers/connection_provider.dart';
+import 'package:sonjagapp/Providers/edit_voters_provider.dart';
 import 'package:sonjagapp/Screens/search_family_members.dart';
 import 'package:sonjagapp/Screens/edit_voter_details.dart';
 import 'package:sonjagapp/Services/service.dart';
@@ -275,12 +276,16 @@ class _VoterListScreenState extends State<VoterListScreen> {
                                                   _searchController
                                                       .text.isEmpty) {
                                                 return _buildVoterCard(
-                                                    size, voterItems[index]);
+                                                    size,
+                                                    voterItems[index],
+                                                    snapshot);
                                               } else {
                                                 print(
                                                     _searchResultsItems.length);
-                                                return _buildVoterCard(size,
-                                                    _searchResultsItems[index]);
+                                                return _buildVoterCard(
+                                                    size,
+                                                    _searchResultsItems[index],
+                                                    snapshot);
                                               }
                                             },
                                           ),
@@ -293,6 +298,7 @@ class _VoterListScreenState extends State<VoterListScreen> {
                             ],
                           );
                         } else {
+                          print('error');
                           return ErrorNoDataFound(
                             btnlabel: 'Go back',
                             header: 'No Data Found',
@@ -304,6 +310,7 @@ class _VoterListScreenState extends State<VoterListScreen> {
                           );
                         }
                       } else {
+                        print('load data');
                         return const Center(
                           child: CircularProgressIndicator(),
                         );
@@ -311,6 +318,7 @@ class _VoterListScreenState extends State<VoterListScreen> {
                     })
                 : const NoInternetConnectionError();
           } else {
+            print('load network');
             return const Center(
               child: CircularProgressIndicator(),
             );
@@ -320,7 +328,8 @@ class _VoterListScreenState extends State<VoterListScreen> {
     );
   }
 
-  Widget _buildVoterCard(Size size, UserDataModel data) {
+  Widget _buildVoterCard(Size size, UserDataModel data,
+      AsyncSnapshot<List<UserDataModel>> snapshot) {
     return Container(
       width: size.width,
       margin: const EdgeInsets.only(bottom: 10.0),
@@ -400,9 +409,9 @@ class _VoterListScreenState extends State<VoterListScreen> {
                         id: data.id.toString(),
                       ),
                     ),
-                  );
+                  ).then((value) => setState(() {}));
                 },
-                child: Text(
+                child: const Text(
                   'Edit',
                   style: TextStyle(
                     color: Constants.kPrimaryThemeColor,
@@ -411,24 +420,6 @@ class _VoterListScreenState extends State<VoterListScreen> {
                   ),
                 ),
               ),
-
-              // NormalTextButtonWidget(
-              //   label: 'Edit',
-              //   fontSize: Constants.fontExtraSmall,
-              //   onPressed: () {
-              //     Navigator.push(
-              //       context,
-              //       MaterialPageRoute(
-              //         builder: (_) => EditDetailsScreen(
-              //           voterId: data.voterNo.toString(),
-              //           acNo: data.acNo.toString(),
-              //           boothNo: widget.boothNo,
-              //           details: data,
-              //         ),
-              //       ),
-              //     );
-              //   },
-              // ),
             ],
           ),
           // const SizedBox(height: 10.0),
@@ -519,7 +510,7 @@ class _VoterListScreenState extends State<VoterListScreen> {
                           ),
                         ),
                         const SizedBox(width: 10.0),
-                        data.position!.isEmpty
+                        data.position! == 'null' || data.position! == 'None'
                             ? const SizedBox(width: 0.0)
                             : Card(
                                 margin: EdgeInsets.zero,
@@ -615,7 +606,9 @@ class _VoterListScreenState extends State<VoterListScreen> {
                   children: [
                     _buildItems(
                         label: 'Category:',
-                        labelData: data.category.toString()),
+                        labelData: data.category! != 'null'
+                            ? data.category.toString()
+                            : ''),
                     _buildItems(
                         label: 'Relation Type:',
                         labelData: data.relationType.toString()),

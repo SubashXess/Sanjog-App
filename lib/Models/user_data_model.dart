@@ -2,8 +2,6 @@
 
 import 'dart:convert';
 
-import 'package:flutter/material.dart';
-
 List<UserDataModel> getVoterListFromJson(String str) =>
     List<UserDataModel>.from(
         json.decode(str).map((x) => UserDataModel.fromJson(x)));
@@ -86,19 +84,19 @@ class UserDataModel {
       adharNo: json['adharNo'] ?? '',
       name: json['name'] ?? '',
       gender: json['gender'] ?? '',
-      category: json['category'] ?? '',
+      category: json['category'] == '' ? null : json['category'],
       relationType: json['relationType'] ?? '',
       relationName: json['relationName'] ?? '',
       mobileNo: json['mobileNo'] ?? '',
       whatsappNo: json['whatsappNo'] ?? '',
       photo: json['photo'] ?? '',
       address: json['address'] ?? '',
-      bloodGroup: json['blood_group'] ?? '',
+      bloodGroup: json['blood_group'] == '' ? null : json['blood_group'],
       dob: json['dob'] ?? '',
       dom: json['dom'] ?? '',
-      position: json['position'] ?? '',
+      position: json['position'] == '' ? null : json['position'],
       postBJP: json['postBJP'] ?? '',
-      socialOrg: json['soc_org'] ?? '',
+      socialOrg: json['soc_org'] == '' ? null : json['soc_org'],
       createdAt: json['createdAt'] ?? '',
       updatedAt: json['upd_date'] ?? '',
       members: json['members'],

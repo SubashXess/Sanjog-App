@@ -1,15 +1,17 @@
 // ignore_for_file: avoid_print
 
 import 'dart:io';
-import 'package:path/path.dart';
+import 'package:path/path.dart' as path;
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
 import 'package:path_provider/path_provider.dart';
+import 'package:provider/provider.dart';
 import 'package:sonjagapp/Components/gradients.dart';
 import 'package:sonjagapp/Components/showsnackbar.dart';
 import 'package:sonjagapp/Models/user_data_model.dart';
+import 'package:sonjagapp/Providers/edit_voters_provider.dart';
 import 'package:sonjagapp/Services/service.dart';
 import 'package:sonjagapp/Widgets/text_button_widget.dart';
 import 'package:sonjagapp/Widgets/textformfield_widget.dart';
@@ -158,209 +160,375 @@ class _EditDetailsScreenState extends State<EditDetailsScreen> {
     setState(() {});
   }
 
-  Future<List<UserDataModel>> init() async {
-    return voterDetails =
-        (await APIServices.getVoterDetails(context))!.where((data) {
-      final id = data.id!.trim().toLowerCase().toString();
-      final filterID = widget.id.trim().toLowerCase().toString();
-      return id.contains(filterID);
-    }).toList();
-  }
+  void _controllerData() {}
 
   @override
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
-    print('Voter : $voterDetails');
-    print('ID : ${widget.id}');
-    return FutureBuilder<List<UserDataModel>>(
-        future: init(),
-        builder: (context, snapshot) {
-          if (!snapshot.hasData) {
-            // return _circularDialogBox(context);
-          }
-          return GestureDetector(
-            onTap: () => FocusScope.of(context).unfocus(),
-            child: Scaffold(
-              appBar: AppBar(
-                automaticallyImplyLeading: false,
-                leadingWidth: 36.0,
-                titleSpacing: 0.0,
-                centerTitle: true,
-                elevation: 0.0,
-                leading: IconButton(
-                  onPressed: () => Navigator.pop(context),
-                  icon: const Icon(
-                    Icons.arrow_back,
-                    color: Colors.white,
-                    size: 20.0,
-                  ),
-                ),
-                title: const Text(
-                  'Edit Voter Details',
-                  style: TextStyle(
-                    color: Colors.white,
-                    fontSize: Constants.fontLarge,
-                    fontWeight: FontWeight.w600,
-                  ),
-                ),
-                flexibleSpace: FlexibleSpaceBar(
-                  background: Container(
-                    decoration: BoxDecoration(
-                      gradient: gradientColor(),
-                    ),
-                  ),
-                ),
+
+    return GestureDetector(
+      onTap: () => FocusScope.of(context).unfocus(),
+      child: Scaffold(
+        appBar: AppBar(
+          automaticallyImplyLeading: false,
+          leadingWidth: 36.0,
+          titleSpacing: 0.0,
+          centerTitle: true,
+          elevation: 0.0,
+          leading: IconButton(
+            onPressed: () => Navigator.pop(context),
+            icon: const Icon(
+              Icons.arrow_back,
+              color: Colors.white,
+              size: 20.0,
+            ),
+          ),
+          title: const Text(
+            'Edit Voter Details',
+            style: TextStyle(
+              color: Colors.white,
+              fontSize: Constants.fontLarge,
+              fontWeight: FontWeight.w600,
+            ),
+          ),
+          flexibleSpace: FlexibleSpaceBar(
+            background: Container(
+              decoration: BoxDecoration(
+                gradient: gradientColor(),
               ),
-              body: SizedBox(
-                width: double.infinity,
-                child: SingleChildScrollView(
-                  child: SafeArea(
-                    child: Padding(
-                      padding: const EdgeInsets.all(10.0),
-                      child: Form(
-                        key: _formKey,
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          mainAxisAlignment: MainAxisAlignment.start,
-                          children: [
-                            Stack(
-                              alignment: Alignment.center,
-                              fit: StackFit.loose,
-                              children: [
-                                CircleAvatar(
-                                  backgroundColor: Colors.grey.shade400,
-                                  radius: size.width * 0.14,
-                                  child: image != null
-                                      ? CircleAvatar(
-                                          backgroundColor: Colors.grey.shade200,
-                                          radius: size.width * 0.132,
-                                          backgroundImage: FileImage(image!),
-                                        )
-                                      : CircleAvatar(
-                                          backgroundColor: Colors.grey.shade200,
-                                          radius: size.width * 0.132,
-                                          child: Icon(
-                                            Icons.person_rounded,
-                                            color: Colors.grey.shade400,
-                                            size: size.width * 0.12,
-                                          ),
-                                        ),
-                                ),
-                                Positioned(
-                                  bottom: 0,
-                                  right: 0,
-                                  child: CircleAvatar(
-                                    backgroundColor: Colors.red,
-                                    radius: 14.0,
-                                    child: IconButton(
-                                      onPressed: () {
-                                        showModalBottomSheet(
-                                            backgroundColor: Colors.transparent,
-                                            isDismissible: true,
-                                            enableDrag: true,
-                                            context: context,
-                                            builder: (context) {
-                                              return bottomSheet(context);
-                                            });
-                                      },
-                                      padding: EdgeInsets.zero,
-                                      splashRadius: 20.0,
-                                      icon: const Icon(
-                                        Icons.camera_alt,
-                                        size: 15.0,
-                                        color: Colors.white,
-                                      ),
+            ),
+          ),
+        ),
+        body: SizedBox(
+          width: double.infinity,
+          child: SingleChildScrollView(
+            child: SafeArea(
+              child: Padding(
+                padding: const EdgeInsets.all(10.0),
+                child: Form(
+                  key: _formKey,
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    children: [
+                      Stack(
+                        alignment: Alignment.center,
+                        fit: StackFit.loose,
+                        children: [
+                          CircleAvatar(
+                            backgroundColor: Colors.grey.shade400,
+                            radius: size.width * 0.14,
+                            child: image != null
+                                ? CircleAvatar(
+                                    backgroundColor: Colors.grey.shade200,
+                                    radius: size.width * 0.132,
+                                    backgroundImage: FileImage(image!),
+                                  )
+                                : CircleAvatar(
+                                    backgroundColor: Colors.grey.shade200,
+                                    radius: size.width * 0.132,
+                                    child: Icon(
+                                      Icons.person_rounded,
+                                      color: Colors.grey.shade400,
+                                      size: size.width * 0.12,
                                     ),
                                   ),
-                                ),
-                              ],
-                            ),
-                            SizedBox(height: size.height * 0.02),
-                            SizedBox(
-                              width: size.width,
-                              child: Text(
-                                widget.details!.name.toString(),
-                                textAlign: TextAlign.center,
-                                style: const TextStyle(
-                                  color: Colors.black,
-                                  fontSize: Constants.fontLarge,
-                                  fontWeight: FontWeight.w600,
+                          ),
+                          Positioned(
+                            bottom: 0,
+                            right: 0,
+                            child: CircleAvatar(
+                              backgroundColor: Colors.red,
+                              radius: 14.0,
+                              child: IconButton(
+                                onPressed: () {
+                                  showModalBottomSheet(
+                                      backgroundColor: Colors.transparent,
+                                      isDismissible: true,
+                                      enableDrag: true,
+                                      context: context,
+                                      builder: (context) {
+                                        return bottomSheet(context);
+                                      });
+                                },
+                                padding: EdgeInsets.zero,
+                                splashRadius: 20.0,
+                                icon: const Icon(
+                                  Icons.camera_alt,
+                                  size: 15.0,
+                                  color: Colors.white,
                                 ),
                               ),
                             ),
-                            const SizedBox(height: 10.0),
-                            Row(
-                              crossAxisAlignment: CrossAxisAlignment.center,
-                              mainAxisAlignment: MainAxisAlignment.center,
+                          ),
+                        ],
+                      ),
+                      SizedBox(height: size.height * 0.02),
+                      SizedBox(
+                        width: size.width,
+                        child: Text(
+                          widget.details!.name.toString(),
+                          textAlign: TextAlign.center,
+                          style: const TextStyle(
+                            color: Colors.black,
+                            fontSize: Constants.fontLarge,
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
+                      ),
+                      const SizedBox(height: 10.0),
+                      Row(
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          const Text(
+                            'Voter Id:',
+                            style: TextStyle(
+                              color: Colors.black38,
+                              fontSize: Constants.fontRegular,
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                          const SizedBox(width: 10.0),
+                          Text(
+                            widget.voterId,
+                            style: const TextStyle(
+                              color: Colors.black54,
+                              fontSize: Constants.fontRegular,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 6.0),
+                      Row(
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          const Text(
+                            'Aadhar No:',
+                            style: TextStyle(
+                              color: Colors.black38,
+                              fontSize: Constants.fontRegular,
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                          const SizedBox(width: 10.0),
+                          Text(
+                            widget.details!.adharNo.toString(),
+                            style: const TextStyle(
+                              color: Colors.black54,
+                              fontSize: Constants.fontRegular,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 6.0),
+                      Row(
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          const Text(
+                            'AC No:',
+                            style: TextStyle(
+                              color: Colors.black38,
+                              fontSize: Constants.fontRegular,
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                          const SizedBox(width: 6.0),
+                          Text(
+                            widget.details!.acNo.toString(),
+                            style: const TextStyle(
+                              color: Colors.black54,
+                              fontSize: Constants.fontRegular,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        ],
+                      ),
+                      SizedBox(height: size.height * 0.04),
+                      Row(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Expanded(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              mainAxisAlignment: MainAxisAlignment.start,
                               children: [
                                 const Text(
-                                  'Voter Id:',
+                                  'Position',
                                   style: TextStyle(
-                                    color: Colors.black38,
-                                    fontSize: Constants.fontRegular,
-                                    fontWeight: FontWeight.w600,
+                                    color: Colors.black87,
+                                    fontSize: Constants.fontSmall,
+                                    fontWeight: FontWeight.bold,
                                   ),
                                 ),
-                                const SizedBox(width: 10.0),
-                                Text(
-                                  widget.voterId,
-                                  style: const TextStyle(
-                                    color: Colors.black54,
-                                    fontSize: Constants.fontRegular,
-                                    fontWeight: FontWeight.bold,
+                                const SizedBox(height: 10.0),
+                                SizedBox(
+                                  width: size.width,
+                                  child: DropdownButtonFormField<String>(
+                                    // value: positionDefaultValue,
+                                    value: widget.details!.position == 'null'
+                                        ? null
+                                        : categoryDefaultValue ??
+                                            widget.details!.position,
+                                    focusNode: _positionNode,
+                                    hint: const Text(
+                                      'Position',
+                                      style: TextStyle(
+                                          color: Colors.black45,
+                                          fontSize: Constants.fontRegular,
+                                          fontWeight: FontWeight.w500),
+                                    ),
+                                    isExpanded: true,
+                                    autovalidateMode:
+                                        AutovalidateMode.onUserInteraction,
+                                    isDense: true,
+                                    decoration: InputDecoration(
+                                      contentPadding:
+                                          const EdgeInsets.symmetric(
+                                              horizontal: 10.0),
+                                      errorMaxLines: 2,
+                                      filled: true,
+                                      fillColor: Colors.grey.shade200,
+                                      border: OutlineInputBorder(
+                                        borderRadius:
+                                            BorderRadius.circular(6.0),
+                                        borderSide: BorderSide.none,
+                                      ),
+                                      errorStyle: const TextStyle(
+                                          color: Colors.red,
+                                          fontSize: Constants.fontSmall,
+                                          fontWeight: FontWeight.normal),
+                                    ),
+                                    borderRadius: BorderRadius.circular(6.0),
+                                    items: positionItems
+                                        .map(
+                                          (String value) =>
+                                              DropdownMenuItem<String>(
+                                            alignment: Alignment.centerLeft,
+                                            value: value,
+                                            // enabled: value == 'Ekamra Bhubaneswar',
+                                            child: Text(
+                                              value,
+                                              style: const TextStyle(
+                                                color: Colors.black,
+                                                fontSize: Constants.fontRegular,
+                                                fontWeight: FontWeight.w500,
+                                              ),
+                                            ),
+                                          ),
+                                        )
+                                        .toList(),
+                                    icon: Icon(
+                                      Icons.arrow_drop_down_rounded,
+                                      color: Colors.grey.shade400,
+                                      size: 26.0,
+                                    ),
+                                    onChanged: (value) {
+                                      positionDefaultValue = value!;
+                                      print(positionDefaultValue);
+                                    },
                                   ),
                                 ),
                               ],
                             ),
-                            const SizedBox(height: 6.0),
-                            Row(
-                              crossAxisAlignment: CrossAxisAlignment.center,
-                              mainAxisAlignment: MainAxisAlignment.center,
+                          ),
+                          const SizedBox(width: 10.0),
+                          Expanded(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              mainAxisAlignment: MainAxisAlignment.start,
                               children: [
                                 const Text(
-                                  'Aadhar No:',
+                                  'Category',
                                   style: TextStyle(
-                                    color: Colors.black38,
-                                    fontSize: Constants.fontRegular,
-                                    fontWeight: FontWeight.w600,
+                                    color: Colors.black87,
+                                    fontSize: Constants.fontSmall,
+                                    fontWeight: FontWeight.bold,
                                   ),
                                 ),
-                                const SizedBox(width: 10.0),
-                                Text(
-                                  widget.details!.adharNo.toString(),
-                                  style: const TextStyle(
-                                    color: Colors.black54,
-                                    fontSize: Constants.fontRegular,
-                                    fontWeight: FontWeight.bold,
+                                const SizedBox(height: 10.0),
+                                SizedBox(
+                                  width: size.width,
+                                  child: DropdownButtonFormField<String>(
+                                    value: widget.details!.category == 'null'
+                                        ? null
+                                        : categoryDefaultValue ??
+                                            widget.details!.category,
+                                    // value: categoryDefaultValue,
+                                    focusNode: _categoryNode,
+                                    hint: const Text(
+                                      'Category',
+                                      style: TextStyle(
+                                          color: Colors.black45,
+                                          fontSize: Constants.fontRegular,
+                                          fontWeight: FontWeight.w500),
+                                    ),
+                                    isExpanded: true,
+                                    autovalidateMode:
+                                        AutovalidateMode.onUserInteraction,
+                                    isDense: true,
+                                    decoration: InputDecoration(
+                                      contentPadding:
+                                          const EdgeInsets.symmetric(
+                                              horizontal: 10.0),
+                                      errorMaxLines: 2,
+                                      filled: true,
+                                      fillColor: Colors.grey.shade200,
+                                      border: OutlineInputBorder(
+                                        borderRadius:
+                                            BorderRadius.circular(6.0),
+                                        borderSide: BorderSide.none,
+                                      ),
+                                      errorStyle: const TextStyle(
+                                          color: Colors.red,
+                                          fontSize: Constants.fontSmall,
+                                          fontWeight: FontWeight.normal),
+                                    ),
+                                    borderRadius: BorderRadius.circular(6.0),
+                                    items: categoryItems
+                                        .map(
+                                          (String value) =>
+                                              DropdownMenuItem<String>(
+                                            alignment: Alignment.centerLeft,
+                                            value: value,
+                                            // enabled: value == 'Ekamra Bhubaneswar',
+                                            child: Text(
+                                              value,
+                                              style: const TextStyle(
+                                                color: Colors.black,
+                                                fontSize: Constants.fontRegular,
+                                                fontWeight: FontWeight.w500,
+                                              ),
+                                            ),
+                                          ),
+                                        )
+                                        .toList(),
+                                    icon: Icon(
+                                      Icons.arrow_drop_down_rounded,
+                                      color: Colors.grey.shade400,
+                                      size: 26.0,
+                                    ),
+                                    onChanged: (value) {
+                                      categoryDefaultValue = value!;
+                                      print(categoryDefaultValue);
+                                    },
                                   ),
                                 ),
                               ],
                             ),
-                            const SizedBox(height: 6.0),
-                            Row(
-                              crossAxisAlignment: CrossAxisAlignment.center,
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                const Text(
-                                  'AC No:',
-                                  style: TextStyle(
-                                    color: Colors.black38,
-                                    fontSize: Constants.fontRegular,
-                                    fontWeight: FontWeight.w600,
-                                  ),
-                                ),
-                                const SizedBox(width: 6.0),
-                                Text(
-                                  widget.acNo,
-                                  style: const TextStyle(
-                                    color: Colors.black54,
-                                    fontSize: Constants.fontRegular,
-                                    fontWeight: FontWeight.bold,
-                                  ),
-                                ),
-                              ],
-                            ),
-                            SizedBox(height: size.height * 0.04),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 16.0),
+                      SizedBox(
+                        width: double.infinity,
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
                             Row(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
@@ -368,10 +536,9 @@ class _EditDetailsScreenState extends State<EditDetailsScreen> {
                                   child: Column(
                                     crossAxisAlignment:
                                         CrossAxisAlignment.start,
-                                    mainAxisAlignment: MainAxisAlignment.start,
                                     children: [
                                       const Text(
-                                        'Position',
+                                        'Mobile No',
                                         style: TextStyle(
                                           color: Colors.black87,
                                           fontSize: Constants.fontSmall,
@@ -379,72 +546,20 @@ class _EditDetailsScreenState extends State<EditDetailsScreen> {
                                         ),
                                       ),
                                       const SizedBox(height: 10.0),
-                                      SizedBox(
-                                        width: size.width,
-                                        child: DropdownButtonFormField<String>(
-                                          value: positionDefaultValue,
-                                          focusNode: _positionNode,
-                                          hint: const Text(
-                                            'Position',
-                                            style: TextStyle(
-                                                color: Colors.black45,
-                                                fontSize: Constants.fontRegular,
-                                                fontWeight: FontWeight.w500),
-                                          ),
-                                          isExpanded: true,
-                                          autovalidateMode: AutovalidateMode
-                                              .onUserInteraction,
-                                          isDense: true,
-                                          decoration: InputDecoration(
-                                            contentPadding:
-                                                const EdgeInsets.symmetric(
-                                                    horizontal: 10.0),
-                                            errorMaxLines: 2,
-                                            filled: true,
-                                            fillColor: Colors.grey.shade200,
-                                            border: OutlineInputBorder(
-                                              borderRadius:
-                                                  BorderRadius.circular(6.0),
-                                              borderSide: BorderSide.none,
-                                            ),
-                                            errorStyle: const TextStyle(
-                                                color: Colors.red,
-                                                fontSize: Constants.fontSmall,
-                                                fontWeight: FontWeight.normal),
-                                          ),
-                                          borderRadius:
-                                              BorderRadius.circular(6.0),
-                                          items: positionItems
-                                              .map(
-                                                (String value) =>
-                                                    DropdownMenuItem<String>(
-                                                  alignment:
-                                                      Alignment.centerLeft,
-                                                  value: value,
-                                                  // enabled: value == 'Ekamra Bhubaneswar',
-                                                  child: Text(
-                                                    value,
-                                                    style: const TextStyle(
-                                                      color: Colors.black,
-                                                      fontSize:
-                                                          Constants.fontRegular,
-                                                      fontWeight:
-                                                          FontWeight.w500,
-                                                    ),
-                                                  ),
-                                                ),
-                                              )
-                                              .toList(),
-                                          icon: Icon(
-                                            Icons.arrow_drop_down_rounded,
-                                            color: Colors.grey.shade400,
-                                            size: 26.0,
-                                          ),
-                                          onChanged: (value) {
-                                            positionDefaultValue = value!;
-                                            print(positionDefaultValue);
-                                          },
-                                        ),
+                                      FormFieldWidget(
+                                        controller: _mobileNoController,
+                                        focusNode: _mobileNode,
+                                        autofillHints: const [
+                                          AutofillHints.telephoneNumber
+                                        ],
+                                        isPrefixIcon: false,
+                                        isSuffixIcon: false,
+                                        keyboardType: TextInputType.phone,
+                                        maxLength: 10,
+                                        // validator: mobileValidator,
+                                        onChanged: (value) {
+                                          print(value);
+                                        },
                                       ),
                                     ],
                                   ),
@@ -454,10 +569,9 @@ class _EditDetailsScreenState extends State<EditDetailsScreen> {
                                   child: Column(
                                     crossAxisAlignment:
                                         CrossAxisAlignment.start,
-                                    mainAxisAlignment: MainAxisAlignment.start,
                                     children: [
                                       const Text(
-                                        'Category',
+                                        'Whatsapp No',
                                         style: TextStyle(
                                           color: Colors.black87,
                                           fontSize: Constants.fontSmall,
@@ -465,72 +579,18 @@ class _EditDetailsScreenState extends State<EditDetailsScreen> {
                                         ),
                                       ),
                                       const SizedBox(height: 10.0),
-                                      SizedBox(
-                                        width: size.width,
-                                        child: DropdownButtonFormField<String>(
-                                          value: categoryDefaultValue,
-                                          focusNode: _categoryNode,
-                                          hint: const Text(
-                                            'Category',
-                                            style: TextStyle(
-                                                color: Colors.black45,
-                                                fontSize: Constants.fontRegular,
-                                                fontWeight: FontWeight.w500),
-                                          ),
-                                          isExpanded: true,
-                                          autovalidateMode: AutovalidateMode
-                                              .onUserInteraction,
-                                          isDense: true,
-                                          decoration: InputDecoration(
-                                            contentPadding:
-                                                const EdgeInsets.symmetric(
-                                                    horizontal: 10.0),
-                                            errorMaxLines: 2,
-                                            filled: true,
-                                            fillColor: Colors.grey.shade200,
-                                            border: OutlineInputBorder(
-                                              borderRadius:
-                                                  BorderRadius.circular(6.0),
-                                              borderSide: BorderSide.none,
-                                            ),
-                                            errorStyle: const TextStyle(
-                                                color: Colors.red,
-                                                fontSize: Constants.fontSmall,
-                                                fontWeight: FontWeight.normal),
-                                          ),
-                                          borderRadius:
-                                              BorderRadius.circular(6.0),
-                                          items: categoryItems
-                                              .map(
-                                                (String value) =>
-                                                    DropdownMenuItem<String>(
-                                                  alignment:
-                                                      Alignment.centerLeft,
-                                                  value: value,
-                                                  // enabled: value == 'Ekamra Bhubaneswar',
-                                                  child: Text(
-                                                    value,
-                                                    style: const TextStyle(
-                                                      color: Colors.black,
-                                                      fontSize:
-                                                          Constants.fontRegular,
-                                                      fontWeight:
-                                                          FontWeight.w500,
-                                                    ),
-                                                  ),
-                                                ),
-                                              )
-                                              .toList(),
-                                          icon: Icon(
-                                            Icons.arrow_drop_down_rounded,
-                                            color: Colors.grey.shade400,
-                                            size: 26.0,
-                                          ),
-                                          onChanged: (value) {
-                                            categoryDefaultValue = value!;
-                                            print(categoryDefaultValue);
-                                          },
-                                        ),
+                                      FormFieldWidget(
+                                        controller: _whatsappNoController,
+                                        focusNode: _wpNoNode,
+                                        autofillHints: const [
+                                          AutofillHints.telephoneNumber
+                                        ],
+                                        isPrefixIcon: false,
+                                        isSuffixIcon: false,
+                                        keyboardType: TextInputType.phone,
+                                        maxLength: 10,
+                                        validator: whatsappValidator,
+                                        onChanged: (value) {},
                                       ),
                                     ],
                                   ),
@@ -538,498 +598,430 @@ class _EditDetailsScreenState extends State<EditDetailsScreen> {
                               ],
                             ),
                             const SizedBox(height: 16.0),
-                            SizedBox(
-                              width: double.infinity,
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Row(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: [
-                                      Expanded(
-                                        child: Column(
-                                          crossAxisAlignment:
-                                              CrossAxisAlignment.start,
-                                          children: [
-                                            const Text(
-                                              'Mobile No',
-                                              style: TextStyle(
-                                                color: Colors.black87,
-                                                fontSize: Constants.fontSmall,
-                                                fontWeight: FontWeight.bold,
-                                              ),
-                                            ),
-                                            const SizedBox(height: 10.0),
-                                            FormFieldWidget(
-                                              controller: _mobileNoController,
-                                              focusNode: _mobileNode,
-                                              autofillHints: const [
-                                                AutofillHints.telephoneNumber
-                                              ],
-                                              isPrefixIcon: false,
-                                              isSuffixIcon: false,
-                                              keyboardType: TextInputType.phone,
-                                              maxLength: 10,
-                                              // validator: mobileValidator,
-                                              onChanged: (value) {
-                                                print(value);
-                                              },
-                                            ),
-                                          ],
-                                        ),
-                                      ),
-                                      const SizedBox(width: 10.0),
-                                      Expanded(
-                                        child: Column(
-                                          crossAxisAlignment:
-                                              CrossAxisAlignment.start,
-                                          children: [
-                                            const Text(
-                                              'Whatsapp No',
-                                              style: TextStyle(
-                                                color: Colors.black87,
-                                                fontSize: Constants.fontSmall,
-                                                fontWeight: FontWeight.bold,
-                                              ),
-                                            ),
-                                            const SizedBox(height: 10.0),
-                                            FormFieldWidget(
-                                              controller: _whatsappNoController,
-                                              focusNode: _wpNoNode,
-                                              autofillHints: const [
-                                                AutofillHints.telephoneNumber
-                                              ],
-                                              isPrefixIcon: false,
-                                              isSuffixIcon: false,
-                                              keyboardType: TextInputType.phone,
-                                              maxLength: 10,
-                                              validator: whatsappValidator,
-                                              onChanged: (value) {},
-                                            ),
-                                          ],
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                  const SizedBox(height: 16.0),
-                                  const Text(
-                                    'Present Address',
-                                    style: TextStyle(
-                                      color: Colors.black87,
-                                      fontSize: Constants.fontSmall,
-                                      fontWeight: FontWeight.bold,
-                                    ),
-                                  ),
-                                  const SizedBox(height: 10.0),
-                                  FormFieldWidget(
-                                    controller: _addressController,
-                                    focusNode: _addressNode,
-                                    autofillHints: const [
-                                      AutofillHints.addressCity
-                                    ],
-                                    isPrefixIcon: false,
-                                    isSuffixIcon: false,
-                                    keyboardType: TextInputType.multiline,
-                                    contentPadding: const EdgeInsets.symmetric(
-                                        horizontal: 10.0, vertical: 10.0),
-                                    maxLength: 100,
-                                    maxLines: 3,
-                                    onChanged: (value) {},
-                                  ),
-                                  const SizedBox(height: 16.0),
-                                  Row(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: [
-                                      Expanded(
-                                        child: Column(
-                                          crossAxisAlignment:
-                                              CrossAxisAlignment.start,
-                                          children: [
-                                            const Text(
-                                              'Date of Birth',
-                                              style: TextStyle(
-                                                color: Colors.black87,
-                                                fontSize: Constants.fontSmall,
-                                                fontWeight: FontWeight.bold,
-                                              ),
-                                            ),
-                                            const SizedBox(height: 10.0),
-                                            FormFieldWidget(
-                                              controller: _dobController,
-                                              focusNode: _dobNode,
-                                              hintText: 'DD-MM-YYYY',
-                                              isPrefixIcon: false,
-                                              isSuffixIcon: false,
-                                              readOnly: true,
-                                              onTap: () async {
-                                                DateTime? pickedDate =
-                                                    await showDatePicker(
-                                                        context: context,
-                                                        initialDate:
-                                                            DateTime.now(),
-                                                        firstDate:
-                                                            DateTime(1900),
-                                                        lastDate:
-                                                            DateTime(2101));
-
-                                                if (pickedDate != null) {
-                                                  print(pickedDate);
-                                                  String formattedDate =
-                                                      DateFormat('dd-MM-yyyy')
-                                                          .format(pickedDate);
-                                                  print(formattedDate);
-                                                  setState(() {
-                                                    _dobController.text =
-                                                        formattedDate;
-                                                  });
-                                                } else {
-                                                  print('Date is not selected');
-                                                }
-                                              },
-                                              // validator: dobValidator,
-                                            ),
-                                          ],
-                                        ),
-                                      ),
-                                      const SizedBox(width: 10.0),
-                                      Expanded(
-                                        child: Column(
-                                          crossAxisAlignment:
-                                              CrossAxisAlignment.start,
-                                          children: [
-                                            const Text(
-                                              'Date of Marriage',
-                                              style: TextStyle(
-                                                color: Colors.black87,
-                                                fontSize: Constants.fontSmall,
-                                                fontWeight: FontWeight.bold,
-                                              ),
-                                            ),
-                                            const SizedBox(height: 10.0),
-                                            FormFieldWidget(
-                                              controller: _domController,
-                                              focusNode: _domNode,
-                                              hintText: 'DD-MM-YYYY',
-                                              isPrefixIcon: false,
-                                              isSuffixIcon: false,
-                                              readOnly: true,
-                                              onTap: () async {
-                                                DateTime? pickedDate =
-                                                    await showDatePicker(
-                                                        context: context,
-                                                        initialDate:
-                                                            DateTime.now(),
-                                                        firstDate:
-                                                            DateTime(1900),
-                                                        lastDate:
-                                                            DateTime(2101));
-
-                                                if (pickedDate != null) {
-                                                  print(pickedDate);
-                                                  String formattedDate =
-                                                      DateFormat('dd-MM-yyyy')
-                                                          .format(pickedDate);
-                                                  print(formattedDate);
-                                                  setState(() {
-                                                    _domController.text =
-                                                        formattedDate;
-                                                  });
-                                                } else {
-                                                  print('Date is not selected');
-                                                }
-                                              },
-                                              // validator: domValidator,
-                                            ),
-                                          ],
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                  const SizedBox(height: 16.0),
-                                  Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: [
-                                      const Text(
-                                        'Blood Group',
-                                        style: TextStyle(
-                                          color: Colors.black87,
-                                          fontSize: Constants.fontSmall,
-                                          fontWeight: FontWeight.bold,
-                                        ),
-                                      ),
-                                      const SizedBox(height: 10.0),
-                                      SizedBox(
-                                        width: size.width,
-                                        child: DropdownButtonFormField<String>(
-                                          value: bloodGroupDefaultValue,
-                                          focusNode: _bloodNode,
-                                          hint: const Text(
-                                            'Select your blood group',
-                                            style: TextStyle(
-                                                color: Colors.black45,
-                                                fontSize: Constants.fontRegular,
-                                                fontWeight: FontWeight.w500),
-                                          ),
-                                          isExpanded: true,
-                                          autovalidateMode: AutovalidateMode
-                                              .onUserInteraction,
-                                          isDense: true,
-                                          decoration: InputDecoration(
-                                            contentPadding:
-                                                const EdgeInsets.symmetric(
-                                                    horizontal: 10.0),
-                                            errorMaxLines: 2,
-                                            filled: true,
-                                            fillColor: Colors.grey.shade200,
-                                            border: OutlineInputBorder(
-                                              borderRadius:
-                                                  BorderRadius.circular(6.0),
-                                              borderSide: BorderSide.none,
-                                            ),
-                                            errorStyle: const TextStyle(
-                                                color: Colors.red,
-                                                fontSize: Constants.fontSmall,
-                                                fontWeight: FontWeight.normal),
-                                          ),
-                                          borderRadius:
-                                              BorderRadius.circular(6.0),
-                                          items: bloodGroupItems
-                                              .map(
-                                                (String value) =>
-                                                    DropdownMenuItem<String>(
-                                                  alignment: Alignment.center,
-                                                  value: value,
-                                                  // enabled: value == 'Ekamra Bhubaneswar',
-                                                  child: Text(
-                                                    value,
-                                                    style: const TextStyle(
-                                                      color: Colors.black,
-                                                      fontSize:
-                                                          Constants.fontRegular,
-                                                      fontWeight:
-                                                          FontWeight.w500,
-                                                    ),
-                                                  ),
-                                                ),
-                                              )
-                                              .toList(),
-                                          icon: Icon(
-                                            Icons.arrow_drop_down_rounded,
-                                            color: Colors.grey.shade400,
-                                            size: 26.0,
-                                          ),
-                                          // validator: bloodValidator,
-                                          onChanged: (value) {
-                                            bloodGroupDefaultValue = value!;
-                                            print(bloodGroupDefaultValue);
-                                          },
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                  const SizedBox(height: 16.0),
-                                  const Text(
-                                    'Post in BJP',
-                                    style: TextStyle(
-                                      color: Colors.black87,
-                                      fontSize: Constants.fontSmall,
-                                      fontWeight: FontWeight.bold,
-                                    ),
-                                  ),
-                                  const SizedBox(height: 10.0),
-                                  FormFieldWidget(
-                                    controller: _postBJPController,
-                                    focusNode: _postBJPNode,
-                                    isPrefixIcon: false,
-                                    isSuffixIcon: false,
-                                    keyboardType: TextInputType.text,
-                                    maxLength: 40,
-                                    // validator: postInBJPValidator,
-                                    onChanged: (value) {},
-                                  ),
-                                  const SizedBox(height: 16.0),
-                                  Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: [
-                                      const Text(
-                                        'Social Organisation',
-                                        style: TextStyle(
-                                          color: Colors.black87,
-                                          fontSize: Constants.fontSmall,
-                                          fontWeight: FontWeight.bold,
-                                        ),
-                                      ),
-                                      const SizedBox(height: 10.0),
-                                      SizedBox(
-                                        width: size.width,
-                                        child: DropdownButtonFormField<String>(
-                                          value: socialOrgDefaultValue,
-                                          focusNode: _socialNode,
-                                          hint: const Text(
-                                            'Select social organisation',
-                                            style: TextStyle(
-                                                color: Colors.black45,
-                                                fontSize: Constants.fontRegular,
-                                                fontWeight: FontWeight.w500),
-                                          ),
-                                          isExpanded: true,
-                                          autovalidateMode: AutovalidateMode
-                                              .onUserInteraction,
-                                          isDense: true,
-                                          decoration: InputDecoration(
-                                            contentPadding:
-                                                const EdgeInsets.symmetric(
-                                                    horizontal: 10.0),
-                                            errorMaxLines: 1,
-                                            filled: true,
-                                            fillColor: Colors.grey.shade200,
-                                            border: OutlineInputBorder(
-                                              borderRadius:
-                                                  BorderRadius.circular(6.0),
-                                              borderSide: BorderSide.none,
-                                            ),
-                                            errorStyle: const TextStyle(
-                                                color: Colors.red,
-                                                fontSize: Constants.fontSmall,
-                                                fontWeight: FontWeight.normal),
-                                          ),
-                                          borderRadius:
-                                              BorderRadius.circular(6.0),
-                                          items: socialOrgItems
-                                              .map(
-                                                (String value) =>
-                                                    DropdownMenuItem<String>(
-                                                  alignment:
-                                                      Alignment.centerLeft,
-                                                  value: value,
-                                                  child: Text(
-                                                    value,
-                                                    style: const TextStyle(
-                                                      color: Colors.black,
-                                                      fontSize:
-                                                          Constants.fontRegular,
-                                                      fontWeight:
-                                                          FontWeight.w500,
-                                                    ),
-                                                  ),
-                                                  onTap: () {
-                                                    print(value);
-                                                  },
-                                                ),
-                                              )
-                                              .toList(),
-                                          icon: Icon(
-                                            Icons.arrow_drop_down_rounded,
-                                            color: Colors.grey.shade400,
-                                            size: 26.0,
-                                          ),
-                                          // validator: socialOrgValidator,
-                                          onChanged: (value) {
-                                            socialOrgDefaultValue = value!;
-                                            print(socialOrgDefaultValue);
-                                          },
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                ],
+                            const Text(
+                              'Present Address',
+                              style: TextStyle(
+                                color: Colors.black87,
+                                fontSize: Constants.fontSmall,
+                                fontWeight: FontWeight.bold,
                               ),
+                            ),
+                            const SizedBox(height: 10.0),
+                            FormFieldWidget(
+                              controller: _addressController,
+                              focusNode: _addressNode,
+                              autofillHints: const [AutofillHints.addressCity],
+                              isPrefixIcon: false,
+                              isSuffixIcon: false,
+                              keyboardType: TextInputType.multiline,
+                              contentPadding: const EdgeInsets.symmetric(
+                                  horizontal: 10.0, vertical: 10.0),
+                              maxLength: 100,
+                              maxLines: 3,
+                              onChanged: (value) {},
                             ),
                             const SizedBox(height: 16.0),
-                            MaterialButtonWidget(
-                              size: size,
-                              widget: const Text(
-                                'Update',
-                                style: TextStyle(color: Colors.white),
-                              ),
-                              onPressed: () {
-                                if (_formKey.currentState!.validate()) {
-                                  print('Success');
-                                  setState(() {
-                                    _positionNode.unfocus();
-                                    _categoryNode.unfocus();
-                                    _mobileNode.unfocus();
-                                    _wpNoNode.unfocus();
-                                    _addressNode.unfocus();
-                                    _dobNode.unfocus();
-                                    _domNode.unfocus();
-                                    _bloodNode.unfocus();
-                                    _postBJPNode.unfocus();
-                                    _socialNode.unfocus();
-                                  });
-                                  // APIServices.updateUserData(
-                                  //   context,
-                                  //   id: widget.details!.id.toString(),
-                                  //   loginUserId: widget.details!.userId.toString(),
-                                  //   photo: image.toString(),
-                                  //   position: positionDefaultValue,
-                                  //   category: categoryDefaultValue,
-                                  //   mobile:
-                                  //       _mobileNoController.text.trim().toString(),
-                                  //   wpNumber:
-                                  //       _whatsappNoController.text.trim().toString(),
-                                  //   address: _addressController.text,
-                                  //   dob: _dobController.text.toString(),
-                                  //   dom: _domController.text.toString(),
-                                  //   bloodGroup: bloodGroupDefaultValue,
-                                  //   postBJP: _postBJPController.text.toString(),
-                                  //   socialOrg: socialOrgDefaultValue,
-                                  // ).then((value) {
-                                  //   setState(() {});
-                                  // });
+                            Row(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Expanded(
+                                  child: Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      const Text(
+                                        'Date of Birth',
+                                        style: TextStyle(
+                                          color: Colors.black87,
+                                          fontSize: Constants.fontSmall,
+                                          fontWeight: FontWeight.bold,
+                                        ),
+                                      ),
+                                      const SizedBox(height: 10.0),
+                                      FormFieldWidget(
+                                        controller: _dobController,
+                                        focusNode: _dobNode,
+                                        hintText: 'DD-MM-YYYY',
+                                        isPrefixIcon: false,
+                                        isSuffixIcon: false,
+                                        readOnly: true,
+                                        onTap: () async {
+                                          DateTime? pickedDate =
+                                              await showDatePicker(
+                                                  context: context,
+                                                  initialDate: DateTime.now(),
+                                                  firstDate: DateTime(1900),
+                                                  lastDate: DateTime(2101));
 
-                                  showSnackBar(context,
-                                      'Your updates have been successfully');
-                                } else {
-                                  print('Error');
-                                  showSnackBar(context,
-                                      'Please fill out all required fields');
-                                }
-                              },
+                                          if (pickedDate != null) {
+                                            print(pickedDate);
+                                            String formattedDate =
+                                                DateFormat('dd-MM-yyyy')
+                                                    .format(pickedDate);
+                                            print(formattedDate);
+                                            setState(() {
+                                              _dobController.text =
+                                                  formattedDate;
+                                            });
+                                          } else {
+                                            print('Date is not selected');
+                                          }
+                                        },
+                                        // validator: dobValidator,
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                                const SizedBox(width: 10.0),
+                                Expanded(
+                                  child: Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      const Text(
+                                        'Date of Marriage',
+                                        style: TextStyle(
+                                          color: Colors.black87,
+                                          fontSize: Constants.fontSmall,
+                                          fontWeight: FontWeight.bold,
+                                        ),
+                                      ),
+                                      const SizedBox(height: 10.0),
+                                      FormFieldWidget(
+                                        controller: _domController,
+                                        focusNode: _domNode,
+                                        hintText: 'DD-MM-YYYY',
+                                        isPrefixIcon: false,
+                                        isSuffixIcon: false,
+                                        readOnly: true,
+                                        onTap: () async {
+                                          DateTime? pickedDate =
+                                              await showDatePicker(
+                                                  context: context,
+                                                  initialDate: DateTime.now(),
+                                                  firstDate: DateTime(1900),
+                                                  lastDate: DateTime(2101));
+
+                                          if (pickedDate != null) {
+                                            print(pickedDate);
+                                            String formattedDate =
+                                                DateFormat('dd-MM-yyyy')
+                                                    .format(pickedDate);
+                                            print(formattedDate);
+                                            setState(() {
+                                              _domController.text =
+                                                  formattedDate;
+                                            });
+                                          } else {
+                                            print('Date is not selected');
+                                          }
+                                        },
+                                        // validator: domValidator,
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ],
                             ),
-                            SizedBox(height: size.height * 0.04),
-                            NormalTextButtonWidget(
-                              label: 'Clear all the fields',
-                              fontSize: Constants.fontRegular,
-                              onPressed: () {
-                                setState(() {
-                                  positionDefaultValue = null;
-                                  categoryDefaultValue = null;
-                                  bloodGroupDefaultValue = null;
-                                  socialOrgDefaultValue = null;
-                                  _mobileNoController.clear();
-                                  _whatsappNoController.clear();
-                                  _addressController.clear();
-                                  _dobController.clear();
-                                  _domController.clear();
-                                  _postBJPController.clear();
-                                  _positionNode.unfocus();
-                                  _categoryNode.unfocus();
-                                  _mobileNode.unfocus();
-                                  _wpNoNode.unfocus();
-                                  _addressNode.unfocus();
-                                  _dobNode.unfocus();
-                                  _domNode.unfocus();
-                                  _bloodNode.unfocus();
-                                  _postBJPNode.unfocus();
-                                  _socialNode.unfocus();
-                                });
-                              },
+                            const SizedBox(height: 16.0),
+                            Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                const Text(
+                                  'Blood Group',
+                                  style: TextStyle(
+                                    color: Colors.black87,
+                                    fontSize: Constants.fontSmall,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                                const SizedBox(height: 10.0),
+                                SizedBox(
+                                  width: size.width,
+                                  child: DropdownButtonFormField<String>(
+                                    // value: bloodGroupDefaultValue,
+                                    value: widget.details!.bloodGroup == 'null'
+                                        ? null
+                                        : categoryDefaultValue ??
+                                            widget.details!.bloodGroup,
+                                    focusNode: _bloodNode,
+                                    hint: const Text(
+                                      'Select your blood group',
+                                      style: TextStyle(
+                                          color: Colors.black45,
+                                          fontSize: Constants.fontRegular,
+                                          fontWeight: FontWeight.w500),
+                                    ),
+                                    isExpanded: false,
+                                    autovalidateMode:
+                                        AutovalidateMode.onUserInteraction,
+                                    isDense: true,
+                                    decoration: InputDecoration(
+                                      contentPadding:
+                                          const EdgeInsets.symmetric(
+                                              horizontal: 10.0),
+                                      errorMaxLines: 2,
+                                      filled: true,
+                                      fillColor: Colors.grey.shade200,
+                                      border: OutlineInputBorder(
+                                        borderRadius:
+                                            BorderRadius.circular(6.0),
+                                        borderSide: BorderSide.none,
+                                      ),
+                                      errorStyle: const TextStyle(
+                                          color: Colors.red,
+                                          fontSize: Constants.fontSmall,
+                                          fontWeight: FontWeight.normal),
+                                    ),
+                                    borderRadius: BorderRadius.circular(6.0),
+                                    items: bloodGroupItems
+                                        .map(
+                                          (String value) =>
+                                              DropdownMenuItem<String>(
+                                            alignment: Alignment.center,
+                                            value: value,
+                                            // enabled: value == 'Ekamra Bhubaneswar',
+                                            child: Text(
+                                              value,
+                                              style: const TextStyle(
+                                                color: Colors.black,
+                                                fontSize: Constants.fontRegular,
+                                                fontWeight: FontWeight.w500,
+                                              ),
+                                            ),
+                                          ),
+                                        )
+                                        .toList(),
+                                    icon: Icon(
+                                      Icons.arrow_drop_down_rounded,
+                                      color: Colors.grey.shade400,
+                                      size: 26.0,
+                                    ),
+                                    // validator: bloodValidator,
+                                    onChanged: (value) {
+                                      bloodGroupDefaultValue = value!;
+                                      print(bloodGroupDefaultValue);
+                                    },
+                                  ),
+                                ),
+                              ],
+                            ),
+                            const SizedBox(height: 16.0),
+                            const Text(
+                              'Post in BJP',
+                              style: TextStyle(
+                                color: Colors.black87,
+                                fontSize: Constants.fontSmall,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                            const SizedBox(height: 10.0),
+                            FormFieldWidget(
+                              controller: _postBJPController,
+                              focusNode: _postBJPNode,
+                              isPrefixIcon: false,
+                              isSuffixIcon: false,
+                              keyboardType: TextInputType.text,
+                              maxLength: 40,
+                              // validator: postInBJPValidator,
+                              onChanged: (value) {},
+                            ),
+                            const SizedBox(height: 16.0),
+                            Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                const Text(
+                                  'Social Organisation',
+                                  style: TextStyle(
+                                    color: Colors.black87,
+                                    fontSize: Constants.fontSmall,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                                const SizedBox(height: 10.0),
+                                SizedBox(
+                                  width: size.width,
+                                  child: DropdownButtonFormField<String>(
+                                    // value: socialOrgDefaultValue,
+                                    value: widget.details!.socialOrg == 'null'
+                                        ? null
+                                        : categoryDefaultValue ??
+                                            widget.details!.socialOrg,
+                                    focusNode: _socialNode,
+                                    hint: const Text(
+                                      'Select social organisation',
+                                      style: TextStyle(
+                                          color: Colors.black45,
+                                          fontSize: Constants.fontRegular,
+                                          fontWeight: FontWeight.w500),
+                                    ),
+                                    isExpanded: true,
+                                    autovalidateMode:
+                                        AutovalidateMode.onUserInteraction,
+                                    isDense: true,
+                                    decoration: InputDecoration(
+                                      contentPadding:
+                                          const EdgeInsets.symmetric(
+                                              horizontal: 10.0),
+                                      errorMaxLines: 1,
+                                      filled: true,
+                                      fillColor: Colors.grey.shade200,
+                                      border: OutlineInputBorder(
+                                        borderRadius:
+                                            BorderRadius.circular(6.0),
+                                        borderSide: BorderSide.none,
+                                      ),
+                                      errorStyle: const TextStyle(
+                                          color: Colors.red,
+                                          fontSize: Constants.fontSmall,
+                                          fontWeight: FontWeight.normal),
+                                    ),
+                                    borderRadius: BorderRadius.circular(6.0),
+                                    items: socialOrgItems
+                                        .map(
+                                          (String value) =>
+                                              DropdownMenuItem<String>(
+                                            alignment: Alignment.centerLeft,
+                                            value: value,
+                                            child: Text(
+                                              value,
+                                              style: const TextStyle(
+                                                color: Colors.black,
+                                                fontSize: Constants.fontRegular,
+                                                fontWeight: FontWeight.w500,
+                                              ),
+                                            ),
+                                            onTap: () {
+                                              print(value);
+                                            },
+                                          ),
+                                        )
+                                        .toList(),
+                                    icon: Icon(
+                                      Icons.arrow_drop_down_rounded,
+                                      color: Colors.grey.shade400,
+                                      size: 26.0,
+                                    ),
+                                    // validator: socialOrgValidator,
+                                    onChanged: (value) {
+                                      socialOrgDefaultValue = value!;
+                                      print(socialOrgDefaultValue);
+                                    },
+                                  ),
+                                ),
+                              ],
                             ),
                           ],
                         ),
                       ),
-                    ),
+                      const SizedBox(height: 16.0),
+                      MaterialButtonWidget(
+                        size: size,
+                        widget: const Text('Check'),
+                        onPressed: () {
+                          setState(() {});
+                          print(
+                              'Check TextController : ${_mobileNoController.text.runtimeType}');
+                          print(
+                              'Check TextController : ${_mobileNoController.text}');
+                          print(
+                              'Check database : ${widget.details!.mobileNo.runtimeType}');
+                          print('Check database : ${widget.details!.mobileNo}');
+                        },
+                      ),
+                      const SizedBox(height: 16.0),
+                      MaterialButtonWidget(
+                        size: size,
+                        widget: const Text(
+                          'Update',
+                          style: TextStyle(color: Colors.white),
+                        ),
+                        onPressed: () {
+                          if (_formKey.currentState!.validate()) {
+                            print('Success');
+                            setState(() {
+                              _positionNode.unfocus();
+                              _categoryNode.unfocus();
+                              _mobileNode.unfocus();
+                              _wpNoNode.unfocus();
+                              _addressNode.unfocus();
+                              _dobNode.unfocus();
+                              _domNode.unfocus();
+                              _bloodNode.unfocus();
+                              _postBJPNode.unfocus();
+                              _socialNode.unfocus();
+                            });
+
+                            APIServices.updateUserData(
+                              context,
+                              id: widget.details!.id.toString(),
+                              loginUserId: widget.details!.userId.toString(),
+                              photo: image.toString(),
+                              position: positionDefaultValue ??
+                                  widget.details!.bloodGroup,
+                              category: categoryDefaultValue ??
+                                  widget.details!.category.toString(),
+                              mobile:
+                                  _mobileNoController.text.trim().toString(),
+                              wpNumber:
+                                  _whatsappNoController.text.trim().toString(),
+                              address: _addressController.text,
+                              dob: _dobController.text.toString(),
+                              dom: _domController.text.toString(),
+                              bloodGroup: bloodGroupDefaultValue ??
+                                  widget.details!.bloodGroup.toString(),
+                              postBJP: _postBJPController.text.toString(),
+                              socialOrg: socialOrgDefaultValue ??
+                                  widget.details!.socialOrg.toString(),
+                            );
+
+                            showSnackBar(
+                                context, 'Your updates have been successfully');
+                          } else {
+                            print('Error');
+                            showSnackBar(
+                                context, 'Please fill out all required fields');
+                          }
+                        },
+                      ),
+                      SizedBox(height: size.height * 0.04),
+                      NormalTextButtonWidget(
+                        label: 'Clear all the fields',
+                        fontSize: Constants.fontRegular,
+                        onPressed: () {
+                          setState(() {
+                            positionDefaultValue = null;
+                            categoryDefaultValue = null;
+                            bloodGroupDefaultValue = null;
+                            socialOrgDefaultValue = null;
+                            _mobileNoController.clear();
+                            _whatsappNoController.clear();
+                            _addressController.clear();
+                            _dobController.clear();
+                            _domController.clear();
+                            _postBJPController.clear();
+                            _positionNode.unfocus();
+                            _categoryNode.unfocus();
+                            _mobileNode.unfocus();
+                            _wpNoNode.unfocus();
+                            _addressNode.unfocus();
+                            _dobNode.unfocus();
+                            _domNode.unfocus();
+                            _bloodNode.unfocus();
+                            _postBJPNode.unfocus();
+                            _socialNode.unfocus();
+                          });
+                        },
+                      ),
+                    ],
                   ),
                 ),
               ),
             ),
-          );
-        });
+          ),
+        ),
+      ),
+    );
   }
 
   String? mobileValidator(String? value) {
@@ -1216,7 +1208,7 @@ class _EditDetailsScreenState extends State<EditDetailsScreen> {
 
   Future<File> saveImagePermanently(String imagePath) async {
     final directory = await getApplicationDocumentsDirectory();
-    final name = basename(imagePath);
+    final name = path.basename(imagePath);
     final image = File('${directory.path}/$name');
     return File(imagePath).copy(image.path);
   }

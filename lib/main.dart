@@ -4,6 +4,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:sonjagapp/Error%20Screens/no_data_found.dart';
 import 'package:sonjagapp/Error%20Screens/no_internet_connection.dart';
 import 'package:sonjagapp/Providers/connection_provider.dart';
+import 'package:sonjagapp/Providers/edit_voters_provider.dart';
 import 'package:sonjagapp/Providers/voter_list_provider.dart';
 import 'package:sonjagapp/Screens/add_family_members_list_screen.dart';
 import 'package:sonjagapp/Screens/search_family_members.dart';
@@ -32,7 +33,7 @@ class MyApp extends StatelessWidget {
     return MultiProvider(
       providers: [
         ChangeNotifierProvider(create: (context) => ConnectivityProvider()),
-        // ChangeNotifierProvider(create: (context) => VoterListProvider()),
+        ChangeNotifierProvider(create: (context) => EditVotersProvider()),
         // ChangeNotifierProvider(create: (context) => TestProvider()),
       ],
       builder: (context, child) => MaterialApp(
