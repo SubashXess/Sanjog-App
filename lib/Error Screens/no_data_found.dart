@@ -1,3 +1,5 @@
+// ignore_for_file: avoid_print
+
 import 'package:flutter/material.dart';
 import 'package:lottie/lottie.dart';
 import 'package:sonjagapp/Constants/constants.dart';
@@ -22,6 +24,7 @@ class ErrorNoDataFound extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
+    print('No data found screen detect');
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.transparent,

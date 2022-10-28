@@ -4,12 +4,14 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:sonjagapp/Error%20Screens/no_data_found.dart';
 import 'package:sonjagapp/Error%20Screens/no_internet_connection.dart';
 import 'package:sonjagapp/Providers/connection_provider.dart';
+import 'package:sonjagapp/Providers/voter_list_provider.dart';
 import 'package:sonjagapp/Screens/add_family_members_list_screen.dart';
 import 'package:sonjagapp/Screens/search_family_members.dart';
 import 'package:sonjagapp/Screens/login_screen.dart';
 import 'package:sonjagapp/Screens/samiti_screen.dart';
 import 'package:sonjagapp/Screens/search_by_voter_id_screen.dart';
 import 'package:sonjagapp/Screens/voter_list_screen.dart';
+import 'package:sonjagapp/Test%20Screens/test_provider.dart';
 import 'package:sonjagapp/Test%20Screens/test_screen.dart';
 
 void main() async {
@@ -30,6 +32,8 @@ class MyApp extends StatelessWidget {
     return MultiProvider(
       providers: [
         ChangeNotifierProvider(create: (context) => ConnectivityProvider()),
+        // ChangeNotifierProvider(create: (context) => VoterListProvider()),
+        // ChangeNotifierProvider(create: (context) => TestProvider()),
       ],
       builder: (context, child) => MaterialApp(
         title: 'Sanjog App',
@@ -38,10 +42,7 @@ class MyApp extends StatelessWidget {
         // home: isLoggedIn! ? const SamitiScreen() : const LoginScreen(),
         // home: SamitiScreen(),
         home: const SamitiScreen(),
-        // home: const AddDetailsScreen(
-        //   voterId: 'YXV0934471',
-        //   acNo: '111',
-        // ),
+        // home: const TestScreen(),
       ),
     );
   }

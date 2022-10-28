@@ -85,6 +85,22 @@ class APIServices {
     }
   }
 
+  static Future<List<UserDataModel>>? getVoterDetails(context) async {
+    Client client = http.Client();
+    Uri uri = Uri.parse(APIs.VOTER_LIST_API);
+    try {
+      Response response = await client.get(uri);
+      if (response.statusCode == 200) {
+        String json = response.body;
+        return getVoterListFromJson(json);
+      } else {
+        return Future.error('Connection Error');
+      }
+    } catch (e) {
+      return Future.error('Unexpected Error $e');
+    }
+  }
+
   static Future<String> updateUserData(
     context, {
     String? address,

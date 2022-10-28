@@ -268,6 +268,7 @@ class _SearchByVoterIdScreenState extends State<SearchByVoterIdScreen> {
                           acNo: data.acNo.toString(),
                           boothNo: '',
                           details: data,
+                          id: data.id.toString(),
                         ),
                       ));
                 },

@@ -6,7 +6,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import 'package:sonjagapp/Components/or_divider.dart';
-import 'package:sonjagapp/Components/showsnackbar.dart';
 import 'package:sonjagapp/Constants/constants.dart';
 import 'package:sonjagapp/Error%20Screens/no_data_found.dart';
 import 'package:sonjagapp/Error%20Screens/no_internet_connection.dart';
@@ -16,6 +15,7 @@ import 'package:sonjagapp/Screens/search_family_members.dart';
 import 'package:sonjagapp/Screens/edit_voter_details.dart';
 import 'package:sonjagapp/Services/service.dart';
 import 'package:sonjagapp/Widgets/button_widget.dart';
+import 'package:sonjagapp/Widgets/text_button_widget.dart';
 import 'package:sonjagapp/Widgets/textformfield_widget.dart';
 
 class VoterListScreen extends StatefulWidget {
@@ -58,7 +58,6 @@ class _VoterListScreenState extends State<VoterListScreen> {
   List<UserDataModel> _searchResultsItems = [];
 
   // Variables
-  bool _isLoaded = false;
   int page = 1;
   String searchQuery = '';
   Timer? debouncer;
@@ -134,7 +133,7 @@ class _VoterListScreenState extends State<VoterListScreen> {
   @override
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
-    print('reload');
+
     return GestureDetector(
       onTap: () => FocusScope.of(context).unfocus(),
       child: Scaffold(
@@ -246,6 +245,23 @@ class _VoterListScreenState extends State<VoterListScreen> {
                                           bottom: 0.0),
                                       child: Column(
                                         children: [
+                                          Row(
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.center,
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.spaceBetween,
+                                            children: [
+                                              _buildItems(
+                                                  label: 'Booth No:',
+                                                  labelData: widget.boothNo),
+                                              const SizedBox(width: 10.0),
+                                              _buildItems(
+                                                  label: 'Total Voters:',
+                                                  labelData: voterItems.length
+                                                      .toString()),
+                                            ],
+                                          ),
+                                          const SizedBox(height: 10.0),
                                           ListView.builder(
                                             itemCount: _searchController
                                                     .text.isEmpty
@@ -364,50 +380,55 @@ class _VoterListScreenState extends State<VoterListScreen> {
                   ],
                 ),
               ),
-              InkWell(
-                splashColor: Colors.transparent,
-                highlightColor: Colors.transparent,
-                onTap: () {
+              TextButton(
+                style: ButtonStyle(
+                  padding: MaterialStateProperty.all(
+                      const EdgeInsets.symmetric(horizontal: 0.0)),
+                  visualDensity:
+                      const VisualDensity(horizontal: -4, vertical: -4),
+                  tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                ),
+                onPressed: () {
                   Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (_) => EditDetailsScreen(
-                          voterId: data.voterNo.toString(),
-                          acNo: data.acNo.toString(),
-                          boothNo: widget.boothNo,
-                          details: data,
-                        ),
-                      ));
+                    context,
+                    MaterialPageRoute(
+                      builder: (_) => EditDetailsScreen(
+                        voterId: data.voterNo.toString(),
+                        acNo: data.acNo.toString(),
+                        boothNo: widget.boothNo,
+                        details: data,
+                        id: data.id.toString(),
+                      ),
+                    ),
+                  );
                 },
-                child: Container(
-                  padding: const EdgeInsets.symmetric(
-                      horizontal: 6.0, vertical: 4.0),
-                  decoration: BoxDecoration(
-                    color: Colors.grey.shade100,
-                    borderRadius: BorderRadius.circular(4.0),
-                    border: Border.all(width: 1.0, color: Colors.grey.shade300),
-                  ),
-                  child: Row(
-                    mainAxisSize: MainAxisSize.min,
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: const [
-                      Icon(
-                        Icons.edit,
-                        size: 14,
-                        color: Colors.black38,
-                      ),
-                      SizedBox(width: 4.0),
-                      Text(
-                        'Edit',
-                        style: TextStyle(
-                            color: Colors.black38,
-                            fontWeight: FontWeight.w500,
-                            fontSize: Constants.fontExtraSmall),
-                      ),
-                    ],
+                child: Text(
+                  'Edit',
+                  style: TextStyle(
+                    color: Constants.kPrimaryThemeColor,
+                    fontSize: Constants.fontExtraSmall,
+                    fontWeight: FontWeight.w600,
                   ),
                 ),
-              )
+              ),
+
+              // NormalTextButtonWidget(
+              //   label: 'Edit',
+              //   fontSize: Constants.fontExtraSmall,
+              //   onPressed: () {
+              //     Navigator.push(
+              //       context,
+              //       MaterialPageRoute(
+              //         builder: (_) => EditDetailsScreen(
+              //           voterId: data.voterNo.toString(),
+              //           acNo: data.acNo.toString(),
+              //           boothNo: widget.boothNo,
+              //           details: data,
+              //         ),
+              //       ),
+              //     );
+              //   },
+              // ),
             ],
           ),
           // const SizedBox(height: 10.0),
@@ -477,6 +498,8 @@ class _VoterListScreenState extends State<VoterListScreen> {
                         label: 'Gender:', labelData: data.gender.toString()),
                     const SizedBox(height: 4.0),
                     Wrap(
+                      crossAxisAlignment: WrapCrossAlignment.center,
+                      alignment: WrapAlignment.start,
                       children: [
                         const Text(
                           'Voter No:',
@@ -757,7 +780,7 @@ class _VoterListScreenState extends State<VoterListScreen> {
             fontWeight: FontWeight.w600,
           ),
         ),
-        visualDensity: const VisualDensity(horizontal: -4, vertical: 0),
+        visualDensity: const VisualDensity(horizontal: -4, vertical: -1),
       ),
       child: Text(label.toString()),
     );

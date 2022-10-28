@@ -7,7 +7,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 
 class ConnectivityProvider with ChangeNotifier {
-  Connectivity _connectivity = Connectivity();
+  final Connectivity _connectivity = Connectivity();
   bool? _isOnline;
   bool? get isOnline => _isOnline;
 
