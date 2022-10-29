@@ -40,9 +40,9 @@ class MyApp extends StatelessWidget {
         title: 'Sanjog App',
         debugShowCheckedModeBanner: false,
         theme: ThemeData(primarySwatch: Colors.red),
-        // home: isLoggedIn! ? const SamitiScreen() : const LoginScreen(),
+        home: isLoggedIn! ? const SamitiScreen() : const LoginScreen(),
         // home: SamitiScreen(),
-        home: const SamitiScreen(),
+        // home: const SamitiScreen(),
         // home: const TestScreen(),
       ),
     );

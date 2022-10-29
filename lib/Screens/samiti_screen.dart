@@ -3,6 +3,7 @@
 import 'package:badges/badges.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:sonjagapp/Components/or_divider.dart';
 import 'package:sonjagapp/Error%20Screens/no_internet_connection.dart';
 import 'package:sonjagapp/Providers/connection_provider.dart';
@@ -42,6 +43,7 @@ class _SamitiScreenState extends State<SamitiScreen> {
 
   @override
   void initState() {
+    getLoginCred();
     Provider.of<ConnectivityProvider>(context, listen: false).startMonitoring();
     _boothNoNode = FocusNode()..addListener(onListen);
     _pageNoNode = FocusNode()..addListener(onListen);
@@ -79,7 +81,8 @@ class _SamitiScreenState extends State<SamitiScreen> {
           return Scaffold(
             appBar: value.isOnline!
                 ? AppBar(
-                    title: const Text('Sanjog Ekmara'),
+                    // title: const Text('Sanjog Ekmara'),
+                    title: Text(status.toString()),
                     centerTitle: true,
                     automaticallyImplyLeading: false,
                     // backgroundColor: Constants.kPrimaryThemeColor,
@@ -97,69 +100,70 @@ class _SamitiScreenState extends State<SamitiScreen> {
                           },
                           child: const Icon(Icons.search, size: 20.0)),
                       const SizedBox(width: 10.0),
-                      Badge(
-                        badgeContent: const Text(
-                          '1',
-                          style: TextStyle(
-                              color: Colors.white,
-                              fontSize: 10.0,
-                              fontWeight: FontWeight.bold),
-                        ),
-                        badgeColor: Colors.white38,
-                        elevation: 0.0,
-                        position: BadgePosition.topEnd(top: 6.0, end: -6.0),
-                        child: InkWell(
-                          splashColor: Colors.transparent,
-                          highlightColor: Colors.transparent,
-                          onTap: () {
-                            print('Notification');
-                            Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                    builder: (_) =>
-                                        const NotificationScreen()));
-                          },
-                          child: const Icon(
-                            Icons.notifications,
-                            size: 20.0,
-                          ),
-                        ),
-                      ),
-                      PopupMenuButton(
-                        shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(6.0)),
-                        iconSize: 20.0,
-                        position: PopupMenuPosition.under,
-                        itemBuilder: (_) {
-                          return [
-                            PopupMenuItem(
-                              value: 0,
-                              height: 20.0,
-                              onTap: () {
-                                ApiClient.logout(context);
-                              },
-                              child: Row(
-                                crossAxisAlignment: CrossAxisAlignment.center,
-                                children: const [
-                                  Icon(
-                                    Icons.power_settings_new,
-                                    color: Constants.kPrimaryThemeColor,
-                                    size: 18.0,
-                                  ),
-                                  SizedBox(width: 6.0),
-                                  Text(
-                                    'Logout',
-                                    style: TextStyle(
-                                        color: Constants.kPrimaryThemeColor,
-                                        fontSize: Constants.fontSmall,
-                                        fontWeight: FontWeight.bold),
-                                  ),
-                                ],
-                              ),
-                            ),
-                          ];
-                        },
-                      ),
+                      // const SizedBox(width: 10.0),
+                      // Badge(
+                      //   badgeContent: const Text(
+                      //     '1',
+                      //     style: TextStyle(
+                      //         color: Colors.white,
+                      //         fontSize: 10.0,
+                      //         fontWeight: FontWeight.bold),
+                      //   ),
+                      //   badgeColor: Colors.white38,
+                      //   elevation: 0.0,
+                      //   position: BadgePosition.topEnd(top: 6.0, end: -6.0),
+                      //   child: InkWell(
+                      //     splashColor: Colors.transparent,
+                      //     highlightColor: Colors.transparent,
+                      //     onTap: () {
+                      //       print('Notification');
+                      //       Navigator.push(
+                      //           context,
+                      //           MaterialPageRoute(
+                      //               builder: (_) =>
+                      //                   const NotificationScreen()));
+                      //     },
+                      //     child: const Icon(
+                      //       Icons.notifications,
+                      //       size: 20.0,
+                      //     ),
+                      //   ),
+                      // ),
+                      // PopupMenuButton(
+                      //   shape: RoundedRectangleBorder(
+                      //       borderRadius: BorderRadius.circular(6.0)),
+                      //   iconSize: 20.0,
+                      //   position: PopupMenuPosition.under,
+                      //   itemBuilder: (_) {
+                      //     return [
+                      //       PopupMenuItem(
+                      //         value: 0,
+                      //         height: 20.0,
+                      //         onTap: () {
+                      //           ApiClient.logout(context);
+                      //         },
+                      //         child: Row(
+                      //           crossAxisAlignment: CrossAxisAlignment.center,
+                      //           children: const [
+                      //             Icon(
+                      //               Icons.power_settings_new,
+                      //               color: Constants.kPrimaryThemeColor,
+                      //               size: 18.0,
+                      //             ),
+                      //             SizedBox(width: 6.0),
+                      //             Text(
+                      //               'Logout',
+                      //               style: TextStyle(
+                      //                   color: Constants.kPrimaryThemeColor,
+                      //                   fontSize: Constants.fontSmall,
+                      //                   fontWeight: FontWeight.bold),
+                      //             ),
+                      //           ],
+                      //         ),
+                      //       ),
+                      //     ];
+                      //   },
+                      // ),
                     ],
                     flexibleSpace: FlexibleSpaceBar(
                       background: Container(
@@ -633,10 +637,10 @@ class _SamitiScreenState extends State<SamitiScreen> {
     );
   }
 
-  // void getLoginCred() async {
-  //   SharedPreferences preferences = await SharedPreferences.getInstance();
-  //   setState(() {
-  //     status = preferences.getString('login');
-  //   });
-  // }
+  void getLoginCred() async {
+    SharedPreferences preferences = await SharedPreferences.getInstance();
+    setState(() {
+      status = preferences.getString('login');
+    });
+  }
 }
