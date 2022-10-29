@@ -98,7 +98,7 @@ class _TestScreenState extends State<TestScreen> {
                   return Card(
                     color: Colors.deepPurple.shade200,
                     child: Center(
-                      child: Text(items[index].name.toString()),
+                      child: Text(items[index].fname.toString()),
                     ),
                   );
                 },

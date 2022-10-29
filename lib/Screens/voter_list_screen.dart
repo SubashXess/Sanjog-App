@@ -129,6 +129,7 @@ class _VoterListScreenState extends State<VoterListScreen> {
       debouncer!.cancel();
     }
     debouncer = Timer(duration, callback);
+    // voterItems = [];
   }
 
   @override
@@ -473,13 +474,17 @@ class _VoterListScreenState extends State<VoterListScreen> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(
-                      data.name.toString(),
-                      style: const TextStyle(
-                        color: Colors.black,
-                        fontWeight: FontWeight.bold,
-                        fontSize: Constants.fontMedium,
-                      ),
+                    Row(
+                      children: [
+                        Text(
+                          '${data.fname} ${data.mname} ${data.lname}',
+                          style: const TextStyle(
+                            color: Colors.black,
+                            fontWeight: FontWeight.bold,
+                            fontSize: Constants.fontMedium,
+                          ),
+                        ),
+                      ],
                     ),
                     const SizedBox(height: 10.0),
                     _buildRowItems(

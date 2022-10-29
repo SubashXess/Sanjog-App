@@ -7,13 +7,10 @@ import 'package:flutter/services.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
 import 'package:path_provider/path_provider.dart';
-import 'package:provider/provider.dart';
 import 'package:sonjagapp/Components/gradients.dart';
 import 'package:sonjagapp/Components/showsnackbar.dart';
 import 'package:sonjagapp/Models/user_data_model.dart';
-import 'package:sonjagapp/Providers/edit_voters_provider.dart';
 import 'package:sonjagapp/Services/service.dart';
-import 'package:sonjagapp/Widgets/text_button_widget.dart';
 import 'package:sonjagapp/Widgets/textformfield_widget.dart';
 import '../Constants/constants.dart';
 import '../Widgets/button_widget.dart';
@@ -101,6 +98,7 @@ class _EditDetailsScreenState extends State<EditDetailsScreen> {
   @override
   void initState() {
     super.initState();
+    _setControllerData();
     _mobileNoController.addListener(onListen);
     _whatsappNoController.addListener(onListen);
     _addressController.addListener(onListen);
@@ -160,12 +158,36 @@ class _EditDetailsScreenState extends State<EditDetailsScreen> {
     setState(() {});
   }
 
-  void _controllerData() {}
+  void _setControllerData() {
+    _mobileNoController.text = _mobileNoController.text.isEmpty
+        ? widget.details!.mobileNo.toString()
+        : _mobileNoController.text;
+
+    _whatsappNoController.text = _whatsappNoController.text.isEmpty
+        ? widget.details!.whatsappNo.toString()
+        : _whatsappNoController.text;
+
+    _addressController.text = _addressController.text.isEmpty
+        ? widget.details!.address.toString()
+        : _addressController.text;
+
+    _dobController.text = _dobController.text.isEmpty
+        ? widget.details!.dob.toString()
+        : _dobController.text;
+
+    _domController.text = _domController.text.isEmpty
+        ? widget.details!.dom.toString()
+        : _domController.text;
+
+    _postBJPController.text = _postBJPController.text.isEmpty
+        ? widget.details!.postBJP.toString()
+        : _postBJPController.text;
+  }
 
   @override
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
-
+    print(_mobileNoController.text);
     return GestureDetector(
       onTap: () => FocusScope.of(context).unfocus(),
       child: Scaffold(
@@ -267,7 +289,8 @@ class _EditDetailsScreenState extends State<EditDetailsScreen> {
                       SizedBox(
                         width: size.width,
                         child: Text(
-                          widget.details!.name.toString(),
+                          // widget.details!.name.toString(),
+                          '${widget.details!.fname} ${widget.details!.mname} ${widget.details!.lname}',
                           textAlign: TextAlign.center,
                           style: const TextStyle(
                             color: Colors.black,
@@ -372,7 +395,7 @@ class _EditDetailsScreenState extends State<EditDetailsScreen> {
                                     // value: positionDefaultValue,
                                     value: widget.details!.position == 'null'
                                         ? null
-                                        : categoryDefaultValue ??
+                                        : positionDefaultValue ??
                                             widget.details!.position,
                                     focusNode: _positionNode,
                                     hint: const Text(
@@ -648,16 +671,23 @@ class _EditDetailsScreenState extends State<EditDetailsScreen> {
                                         onTap: () async {
                                           DateTime? pickedDate =
                                               await showDatePicker(
-                                                  context: context,
-                                                  initialDate: DateTime.now(),
-                                                  firstDate: DateTime(1900),
-                                                  lastDate: DateTime(2101));
+                                            context: context,
+                                            initialDate: _dobController
+                                                    .text.isEmpty
+                                                ? DateTime.now()
+                                                : DateTime.parse(DateFormat(
+                                                        'yyyy-MM-dd') // dd-MM-yyyy
+                                                    .format(DateTime.parse(
+                                                        _dobController.text))),
+                                            firstDate: DateTime(1900),
+                                            lastDate: DateTime(2101),
+                                          );
 
                                           if (pickedDate != null) {
                                             print(pickedDate);
-                                            String formattedDate =
-                                                DateFormat('dd-MM-yyyy')
-                                                    .format(pickedDate);
+                                            String formattedDate = DateFormat(
+                                                    'yyyy-MM-dd') // dd-MM-yyyy
+                                                .format(pickedDate);
                                             print(formattedDate);
                                             setState(() {
                                               _dobController.text =
@@ -698,15 +728,23 @@ class _EditDetailsScreenState extends State<EditDetailsScreen> {
                                           DateTime? pickedDate =
                                               await showDatePicker(
                                                   context: context,
-                                                  initialDate: DateTime.now(),
+                                                  initialDate: _domController
+                                                          .text.isEmpty
+                                                      ? DateTime.now()
+                                                      : DateTime.parse(DateFormat(
+                                                              'yyyy-MM-dd') // dd-MM-yyyy
+                                                          .format(
+                                                              DateTime.parse(
+                                                                  _domController
+                                                                      .text))),
                                                   firstDate: DateTime(1900),
                                                   lastDate: DateTime(2101));
 
                                           if (pickedDate != null) {
                                             print(pickedDate);
-                                            String formattedDate =
-                                                DateFormat('dd-MM-yyyy')
-                                                    .format(pickedDate);
+                                            String formattedDate = DateFormat(
+                                                    'yyyy-MM-dd') // dd-MM-yyyy
+                                                .format(pickedDate);
                                             print(formattedDate);
                                             setState(() {
                                               _domController.text =
@@ -742,7 +780,7 @@ class _EditDetailsScreenState extends State<EditDetailsScreen> {
                                     // value: bloodGroupDefaultValue,
                                     value: widget.details!.bloodGroup == 'null'
                                         ? null
-                                        : categoryDefaultValue ??
+                                        : bloodGroupDefaultValue ??
                                             widget.details!.bloodGroup,
                                     focusNode: _bloodNode,
                                     hint: const Text(
@@ -845,7 +883,7 @@ class _EditDetailsScreenState extends State<EditDetailsScreen> {
                                     // value: socialOrgDefaultValue,
                                     value: widget.details!.socialOrg == 'null'
                                         ? null
-                                        : categoryDefaultValue ??
+                                        : socialOrgDefaultValue ??
                                             widget.details!.socialOrg,
                                     focusNode: _socialNode,
                                     hint: const Text(
@@ -915,21 +953,21 @@ class _EditDetailsScreenState extends State<EditDetailsScreen> {
                         ),
                       ),
                       const SizedBox(height: 16.0),
-                      MaterialButtonWidget(
-                        size: size,
-                        widget: const Text('Check'),
-                        onPressed: () {
-                          setState(() {});
-                          print(
-                              'Check TextController : ${_mobileNoController.text.runtimeType}');
-                          print(
-                              'Check TextController : ${_mobileNoController.text}');
-                          print(
-                              'Check database : ${widget.details!.mobileNo.runtimeType}');
-                          print('Check database : ${widget.details!.mobileNo}');
-                        },
-                      ),
-                      const SizedBox(height: 16.0),
+                      // MaterialButtonWidget(
+                      //   size: size,
+                      //   widget: const Text('Check'),
+                      //   onPressed: () {
+                      //     setState(() {});
+                      //     print(
+                      //         'Check TextController : ${_mobileNoController.text.runtimeType}');
+                      //     print(
+                      //         'Check TextController : ${_mobileNoController.text}');
+                      //     print(
+                      //         'Check database : ${widget.details!.mobileNo.runtimeType}');
+                      //     print('Check database : ${widget.details!.mobileNo}');
+                      //   },
+                      // ),
+                      // const SizedBox(height: 16.0),
                       MaterialButtonWidget(
                         size: size,
                         widget: const Text(
@@ -958,11 +996,10 @@ class _EditDetailsScreenState extends State<EditDetailsScreen> {
                               loginUserId: widget.details!.userId.toString(),
                               photo: image.toString(),
                               position: positionDefaultValue ??
-                                  widget.details!.bloodGroup,
+                                  widget.details!.position.toString(),
                               category: categoryDefaultValue ??
                                   widget.details!.category.toString(),
-                              mobile:
-                                  _mobileNoController.text.trim().toString(),
+                              mobile: _mobileNoController.text,
                               wpNumber:
                                   _whatsappNoController.text.trim().toString(),
                               address: _addressController.text,
@@ -984,35 +1021,35 @@ class _EditDetailsScreenState extends State<EditDetailsScreen> {
                           }
                         },
                       ),
-                      SizedBox(height: size.height * 0.04),
-                      NormalTextButtonWidget(
-                        label: 'Clear all the fields',
-                        fontSize: Constants.fontRegular,
-                        onPressed: () {
-                          setState(() {
-                            positionDefaultValue = null;
-                            categoryDefaultValue = null;
-                            bloodGroupDefaultValue = null;
-                            socialOrgDefaultValue = null;
-                            _mobileNoController.clear();
-                            _whatsappNoController.clear();
-                            _addressController.clear();
-                            _dobController.clear();
-                            _domController.clear();
-                            _postBJPController.clear();
-                            _positionNode.unfocus();
-                            _categoryNode.unfocus();
-                            _mobileNode.unfocus();
-                            _wpNoNode.unfocus();
-                            _addressNode.unfocus();
-                            _dobNode.unfocus();
-                            _domNode.unfocus();
-                            _bloodNode.unfocus();
-                            _postBJPNode.unfocus();
-                            _socialNode.unfocus();
-                          });
-                        },
-                      ),
+                      // SizedBox(height: size.height * 0.04),
+                      // NormalTextButtonWidget(
+                      //   label: 'Clear all the fields',
+                      //   fontSize: Constants.fontRegular,
+                      //   onPressed: () {
+                      //     setState(() {
+                      //       positionDefaultValue = null;
+                      //       categoryDefaultValue = null;
+                      //       bloodGroupDefaultValue = null;
+                      //       socialOrgDefaultValue = null;
+                      //       _mobileNoController.clear();
+                      //       _whatsappNoController.clear();
+                      //       _addressController.clear();
+                      //       _dobController.clear();
+                      //       _domController.clear();
+                      //       _postBJPController.clear();
+                      //       _positionNode.unfocus();
+                      //       _categoryNode.unfocus();
+                      //       _mobileNode.unfocus();
+                      //       _wpNoNode.unfocus();
+                      //       _addressNode.unfocus();
+                      //       _dobNode.unfocus();
+                      //       _domNode.unfocus();
+                      //       _bloodNode.unfocus();
+                      //       _postBJPNode.unfocus();
+                      //       _socialNode.unfocus();
+                      //     });
+                      //   },
+                      // ),
                     ],
                   ),
                 ),

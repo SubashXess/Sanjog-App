@@ -309,20 +309,26 @@ class _SearchSamitiListScreenState extends State<SearchSamitiListScreen> {
                       ],
                     ),
                   )
-                : SliverFillRemaining(
+                : const SliverFillRemaining(
                     fillOverscroll: false,
                     hasScrollBody: false,
-                    child: ErrorNoDataFound(
-                      btnlabel: 'Search samiti list',
-                      header: 'Search by booth number',
-                      desc: 'Search by entering booth no above',
-                      assets: 'assets/raw/search_id.json',
-                      btnicon: Icons.search,
-                      onPressed: () {
-                        _boothNode.requestFocus();
-                      },
+                    child: Center(
+                      child: Text(
+                        'Search by Booth number',
+                        style: TextStyle(fontSize: Constants.fontRegular),
+                      ),
                     ),
                   ),
+            // ErrorNoDataFound(
+            //     btnlabel: 'Search samiti list',
+            //     header: 'Search by booth number',
+            //     desc: 'Search by entering booth no above',
+            //     assets: 'assets/raw/search_id.json',
+            //     btnicon: Icons.search,
+            //     onPressed: () {
+            //       _boothNode.requestFocus();
+            //     },
+            //   ),
           ],
         ),
       ),
@@ -333,30 +339,39 @@ class _SearchSamitiListScreenState extends State<SearchSamitiListScreen> {
     return Container(
       margin: const EdgeInsets.only(bottom: 10.0),
       decoration: BoxDecoration(
-        color: data.position == 'PP'
-            ? Colors.red.shade100
-            : data.position == null
-                ? Colors.white
-                : Colors.green.shade100,
-        borderRadius: BorderRadius.circular(6.0),
-        boxShadow: const [
-          BoxShadow(
-            blurRadius: 4.0,
-            spreadRadius: 1.0,
-            color: Colors.black12,
-            offset: Offset(0.0, 1.0),
+          color: data.position == 'PP'
+              ? Colors.red.withOpacity(0.06)
+              : data.position == null
+                  ? Colors.white
+                  : Colors.green.withOpacity(0.06),
+          borderRadius: BorderRadius.circular(6.0),
+          border: Border.all(
+              width: 1.0,
+              color: data.position == 'PP'
+                  ? Colors.red
+                  : data.position == null
+                      ? Colors.white
+                      : Colors.green)
+          // boxShadow: const [
+          //   BoxShadow(
+          //     blurRadius: 4.0,
+          //     spreadRadius: 1.0,
+          //     color: Colors.black12,
+          //     offset: Offset(0.0, 1.0),
+          //   ),
+          // ],
           ),
-        ],
-      ),
       child: Padding(
         padding: const EdgeInsets.all(10.0),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            _buildCardItems(label: 'Serial No:', labelData: index.toString()),
+            _buildCardItems(
+                label: 'Serial No:', labelData: index.toString(), data: data),
             const SizedBox(height: 6.0),
             _buildRowItems(
-                label: 'Full Name:', labelData: data.name.toString()),
+                label: 'Full Name:',
+                labelData: '${data.fname} ${data.mname} ${data.lname}'),
             const SizedBox(height: 6.0),
             _buildRowItems(
                 label: 'Mobile Number:', labelData: '+91 ${data.mobileNo}'),
@@ -370,12 +385,20 @@ class _SearchSamitiListScreenState extends State<SearchSamitiListScreen> {
     );
   }
 
-  Widget _buildCardItems({required String label, required String labelData}) {
+  Widget _buildCardItems(
+      {required String label,
+      required String labelData,
+      required UserDataModel data}) {
     return Container(
       // constraints: BoxConstraints(maxWidth: size.width * 0.6, minWidth: 100.0),
       padding: const EdgeInsets.symmetric(horizontal: 6.0, vertical: 4.0),
       decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(4.0), color: Colors.white70),
+          borderRadius: BorderRadius.circular(4.0),
+          color: data.position == 'PP'
+              ? Colors.red.shade100
+              : data.position == null
+                  ? Colors.white60
+                  : Colors.green.shade100),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.center,
         mainAxisAlignment: MainAxisAlignment.center,

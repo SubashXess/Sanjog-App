@@ -26,7 +26,7 @@ class APIServices {
       if (response.statusCode == 200) {
         String json = response.body;
         return getVoterListFromJson(json).where((items) {
-          final String nameLower = items.name!.toLowerCase().toString();
+          final String nameLower = items.fname!.toLowerCase() + items.mname!.toLowerCase()  + items.lname!.toLowerCase();
           final String boothNoLower = items.boothNo!.toLowerCase().toString();
           final String searchLower = name!.toLowerCase().toString();
           return nameLower.contains(searchLower) &&

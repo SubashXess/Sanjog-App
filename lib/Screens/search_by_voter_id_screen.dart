@@ -11,6 +11,7 @@ import 'package:sonjagapp/Services/service.dart';
 import 'package:sonjagapp/Widgets/textformfield_widget.dart';
 
 import 'edit_voter_details.dart';
+import 'search_family_members.dart';
 
 class SearchByVoterIdScreen extends StatefulWidget {
   const SearchByVoterIdScreen({super.key});
@@ -64,11 +65,13 @@ class _SearchByVoterIdScreenState extends State<SearchByVoterIdScreen> {
       debouncer!.cancel();
     }
     debouncer = Timer(duration, callback);
+    _searchResultsItems = [];
   }
 
   Future searchVoterId(String query) async => debounce(() async {
         final searchResult =
             await APIServices.getVoterIdSearchResult(context, voterId: query);
+
         if (!mounted) return;
         setState(() {
           searchQuery = query;
@@ -159,35 +162,36 @@ class _SearchByVoterIdScreenState extends State<SearchByVoterIdScreen> {
                 ),
               ),
             ),
-            _voterIdController.text.isNotEmpty || _searchResultsItems.isNotEmpty
-                ? SliverToBoxAdapter(
-                    child: Padding(
-                      padding: const EdgeInsets.all(10.0),
-                      child: ListView.builder(
-                        itemCount: _searchResultsItems.length,
-                        shrinkWrap: true,
-                        padding: EdgeInsets.zero,
-                        controller: _scrollController,
-                        itemBuilder: (context, index) {
-                          print(_searchResultsItems.length);
-                          return _buildVoterCard(
-                              size, _searchResultsItems[index]);
-                        },
-                      ),
-                    ),
-                  )
+            _voterIdController.text.isNotEmpty
+                ? _searchResultsItems.isNotEmpty
+                    ? SliverToBoxAdapter(
+                        child: Padding(
+                          padding: const EdgeInsets.all(10.0),
+                          child: ListView.builder(
+                            itemCount: _searchResultsItems.length,
+                            shrinkWrap: true,
+                            padding: EdgeInsets.zero,
+                            controller: _scrollController,
+                            itemBuilder: (context, index) {
+                              print(_searchResultsItems.length);
+                              return _buildVoterCard(
+                                  size, _searchResultsItems[index], index + 1);
+                            },
+                          ),
+                        ),
+                      )
+                    : SliverFillRemaining(
+                        fillOverscroll: false,
+                        hasScrollBody: false,
+                        child: Center(
+                          child: const CircularProgressIndicator(),
+                        ),
+                      )
                 : SliverFillRemaining(
                     fillOverscroll: false,
                     hasScrollBody: false,
-                    child: ErrorNoDataFound(
-                      btnlabel: 'Search voter id',
-                      header: 'Search by Voter Id',
-                      desc: 'Search by entering voter id above',
-                      assets: 'assets/raw/search_id.json',
-                      btnicon: Icons.search,
-                      onPressed: () {
-                        _voterIdNode.requestFocus();
-                      },
+                    child: Center(
+                      child: Text('Search by Voter ID'),
                     ),
                   ),
           ],
@@ -196,7 +200,18 @@ class _SearchByVoterIdScreenState extends State<SearchByVoterIdScreen> {
     );
   }
 
-  Widget _buildVoterCard(Size size, UserDataModel data) {
+  // ErrorNoDataFound(
+  //                     btnlabel: 'Search voter id',
+  //                     header: 'Search by Voter Id',
+  //                     desc: 'Search by entering voter id above',
+  //                     assets: 'assets/raw/search_id.json',
+  //                     btnicon: Icons.search,
+  //                     onPressed: () {
+  //                       _voterIdNode.requestFocus();
+  //                     },
+  //                   ),
+
+  Widget _buildVoterCard(Size size, UserDataModel data, int index) {
     return Container(
       width: size.width,
       margin: const EdgeInsets.only(bottom: 10.0),
@@ -206,10 +221,10 @@ class _SearchByVoterIdScreenState extends State<SearchByVoterIdScreen> {
         borderRadius: BorderRadius.circular(6.0),
         boxShadow: const [
           BoxShadow(
-            blurRadius: 8.0,
-            spreadRadius: 1.0,
+            blurRadius: 6.0,
+            spreadRadius: 0.0,
             color: Colors.black12,
-            offset: Offset(0.0, 2.0),
+            offset: Offset(0.0, 1.0),
           ),
         ],
       ),
@@ -219,146 +234,144 @@ class _SearchByVoterIdScreenState extends State<SearchByVoterIdScreen> {
         mainAxisSize: MainAxisSize.min,
         children: [
           Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
             crossAxisAlignment: CrossAxisAlignment.center,
-            mainAxisSize: MainAxisSize.max,
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Row(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  Text(
+                    'Serial No:',
+                    style: TextStyle(
+                      color: Constants.kPrimaryThemeColor.withAlpha(120),
+                      fontSize: Constants.fontExtraSmall,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                  const SizedBox(width: 4.0),
+                  Text(
+                    '$index',
+                    style: const TextStyle(
+                      color: Constants.kPrimaryThemeColor,
+                      fontSize: Constants.fontExtraSmall,
+                      fontWeight: FontWeight.w900,
+                    ),
+                  ),
+                ],
+              ),
+              const SizedBox(width: 10.0),
+              TextButton(
+                style: ButtonStyle(
+                  padding: MaterialStateProperty.all(
+                      const EdgeInsets.symmetric(horizontal: 0.0)),
+                  visualDensity:
+                      const VisualDensity(horizontal: -4, vertical: -4),
+                  tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                ),
+                onPressed: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (_) => EditDetailsScreen(
+                        voterId: data.voterNo.toString(),
+                        acNo: data.acNo.toString(),
+                        boothNo: '',
+                        details: data,
+                        id: data.id.toString(),
+                      ),
+                    ),
+                  ).then((value) => setState(() {}));
+                },
+                child: const Text(
+                  'Edit',
+                  style: TextStyle(
+                    color: Constants.kPrimaryThemeColor,
+                    fontSize: Constants.fontExtraSmall,
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 10.0),
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Container(
-                constraints:
-                    const BoxConstraints(minWidth: 100.0, maxWidth: 100.0),
+                constraints: const BoxConstraints(minWidth: 100.0),
                 padding:
                     const EdgeInsets.symmetric(horizontal: 6.0, vertical: 6.0),
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(4.0),
-                  color: Constants.kSecondaryThemeColor.withOpacity(0.8),
+                  color: Colors.grey.shade200,
                 ),
                 child: Row(
                   crossAxisAlignment: CrossAxisAlignment.center,
                   mainAxisAlignment: MainAxisAlignment.center,
+                  mainAxisSize: MainAxisSize.min,
                   children: [
                     const Text(
                       'Ac No:',
                       style: TextStyle(
-                        color: Colors.white70,
+                        color: Colors.black38,
                         fontWeight: FontWeight.w500,
-                        fontSize: Constants.fontRegular,
+                        fontSize: Constants.fontExtraSmall,
                       ),
                     ),
                     const SizedBox(width: 4.0),
                     Text(
                       data.acNo.toString(),
                       style: const TextStyle(
-                        color: Colors.white,
-                        fontWeight: FontWeight.w500,
-                        fontSize: Constants.fontRegular,
+                        color: Colors.black54,
+                        fontWeight: FontWeight.bold,
+                        fontSize: Constants.fontExtraSmall,
                       ),
                     ),
                   ],
                 ),
               ),
-              InkWell(
-                splashColor: Colors.transparent,
-                highlightColor: Colors.transparent,
-                onTap: () {
-                  Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (_) => EditDetailsScreen(
-                          voterId: data.voterNo.toString(),
-                          acNo: data.acNo.toString(),
-                          boothNo: '',
-                          details: data,
-                          id: data.id.toString(),
-                        ),
-                      ));
-                },
-                child: Container(
-                  constraints: const BoxConstraints(minWidth: 100.0),
-                  padding: const EdgeInsets.symmetric(
-                      horizontal: 6.0, vertical: 6.0),
-                  decoration: BoxDecoration(
-                    color: Constants.kLightThemeColor,
-                    borderRadius: BorderRadius.circular(4.0),
-                    border: Border.all(
-                        width: 1.0,
-                        color: Constants.kPrimaryThemeColor.withOpacity(0.4)),
-                  ),
-                  child: Row(
-                    children: const [
-                      Icon(
-                        Icons.edit,
-                        size: 16,
-                        color: Constants.kPrimaryThemeColor,
-                      ),
-                      SizedBox(width: 4.0),
-                      Text(
-                        'Edit Details',
-                        style: TextStyle(
-                            color: Constants.kPrimaryThemeColor,
-                            fontWeight: FontWeight.w500,
-                            fontSize: Constants.fontSmall),
-                      ),
-                    ],
-                  ),
-                ),
-              )
-            ],
-          ),
-          const SizedBox(height: 10.0),
-          Wrap(
-            runSpacing: 10.0,
-            spacing: 10.0,
-            children: [
+              const SizedBox(width: 10.0),
               data.boothNo == null || data.boothNo == '0'
                   ? const SizedBox(width: 0.0)
                   : _buildCardItems(
                       label: 'Booth No:', labelData: data.boothNo.toString()),
-              data.pageNo == null || data.pageNo == '0'
-                  ? const SizedBox(width: 0.0)
-                  : _buildCardItems(
-                      label: 'Page No:', labelData: data.pageNo.toString()),
-              data.serialNo == null || data.serialNo == '0'
-                  ? const SizedBox(width: 0.0)
-                  : _buildCardItems(
-                      label: 'Serial No:', labelData: data.serialNo.toString()),
+              // data.pageNo == null || data.pageNo == '0'
+              //     ? const SizedBox(width: 0.0)
+              //     : _buildCardItems(
+              //         label: 'Page No:', labelData: data.pageNo.toString()),
+              // data.serialNo == null || data.serialNo == '0'
+              //     ? const SizedBox(width: 0.0)
+              //     : _buildCardItems(
+              //         label: 'Serial No:', labelData: data.serialNo.toString()),
             ],
           ),
           const SizedBox(height: 10.0),
           Row(
             mainAxisAlignment: MainAxisAlignment.start,
-            crossAxisAlignment: CrossAxisAlignment.start,
+            crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               SizedBox(
                 width: 100.0,
                 height: 100.0,
-                child: ClipRRect(
-                  borderRadius: BorderRadius.circular(4.0),
+                child: Card(
+                  margin: EdgeInsets.zero,
+                  color: Colors.grey.shade200,
+                  elevation: 0.0,
                   clipBehavior: Clip.antiAliasWithSaveLayer,
-                  child: InkWell(
-                    highlightColor: Colors.transparent,
-                    splashColor: Colors.transparent,
-                    onTap: () {
-                      print('Change photo');
-                    },
-                    child: Card(
-                      margin: EdgeInsets.zero,
-                      color: Colors.grey.shade200,
-                      elevation: 0.0,
-                      clipBehavior: Clip.antiAliasWithSaveLayer,
-                      shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(4.0)),
-                      child: data.photo == null
-                          ? Icon(
-                              Icons.person_rounded,
-                              color: Colors.grey.shade400,
-                              size: 46.0,
-                            )
-                          : CachedNetworkImage(
-                              imageUrl: data.photo.toString(),
-                              fit: BoxFit.contain,
-                            ),
-                    ),
-                  ),
+                  shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(4.0)),
+                  child: data.photo!.isEmpty
+                      ? Icon(
+                          Icons.person_rounded,
+                          size: 46.0,
+                          color: Colors.grey.shade400,
+                        )
+                      : CachedNetworkImage(
+                          imageUrl: data.photo.toString(),
+                          fit: BoxFit.contain,
+                        ),
                 ),
               ),
               const SizedBox(width: 10.0),
@@ -367,35 +380,44 @@ class _SearchByVoterIdScreenState extends State<SearchByVoterIdScreen> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      data.name.toString(),
+                      // data.name.toString(),
+                      '${data.fname} ${data.mname} ${data.lname}',
                       style: const TextStyle(
                         color: Colors.black,
                         fontWeight: FontWeight.bold,
-                        fontSize: Constants.fontLarge,
+                        fontSize: Constants.fontMedium,
                       ),
                     ),
                     const SizedBox(height: 10.0),
                     _buildRowItems(
-                        label: 'DOB:',
-                        labelData: data.dob == null ? '' : data.dob.toString()),
+                        label: 'DOB:', labelData: data.dob.toString()),
                     const SizedBox(height: 4.0),
                     _buildRowItems(
-                        label: 'Sex:',
-                        labelData:
-                            data.gender == null ? '' : data.gender.toString()),
+                        label: 'Gender:', labelData: data.gender.toString()),
                     const SizedBox(height: 4.0),
-                    Row(
+                    Wrap(
+                      crossAxisAlignment: WrapCrossAlignment.center,
+                      alignment: WrapAlignment.start,
                       children: [
+                        const Text(
+                          'Voter No:',
+                          style: TextStyle(
+                            color: Colors.black38,
+                            fontWeight: FontWeight.w500,
+                            fontSize: Constants.fontSmall,
+                          ),
+                        ),
+                        const SizedBox(width: 6.0),
                         Text(
                           data.voterNo.toString(),
                           style: const TextStyle(
                             color: Colors.black,
                             fontWeight: FontWeight.bold,
-                            fontSize: Constants.fontRegular,
+                            fontSize: Constants.fontSmall,
                           ),
                         ),
                         const SizedBox(width: 10.0),
-                        data.position == null
+                        data.position! == 'null' || data.position! == 'None'
                             ? const SizedBox(width: 0.0)
                             : Card(
                                 margin: EdgeInsets.zero,
@@ -415,11 +437,37 @@ class _SearchByVoterIdScreenState extends State<SearchByVoterIdScreen> {
                                     style: const TextStyle(
                                       color: Colors.white,
                                       fontWeight: FontWeight.bold,
-                                      fontSize: Constants.fontSmall,
+                                      fontSize: Constants.fontExtraSmall,
                                     ),
                                   ),
                                 ),
                               ),
+                      ],
+                    ),
+                    const SizedBox(height: 4.0),
+                    Row(
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      children: [
+                        const Text(
+                          'Aadhar No:',
+                          style: TextStyle(
+                            color: Colors.black38,
+                            fontWeight: FontWeight.w500,
+                            fontSize: Constants.fontSmall,
+                          ),
+                        ),
+                        const SizedBox(width: 6.0),
+                        Expanded(
+                          child: Text(
+                            data.adharNo.toString(),
+                            style: const TextStyle(
+                              color: Colors.black,
+                              fontWeight: FontWeight.bold,
+                              fontSize: Constants.fontSmall,
+                            ),
+                          ),
+                        ),
                       ],
                     ),
                   ],
@@ -436,29 +484,27 @@ class _SearchByVoterIdScreenState extends State<SearchByVoterIdScreen> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 const Text(
-                  'Address',
+                  'Address:',
                   style: TextStyle(
                     color: Colors.black38,
                     fontWeight: FontWeight.w500,
-                    fontSize: Constants.fontRegular,
+                    fontSize: Constants.fontSmall,
                   ),
                 ),
-                data.address == null
+                data.address.isEmpty
                     ? const SizedBox(height: 0.0)
                     : const SizedBox(height: 4.0),
-                data.address == null
-                    ? const Text('')
-                    : Text(
-                        data.address.toString(),
-                        style: const TextStyle(
-                          color: Colors.black54,
-                          fontWeight: FontWeight.bold,
-                          fontSize: Constants.fontRegular,
-                        ),
-                      ),
-                data.address == null
+                Text(
+                  data.address.toString(),
+                  style: const TextStyle(
+                    color: Colors.black54,
+                    fontWeight: FontWeight.bold,
+                    fontSize: Constants.fontSmall,
+                  ),
+                ),
+                data.address.isEmpty
                     ? const SizedBox(height: 0.0)
-                    : const SizedBox(height: 6.0),
+                    : const SizedBox(height: 10.0),
                 Wrap(
                   alignment: WrapAlignment.start,
                   runSpacing: 10.0,
@@ -466,29 +512,21 @@ class _SearchByVoterIdScreenState extends State<SearchByVoterIdScreen> {
                   children: [
                     _buildItems(
                         label: 'Category:',
-                        labelData: data.category == null
-                            ? ''
-                            : data.category.toString()),
+                        labelData: data.category! != 'null'
+                            ? data.category.toString()
+                            : ''),
                     _buildItems(
                         label: 'Relation Type:',
-                        labelData: data.relationType == null
-                            ? ''
-                            : data.relationType.toString()),
+                        labelData: data.relationType.toString()),
                     _buildItems(
                         label: 'Relation Name:',
-                        labelData: data.relationName == null
-                            ? ''
-                            : data.relationName.toString()),
+                        labelData: data.relationName.toString()),
                     _buildItems(
                         label: 'Mobile No:',
-                        labelData: data.mobileNo == null
-                            ? ''
-                            : '+91 ${data.mobileNo.toString()}'),
+                        labelData: '+91 ${data.mobileNo.toString()}'),
                     _buildItems(
                         label: 'Whatsapp No:',
-                        labelData: data.whatsappNo == null
-                            ? ''
-                            : '+91 ${data.whatsappNo.toString()}'),
+                        labelData: '+91 ${data.whatsappNo.toString()}'),
                   ],
                 ),
               ],
@@ -499,7 +537,11 @@ class _SearchByVoterIdScreenState extends State<SearchByVoterIdScreen> {
             children: [
               Expanded(
                 child: _buildTextButtonWidget(
-                  onPressed: () {},
+                  // onPressed: () => _draggableScrollableSheet(context),
+                  onPressed: () => Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (_) => const SearchFamilyMemberScreen())),
                   label: 'Add Family Members',
                   bgColor: Constants.kLightThemeColor,
                   textColor: Constants.kSecondaryThemeColor,
@@ -511,8 +553,8 @@ class _SearchByVoterIdScreenState extends State<SearchByVoterIdScreen> {
                 child: _buildTextButtonWidget(
                   onPressed: () {},
                   label: 'See Family Details',
-                  bgColor: Colors.grey.shade200,
-                  textColor: Colors.black54,
+                  bgColor: Colors.orange.withAlpha(40),
+                  textColor: Colors.deepOrange.shade400,
                   overlayColor: Colors.grey.shade300,
                 ),
               ),

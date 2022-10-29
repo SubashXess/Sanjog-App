@@ -2,6 +2,8 @@
 
 import 'dart:convert';
 
+import 'package:intl/intl.dart';
+
 List<UserDataModel> getVoterListFromJson(String str) =>
     List<UserDataModel>.from(
         json.decode(str).map((x) => UserDataModel.fromJson(x)));
@@ -21,7 +23,9 @@ class UserDataModel {
   String? voterNo;
   String? adharNo;
   String? position;
-  String? name;
+  String? fname;
+  String? mname;
+  String? lname;
   String? gender;
   String? category;
   String? relationType;
@@ -50,7 +54,9 @@ class UserDataModel {
     required this.serialNo,
     required this.voterNo,
     required this.adharNo,
-    required this.name,
+    required this.fname,
+    required this.mname,
+    required this.lname,
     required this.gender,
     required this.category,
     required this.relationType,
@@ -82,7 +88,9 @@ class UserDataModel {
       serialNo: json['serialNo'] ?? '',
       voterNo: json['voterNo'] ?? '',
       adharNo: json['adharNo'] ?? '',
-      name: json['name'] ?? '',
+      fname: json['name'] ?? '',
+      mname: json['m_name'] ?? '',
+      lname: json['l_name'] ?? '',
       gender: json['gender'] ?? '',
       category: json['category'] == '' ? null : json['category'],
       relationType: json['relationType'] ?? '',
@@ -115,7 +123,9 @@ class UserDataModel {
       'serialNo': serialNo,
       'voterNo': voterNo,
       'adharNo': adharNo,
-      'name': name,
+      'name': fname,
+      'm_name': mname,
+      'l_name': lname,
       'gender': gender,
       'category': category,
       'relationType': relationType,

@@ -184,7 +184,7 @@ class _VoterDetailsCardState extends State<VoterDetailsCard> {
                           spacing: 10.0,
                           children: [
                             Text(
-                              'Name: ${widget.snapshot.name.toString()}',
+                              'Name: ${widget.snapshot.fname}  ${widget.snapshot.mname} ${widget.snapshot.lname}',
                               style: const TextStyle(
                                 color: Colors.black87,
                                 fontSize: Constants.fontSmall,
@@ -251,7 +251,7 @@ class _VoterDetailsCardState extends State<VoterDetailsCard> {
                           //     builder: (context) => EditDetailsScreen(
                           //       voterId: widget.snapshot.voterNo.toString(),
                           //       acNo: widget.snapshot.acNo.toString(),
-                                
+
                           //     ),
                           //   ),
                           // );
