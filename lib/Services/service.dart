@@ -26,7 +26,9 @@ class APIServices {
       if (response.statusCode == 200) {
         String json = response.body;
         return getVoterListFromJson(json).where((items) {
-          final String nameLower = items.fname!.toLowerCase() + items.mname!.toLowerCase()  + items.lname!.toLowerCase();
+          final String nameLower = items.fname!.toLowerCase() +
+              items.mname!.toLowerCase() +
+              items.lname!.toLowerCase();
           final String boothNoLower = items.boothNo!.toLowerCase().toString();
           final String searchLower = name!.toLowerCase().toString();
           return nameLower.contains(searchLower) &&
@@ -137,19 +139,21 @@ class APIServices {
         'postBJP': postBJP.toString(),
         'soc_org': socialOrg.toString(),
       });
-      print(address);
-      print(position);
-      print(category);
-      print(mobile);
-      print(wpNumber);
-      print(dob);
-      print(dom);
-      print(bloodGroup);
-      print(postBJP);
-      print(socialOrg);
+      // print(id);
+      // print(address);
+      // print(position);
+      // print(category);
+      // print(mobile);
+      // print(wpNumber);
+      // print(dob);
+      // print(dom);
+      // print(bloodGroup);
+      // print(postBJP);
+      // print(socialOrg);
 
       if (response.statusCode == 200) {
         var jsonResponse = json.decode(response.body);
+        print(jsonResponse);
         return jsonResponse;
       } else {
         return Future.error('Connection Error');
@@ -169,12 +173,20 @@ class ApiClient {
     try {
       if (response.statusCode == 200) {
         if (data['status'] == '1') {
+          print('Response ${response.body}');
           SharedPreferences preferences = await SharedPreferences.getInstance();
           preferences.setBool('login', true);
-          Navigator.of(context).pushAndRemoveUntil(
-            MaterialPageRoute(builder: (context) => const SamitiScreen()),
-            (route) => false,
-          );
+          if (await preferences.setBool('login', true)) {
+            preferences.setString('name', data['name']);
+            preferences.setString('mobile', data['mobile']);
+            preferences.setString('id', data['id']);
+            Navigator.of(context).pushAndRemoveUntil(
+              MaterialPageRoute(builder: (context) => const SamitiScreen()),
+              (route) => false,
+            );
+          } else {
+            return;
+          }
         } else {
           showSnackBar(context, 'Username and password is incorrect');
         }
@@ -188,14 +200,11 @@ class ApiClient {
 
   static Future<void> logout(context) async {
     SharedPreferences preferences = await SharedPreferences.getInstance();
-    Navigator.of(context)
-        .pushAndRemoveUntil(
+    Navigator.of(context).pushAndRemoveUntil(
       MaterialPageRoute(builder: (_) => const LoginScreen()),
       (route) => false,
-    )
-        .then((value) {
-      preferences.setBool('login', false);
-    });
+    );
+    preferences.setBool('login', false);
   }
 }
 

@@ -7,6 +7,7 @@ import 'package:flutter/services.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
 import 'package:path_provider/path_provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:sonjagapp/Components/gradients.dart';
 import 'package:sonjagapp/Components/showsnackbar.dart';
 import 'package:sonjagapp/Models/user_data_model.dart';
@@ -68,6 +69,7 @@ class _EditDetailsScreenState extends State<EditDetailsScreen> {
   String? categoryDefaultValue;
   String? bloodGroupDefaultValue;
   String? socialOrgDefaultValue;
+  String? userId;
 
   // List of items in our dropdown menu
   List<String> positionItems = ['PP', 'PC', 'None'];
@@ -99,6 +101,7 @@ class _EditDetailsScreenState extends State<EditDetailsScreen> {
   void initState() {
     super.initState();
     _setControllerData();
+    userCredentials();
     _mobileNoController.addListener(onListen);
     _whatsappNoController.addListener(onListen);
     _addressController.addListener(onListen);
@@ -669,26 +672,28 @@ class _EditDetailsScreenState extends State<EditDetailsScreen> {
                                         isSuffixIcon: false,
                                         readOnly: true,
                                         onTap: () async {
+                                          print(_dobController.text);
                                           DateTime? pickedDate =
                                               await showDatePicker(
                                             context: context,
+                                            // initialDate: DateTime.now(),
                                             initialDate: _dobController
                                                     .text.isEmpty
                                                 ? DateTime.now()
                                                 : DateTime.parse(DateFormat(
-                                                        'yyyy-MM-dd') // dd-MM-yyyy
+                                                        'dd-MM-yyyy') // dd-MM-yyyy
                                                     .format(DateTime.parse(
                                                         _dobController.text))),
-                                            firstDate: DateTime(1900),
+                                            firstDate: DateTime(1970),
                                             lastDate: DateTime(2101),
                                           );
 
                                           if (pickedDate != null) {
-                                            print(pickedDate);
+                                            // print(pickedDate);
                                             String formattedDate = DateFormat(
-                                                    'yyyy-MM-dd') // dd-MM-yyyy
+                                                    'dd-MM-yyyy') // dd-MM-yyyy
                                                 .format(pickedDate);
-                                            print(formattedDate);
+                                            // print(formattedDate);
                                             setState(() {
                                               _dobController.text =
                                                   formattedDate;
@@ -732,20 +737,19 @@ class _EditDetailsScreenState extends State<EditDetailsScreen> {
                                                           .text.isEmpty
                                                       ? DateTime.now()
                                                       : DateTime.parse(DateFormat(
-                                                              'yyyy-MM-dd') // dd-MM-yyyy
+                                                              'dd-MM-yyyy') // dd-MM-yyyy
                                                           .format(
                                                               DateTime.parse(
                                                                   _domController
                                                                       .text))),
-                                                  firstDate: DateTime(1900),
+                                                  firstDate: DateTime(1970),
                                                   lastDate: DateTime(2101));
 
                                           if (pickedDate != null) {
-                                            print(pickedDate);
                                             String formattedDate = DateFormat(
-                                                    'yyyy-MM-dd') // dd-MM-yyyy
+                                                    'dd-MM-yyyy') // dd-MM-yyyy
                                                 .format(pickedDate);
-                                            print(formattedDate);
+
                                             setState(() {
                                               _domController.text =
                                                   formattedDate;
@@ -992,8 +996,9 @@ class _EditDetailsScreenState extends State<EditDetailsScreen> {
 
                             APIServices.updateUserData(
                               context,
-                              id: widget.details!.id.toString(),
-                              loginUserId: widget.details!.userId.toString(),
+                              id: widget.details!.userId
+                                  .toString(), // voter user id
+                              loginUserId: userId, // login user id
                               photo: image.toString(),
                               position: positionDefaultValue ??
                                   widget.details!.position.toString(),
@@ -1250,23 +1255,31 @@ class _EditDetailsScreenState extends State<EditDetailsScreen> {
     return File(imagePath).copy(image.path);
   }
 
-  Future<Widget?> _circularDialogBox(BuildContext context) {
-    return showDialog(
-      context: context,
-      builder: (context) => Center(
-        child: Container(
-          width: 60.0,
-          height: 60.0,
-          decoration: BoxDecoration(
-            color: Colors.white,
-            borderRadius: BorderRadius.circular(4.0),
-          ),
-          child: const Padding(
-            padding: EdgeInsets.all(12.0),
-            child: CircularProgressIndicator(),
-          ),
-        ),
-      ),
-    );
+  // Future<Widget?> _circularDialogBox(BuildContext context) {
+  //   return showDialog(
+  //     context: context,
+  //     builder: (context) => Center(
+  //       child: Container(
+  //         width: 60.0,
+  //         height: 60.0,
+  //         decoration: BoxDecoration(
+  //           color: Colors.white,
+  //           borderRadius: BorderRadius.circular(4.0),
+  //         ),
+  //         child: const Padding(
+  //           padding: EdgeInsets.all(12.0),
+  //           child: CircularProgressIndicator(),
+  //         ),
+  //       ),
+  //     ),
+  //   );
+  // }
+
+  void userCredentials() async {
+    SharedPreferences preferences = await SharedPreferences.getInstance();
+    setState(() {
+      userId = preferences.getString('id');
+    });
+    print(userId);
   }
 }

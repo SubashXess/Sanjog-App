@@ -32,7 +32,8 @@ class _SearchSamitiListScreenState extends State<SearchSamitiListScreen> {
   bool _autovalidateMode = false;
   Timer? debouncer;
   String searchQuery = '';
-  bool _isLoaded = false;
+  bool _isLoading = false;
+  bool _hasData = false;
 
   @override
   void initState() {
@@ -59,6 +60,7 @@ class _SearchSamitiListScreenState extends State<SearchSamitiListScreen> {
     if (debouncer != null) {
       debouncer!.cancel();
     }
+
     debouncer = Timer(duration, callback);
   }
 
@@ -66,7 +68,9 @@ class _SearchSamitiListScreenState extends State<SearchSamitiListScreen> {
         final searchResult = await APIServices.getPageSamitiSearchResult(
             context,
             boothNo: query);
+
         if (!mounted) return;
+
         setState(() {
           searchQuery = query;
           _searchResultsItems = searchResult!;
@@ -302,7 +306,7 @@ class _SearchSamitiListScreenState extends State<SearchSamitiListScreen> {
                             controller: _scrollController,
                             padding: const EdgeInsets.all(10.0),
                             itemBuilder: (context, index) {
-                              print(_searchResultsItems.length);
+                              // print(_searchResultsItems.length);
                               return _buildCard(
                                   size, index + 1, _searchResultsItems[index]);
                             }),
@@ -310,25 +314,22 @@ class _SearchSamitiListScreenState extends State<SearchSamitiListScreen> {
                     ),
                   )
                 : const SliverFillRemaining(
-                    fillOverscroll: false,
                     hasScrollBody: false,
                     child: Center(
-                      child: Text(
-                        'Search by Booth number',
-                        style: TextStyle(fontSize: Constants.fontRegular),
-                      ),
+                      child: Text('Search Now'),
                     ),
-                  ),
-            // ErrorNoDataFound(
-            //     btnlabel: 'Search samiti list',
-            //     header: 'Search by booth number',
-            //     desc: 'Search by entering booth no above',
-            //     assets: 'assets/raw/search_id.json',
-            //     btnicon: Icons.search,
-            //     onPressed: () {
-            //       _boothNode.requestFocus();
-            //     },
-            //   ),
+                  )
+
+            // : ErrorNoDataFound(
+            //   btnlabel: 'Search samiti list',
+            //   header: 'Search by booth number',
+            //   desc: 'Search by entering booth no above',
+            //   assets: 'assets/raw/search_id.json',
+            //   btnicon: Icons.search,
+            //   onPressed: () {
+            //     _boothNode.requestFocus();
+            //   },
+            // ),
           ],
         ),
       ),

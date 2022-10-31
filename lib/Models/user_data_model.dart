@@ -113,8 +113,8 @@ class UserDataModel {
 
   Map<String, Object?> toJson() {
     return {
-      'id': id,
-      'user_id': userId,
+      'id': id, // voter user id
+      'user_id': userId, // login user id
       'family_id': familyId,
       'status': status,
       'acNo': acNo,
@@ -145,26 +145,4 @@ class UserDataModel {
       'members': members,
     };
   }
-
-  // test server
-
-  // static Future<List<UserDataModel>> getUserData(
-  //     String boothNo, String pageNo) async {
-  //   final http.Response response = await http.get(Uri.parse(
-  //       '${APIs.VOTER_LIST_API}?boothNo=$boothNo&pageNo=$pageNo')); // api  USER_DATA_API
-  //   try {
-  //     if (response.statusCode == 200) {
-  //       print('Data received');
-  //       List serverResponse = json.decode(response.body);
-  //       print('Server Response : $serverResponse');
-  //       return serverResponse
-  //           .map((data) => UserDataModel.fromJson(data))
-  //           .toList();
-  //     } else {
-  //       return throw Exception('Unexpected error occured!');
-  //     }
-  //   } catch (e) {
-  //     return throw Exception(e.toString());
-  //   }
-  // }
 }

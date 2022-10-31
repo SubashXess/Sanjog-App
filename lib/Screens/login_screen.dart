@@ -293,17 +293,28 @@ class _LoginScreenState extends State<LoginScreen> {
                                     ),
                               onPressed: () {
                                 if (_formKey.currentState!.validate()) {
+                                  setState(() {
+                                    _isLoading = true;
+                                  });
                                   ApiClient.login(
-                                      context,
-                                      _userNameController.text
-                                          .trim()
-                                          .toString(),
-                                      _passwordController.text
-                                          .trim()
-                                          .toString());
+                                          context,
+                                          _userNameController.text
+                                              .trim()
+                                              .toString(),
+                                          _passwordController.text
+                                              .trim()
+                                              .toString())
+                                      .then((value) {
+                                    setState(() {
+                                      _isLoading = false;
+                                    });
+                                  });
 
                                   print('Login');
                                 } else {
+                                  setState(() {
+                                    _isLoading = false;
+                                  });
                                   print('Error');
                                 }
                               },

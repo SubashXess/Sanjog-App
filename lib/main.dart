@@ -43,7 +43,7 @@ class MyApp extends StatelessWidget {
         home: isLoggedIn! ? const SamitiScreen() : const LoginScreen(),
         // home: SamitiScreen(),
         // home: const SamitiScreen(),
-        // home: const TestScreen(),
+        // home: const BS(),
       ),
     );
   }

@@ -21,13 +21,15 @@ class LoginModel {
     required this.status,
   });
 
+  // Response {"id":"2","name":"Subash","mobile":"7682896064","uname":"123456","password":"123456","user_type":"user","assembly":"Ekamra","status":"1"}
+
   factory LoginModel.fromMap(Map<String, dynamic> res) {
     return LoginModel(
       uid: res['id'],
       userlevel: res['userlevel'],
       name: res['name'],
       mobile: res['mobile'],
-      username: res['u_name'],
+      username: res['uname'],
       password: res['password'],
       userType: res['user_type'],
       assembly: res['assembly'],

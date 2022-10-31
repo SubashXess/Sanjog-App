@@ -22,7 +22,7 @@ class APIs {
   static const String LOGIN_API =
       'https://intentitsolutions.com/Ekamra/api/login_user.php';
   // static const String USER_DATA_API = '';
-  static const String  VOTER_LIST_API =
+  static const String VOTER_LIST_API =
       'https://intentitsolutions.com/Ekamra/api/getVoter.php'; // https://intentitsolutions.com/Ekamra/api/config.php
   static const String VOTER_SEARCH_BY_NAME_LIST_API =
       'https://intentitsolutions.com/Ekamra/api/searchVotersByName.php'; // ?name=s
