@@ -30,6 +30,9 @@ class VoterListScreen extends StatefulWidget {
 }
 
 class _VoterListScreenState extends State<VoterListScreen> {
+  // Scaffold Global Key
+  final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
+
   // form validate global state
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   final GlobalKey<FormState> _formKey2 = GlobalKey<FormState>();
@@ -129,7 +132,6 @@ class _VoterListScreenState extends State<VoterListScreen> {
       debouncer!.cancel();
     }
     debouncer = Timer(duration, callback);
-    // voterItems = [];
   }
 
   @override
@@ -139,6 +141,7 @@ class _VoterListScreenState extends State<VoterListScreen> {
     return GestureDetector(
       onTap: () => FocusScope.of(context).unfocus(),
       child: Scaffold(
+        key: _scaffoldKey,
         backgroundColor: Colors.grey.shade50,
         body: Consumer<ConnectivityProvider>(builder: (context, value, child) {
           if (value.isOnline != null) {
@@ -475,10 +478,12 @@ class _VoterListScreenState extends State<VoterListScreen> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Row(
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      mainAxisAlignment: MainAxisAlignment.start,
                       children: [
                         Expanded(
                           child: Text(
-                            '${data.fname} ${data.mname} ${data.lname}',
+                            '${data.fname!.trim()} ${data.mname!.trim()} ${data.lname!.trim()}',
                             style: const TextStyle(
                               color: Colors.black,
                               fontWeight: FontWeight.bold,
@@ -800,153 +805,154 @@ class _VoterListScreenState extends State<VoterListScreen> {
           return GestureDetector(
             onTap: () => FocusScope.of(context).unfocus(),
             child: Card(
-                color: Colors.white,
-                margin: EdgeInsets.zero,
-                shape: const RoundedRectangleBorder(
-                    borderRadius:
-                        BorderRadius.vertical(top: Radius.circular(6.0))),
-                child: ListView(
-                  shrinkWrap: true,
-                  controller: _scrollController,
-                  padding: EdgeInsets.only(
-                      top: 10.0,
-                      right: 10.0,
-                      left: 10.0,
-                      bottom: MediaQuery.of(context).viewInsets.bottom + 10.0),
-                  children: [
-                    SizedBox(
-                      width: size.width,
-                      child: const Text(
-                        'Search Family Members',
-                        textAlign: TextAlign.center,
-                        style: TextStyle(
-                          color: Colors.black,
-                          fontSize: Constants.fontLarge,
-                          fontWeight: FontWeight.bold,
-                        ),
+              color: Colors.white,
+              margin: EdgeInsets.zero,
+              shape: const RoundedRectangleBorder(
+                  borderRadius:
+                      BorderRadius.vertical(top: Radius.circular(6.0))),
+              child: ListView(
+                shrinkWrap: true,
+                controller: _scrollController,
+                padding: EdgeInsets.only(
+                    top: 10.0,
+                    right: 10.0,
+                    left: 10.0,
+                    bottom: MediaQuery.of(context).viewInsets.bottom + 10.0),
+                children: [
+                  SizedBox(
+                    width: size.width,
+                    child: const Text(
+                      'Search Family Members',
+                      textAlign: TextAlign.center,
+                      style: TextStyle(
+                        color: Colors.black,
+                        fontSize: Constants.fontLarge,
+                        fontWeight: FontWeight.bold,
                       ),
                     ),
-                    const SizedBox(height: 20.0),
-                    SizedBox(
-                      width: size.width,
-                      child: Form(
-                        key: _formKey,
-                        child: FormFieldWidget(
-                          controller: _voterNoController,
-                          autovalidateMode: _autovalidateMode
-                              ? AutovalidateMode.onUserInteraction
-                              : AutovalidateMode.disabled,
-                          focusNode: _voterNoNode,
-                          hintText: 'Search by Voter ID',
-                          isPrefixIcon: false,
-                          isSuffixIcon: false,
-                          // maxLength: 10,
-                          keyboardType: TextInputType.text,
-                          textCapitalization: TextCapitalization.characters,
-                          inputFormatters: <TextInputFormatter>[
-                            // UpperCaseTextFormatter(),
-                            // FilteringTextInputFormatter.allow(
-                            // RegExp("[0-9a-zA-Z]"))
-                            FilteringTextInputFormatter.allow(
-                                RegExp(r'^[A-Za-z]{1,3}')),
-                            FilteringTextInputFormatter.allow(
-                                RegExp(r'[0-9]{1,7}$')),
-                          ],
-                          onChanged: (value) {
-                            print(value);
-                          },
-                        ),
+                  ),
+                  const SizedBox(height: 20.0),
+                  SizedBox(
+                    width: size.width,
+                    child: Form(
+                      key: _formKey,
+                      child: FormFieldWidget(
+                        controller: _voterNoController,
+                        autovalidateMode: _autovalidateMode
+                            ? AutovalidateMode.onUserInteraction
+                            : AutovalidateMode.disabled,
+                        focusNode: _voterNoNode,
+                        hintText: 'Search by Voter ID',
+                        isPrefixIcon: false,
+                        isSuffixIcon: false,
+                        // maxLength: 10,
+                        keyboardType: TextInputType.text,
+                        textCapitalization: TextCapitalization.characters,
+                        inputFormatters: <TextInputFormatter>[
+                          // UpperCaseTextFormatter(),
+                          // FilteringTextInputFormatter.allow(
+                          // RegExp("[0-9a-zA-Z]"))
+                          FilteringTextInputFormatter.allow(
+                              RegExp(r'^[A-Za-z]{1,3}')),
+                          FilteringTextInputFormatter.allow(
+                              RegExp(r'[0-9]{1,7}$')),
+                        ],
+                        onChanged: (value) {
+                          print(value);
+                        },
                       ),
                     ),
-                    const SizedBox(height: 10.0),
-                    orDivider(
-                        label: const Text('Or'),
-                        borderColor: Colors.grey.shade400),
-                    const SizedBox(height: 10.0),
-                    SizedBox(
-                      width: size.width,
-                      child: Form(
-                        key: _formKey2,
-                        child: FormFieldWidget(
-                          controller: _aadharController,
-                          autovalidateMode: _autovalidateMode
-                              ? AutovalidateMode.onUserInteraction
-                              : AutovalidateMode.disabled,
-                          focusNode: _aadharNoNode,
-                          hintText: 'Search by Aadhar Number',
-                          isPrefixIcon: false,
-                          isSuffixIcon: false,
-                          maxLength: 12,
-                          keyboardType: TextInputType.number,
-                          onChanged: (value) {},
-                        ),
+                  ),
+                  const SizedBox(height: 10.0),
+                  orDivider(
+                      label: const Text('Or'),
+                      borderColor: Colors.grey.shade400),
+                  const SizedBox(height: 10.0),
+                  SizedBox(
+                    width: size.width,
+                    child: Form(
+                      key: _formKey2,
+                      child: FormFieldWidget(
+                        controller: _aadharController,
+                        autovalidateMode: _autovalidateMode
+                            ? AutovalidateMode.onUserInteraction
+                            : AutovalidateMode.disabled,
+                        focusNode: _aadharNoNode,
+                        hintText: 'Search by Aadhar Number',
+                        isPrefixIcon: false,
+                        isSuffixIcon: false,
+                        maxLength: 12,
+                        keyboardType: TextInputType.number,
+                        onChanged: (value) {},
                       ),
                     ),
-                    const SizedBox(height: 10.0),
-                    orDivider(
-                        label: const Text('Or'),
-                        borderColor: Colors.grey.shade400),
-                    const SizedBox(height: 10.0),
-                    SizedBox(
-                      width: size.width,
-                      child: Form(
-                        key: _formKey3,
-                        child: Row(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Expanded(
-                              child: FormFieldWidget(
-                                controller: _nameController,
-                                autovalidateMode: _autovalidateMode
-                                    ? AutovalidateMode.onUserInteraction
-                                    : AutovalidateMode.disabled,
-                                focusNode: _nameNode,
-                                hintText: 'Name',
-                                isPrefixIcon: false,
-                                isSuffixIcon: false,
-                                keyboardType: TextInputType.name,
-                                onChanged: (value) {},
-                              ),
+                  ),
+                  const SizedBox(height: 10.0),
+                  orDivider(
+                      label: const Text('Or'),
+                      borderColor: Colors.grey.shade400),
+                  const SizedBox(height: 10.0),
+                  SizedBox(
+                    width: size.width,
+                    child: Form(
+                      key: _formKey3,
+                      child: Row(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Expanded(
+                            child: FormFieldWidget(
+                              controller: _nameController,
+                              autovalidateMode: _autovalidateMode
+                                  ? AutovalidateMode.onUserInteraction
+                                  : AutovalidateMode.disabled,
+                              focusNode: _nameNode,
+                              hintText: 'Name',
+                              isPrefixIcon: false,
+                              isSuffixIcon: false,
+                              keyboardType: TextInputType.name,
+                              onChanged: (value) {},
                             ),
-                            const SizedBox(width: 10.0),
-                            Expanded(
-                              child: FormFieldWidget(
-                                controller: _relationNameController,
-                                autovalidateMode: _autovalidateMode
-                                    ? AutovalidateMode.onUserInteraction
-                                    : AutovalidateMode.disabled,
-                                focusNode: _relNameNode,
-                                hintText: 'Relation Name',
-                                isPrefixIcon: false,
-                                isSuffixIcon: false,
-                                keyboardType: TextInputType.name,
-                                onChanged: (value) {},
-                              ),
+                          ),
+                          const SizedBox(width: 10.0),
+                          Expanded(
+                            child: FormFieldWidget(
+                              controller: _relationNameController,
+                              autovalidateMode: _autovalidateMode
+                                  ? AutovalidateMode.onUserInteraction
+                                  : AutovalidateMode.disabled,
+                              focusNode: _relNameNode,
+                              hintText: 'Relation Name',
+                              isPrefixIcon: false,
+                              isSuffixIcon: false,
+                              keyboardType: TextInputType.name,
+                              onChanged: (value) {},
                             ),
-                          ],
-                        ),
+                          ),
+                        ],
                       ),
                     ),
-                    const SizedBox(height: 16.0),
-                    MaterialButtonWidget(
-                      size: size,
-                      widget: const Text(
-                        'Search',
-                        style: TextStyle(color: Colors.white),
-                      ),
-                      onPressed: () {
-                        if (_formKey.currentState!.validate() ||
-                            _formKey2.currentState!.validate() ||
-                            _formKey3.currentState!.validate()) {
-                          print('Success');
-                        } else {
-                          print('Error');
-                        }
-                      },
+                  ),
+                  const SizedBox(height: 16.0),
+                  MaterialButtonWidget(
+                    size: size,
+                    widget: const Text(
+                      'Search',
+                      style: TextStyle(color: Colors.white),
                     ),
-                  ],
-                )),
+                    onPressed: () {
+                      if (_formKey.currentState!.validate() ||
+                          _formKey2.currentState!.validate() ||
+                          _formKey3.currentState!.validate()) {
+                        print('Success');
+                      } else {
+                        print('Error');
+                      }
+                    },
+                  ),
+                ],
+              ),
+            ),
           );
         });
       },
@@ -962,94 +968,4 @@ class _VoterListScreenState extends State<VoterListScreen> {
           _searchResultsItems = searchResult!;
         });
       });
-}
-
-class BS extends StatefulWidget {
-  const BS({super.key});
-
-  @override
-  _BS createState() => _BS();
-}
-
-class _BS extends State<BS> with SingleTickerProviderStateMixin {
-  bool _showSecond = false;
-
-  // AnimationController
-  late AnimationController _controller;
-  late Animation<double> opacityAnimation;
-  int i = 0;
-
-  @override
-  void initState() {
-    _controller = AnimationController(
-        vsync: this, duration: const Duration(milliseconds: 500));
-    opacityAnimation = CurvedAnimation(
-        parent: Tween<double>(begin: 1, end: 0).animate(_controller),
-        curve: Curves.easeInOutExpo);
-    super.initState();
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return BottomSheet(
-      animationController: _controller,
-      onClosing: () {},
-      builder: (BuildContext context) => AnimatedContainer(
-        margin: const EdgeInsets.all(20),
-        decoration: BoxDecoration(
-            color: Colors.white, borderRadius: BorderRadius.circular(30)),
-        duration: const Duration(milliseconds: 400),
-        child: AnimatedCrossFade(
-            firstChild: Container(
-              color: Colors.red,
-              constraints: BoxConstraints.expand(
-                  height: MediaQuery.of(context).size.height - 200),
-//remove constraint and add your widget hierarchy as a child for first view
-              padding: const EdgeInsets.all(20),
-              child: Align(
-                alignment: Alignment.bottomCenter,
-                child: MaterialButton(
-                  onPressed: () => setState(() => _showSecond = true),
-                  padding: const EdgeInsets.all(15),
-                  shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(10)),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: const <Widget>[
-                      Text("Suivant"),
-                    ],
-                  ),
-                ),
-              ),
-            ),
-            secondChild: Container(
-              color: Colors.blue,
-              constraints: BoxConstraints.expand(
-                  height: MediaQuery.of(context).size.height / 3),
-//remove constraint and add your widget hierarchy as a child for second view
-              padding: const EdgeInsets.all(20),
-              child: Align(
-                alignment: Alignment.bottomCenter,
-                child: MaterialButton(
-                  onPressed: () => setState(() => _showSecond = false),
-                  color: Colors.green,
-                  padding: const EdgeInsets.all(15),
-                  shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(10)),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: const <Widget>[
-                      Text("ok"),
-                    ],
-                  ),
-                ),
-              ),
-            ),
-            crossFadeState: _showSecond
-                ? CrossFadeState.showSecond
-                : CrossFadeState.showFirst,
-            duration: const Duration(milliseconds: 400)),
-      ),
-    );
-  }
 }

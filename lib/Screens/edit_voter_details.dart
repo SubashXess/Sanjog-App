@@ -93,6 +93,8 @@ class _EditDetailsScreenState extends State<EditDetailsScreen> {
   ];
 
   // Variables
+  bool _isLoading = false;
+
   // Image add
   File? image;
   String? loadImage;
@@ -293,7 +295,7 @@ class _EditDetailsScreenState extends State<EditDetailsScreen> {
                         width: size.width,
                         child: Text(
                           // widget.details!.name.toString(),
-                          '${widget.details!.fname} ${widget.details!.mname} ${widget.details!.lname}',
+                          '${widget.details!.fname!.trim()} ${widget.details!.mname!.trim()} ${widget.details!.lname!.trim()}',
                           textAlign: TextAlign.center,
                           style: const TextStyle(
                             color: Colors.black,
@@ -974,14 +976,40 @@ class _EditDetailsScreenState extends State<EditDetailsScreen> {
                       // const SizedBox(height: 16.0),
                       MaterialButtonWidget(
                         size: size,
-                        widget: const Text(
-                          'Update',
-                          style: TextStyle(color: Colors.white),
-                        ),
+                        widget: _isLoading
+                            ? Row(
+                                crossAxisAlignment: CrossAxisAlignment.center,
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: const [
+                                  SizedBox(
+                                    width: 18.0,
+                                    height: 18.0,
+                                    child: CircularProgressIndicator(
+                                      backgroundColor:
+                                          Constants.kLightThemeColor,
+                                      valueColor: AlwaysStoppedAnimation<Color>(
+                                          Constants.kPrimaryThemeColor),
+                                      strokeWidth: 4.0,
+                                    ),
+                                  ),
+                                  SizedBox(width: 10.0),
+                                  Text(
+                                    'Updating...',
+                                    style: TextStyle(
+                                        color: Colors.white, fontSize: 15.0),
+                                  ),
+                                ],
+                              )
+                            : const Text(
+                                'Update',
+                                style: TextStyle(
+                                    color: Colors.white, fontSize: 15.0),
+                              ),
                         onPressed: () {
                           if (_formKey.currentState!.validate()) {
                             print('Success');
                             setState(() {
+                              _isLoading = true;
                               _positionNode.unfocus();
                               _categoryNode.unfocus();
                               _mobileNode.unfocus();
@@ -1015,10 +1043,13 @@ class _EditDetailsScreenState extends State<EditDetailsScreen> {
                               postBJP: _postBJPController.text.toString(),
                               socialOrg: socialOrgDefaultValue ??
                                   widget.details!.socialOrg.toString(),
-                            );
-
-                            showSnackBar(
-                                context, 'Your updates have been successfully');
+                            ).then((value) {
+                              setState(() {
+                                _isLoading = false;
+                              });
+                              showSnackBar(context,
+                                  'Your updates have been successfully');
+                            });
                           } else {
                             print('Error');
                             showSnackBar(
