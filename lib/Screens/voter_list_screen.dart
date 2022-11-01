@@ -5,6 +5,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:sonjagapp/Components/or_divider.dart';
 import 'package:sonjagapp/Constants/constants.dart';
 import 'package:sonjagapp/Error%20Screens/no_data_found.dart';
@@ -12,9 +13,12 @@ import 'package:sonjagapp/Error%20Screens/no_internet_connection.dart';
 import 'package:sonjagapp/Models/user_data_model.dart';
 import 'package:sonjagapp/Providers/connection_provider.dart';
 import 'package:sonjagapp/Providers/edit_voters_provider.dart';
+import 'package:sonjagapp/Screens/add_family_members_list_screen.dart';
 import 'package:sonjagapp/Screens/search_family_members.dart';
 import 'package:sonjagapp/Screens/edit_voter_details.dart';
 import 'package:sonjagapp/Services/service.dart';
+import 'package:sonjagapp/Test%20Screens/test_screen_2.dart';
+import 'package:sonjagapp/Widgets/bottom_sheet_widget.dart';
 import 'package:sonjagapp/Widgets/button_widget.dart';
 import 'package:sonjagapp/Widgets/text_button_widget.dart';
 import 'package:sonjagapp/Widgets/textformfield_widget.dart';
@@ -44,42 +48,50 @@ class _VoterListScreenState extends State<VoterListScreen> {
   // TextEditingController
   final TextEditingController _searchController = TextEditingController();
   final TextEditingController _voterNoController = TextEditingController();
-  final TextEditingController _nameController = TextEditingController();
+  final TextEditingController _fNameController = TextEditingController();
+  final TextEditingController _lNameController = TextEditingController();
   final TextEditingController _relationNameController = TextEditingController();
   final TextEditingController _aadharController = TextEditingController();
 
   // FocusNode
   late FocusNode _searchFocusNode;
   late FocusNode _voterNoNode;
-  late FocusNode _nameNode;
+  late FocusNode _fNameNode;
+  late FocusNode _lNameNode;
   late FocusNode _relNameNode;
   late FocusNode _aadharNoNode;
 
   // models
   List<UserDataModel> voterItems = [];
+  List<UserDataModel> searchFamilyMember = [];
   List<UserDataModel> _searchResultsItems = [];
 
   // Variables
   int page = 1;
   String searchQuery = '';
+  String searchQueryBottomSheet = '';
   Timer? debouncer;
   final bool _autovalidateMode = false;
   bool _showSecondSheet = false;
+  bool _isBottomSheetLoad = false;
+  String? getLoginID;
 
   @override
   void initState() {
     super.initState();
     Provider.of<ConnectivityProvider>(context, listen: false).startMonitoring();
     init();
-
+    getDBID();
     _searchFocusNode = FocusNode()..addListener(onListen);
     _scrollController.addListener(onListen);
     _voterNoController.addListener(onListen);
     _aadharController.addListener(onListen);
-    _nameController.addListener(onListen);
+    _fNameController.addListener(onListen);
+    _lNameController.addListener(onListen);
     _relationNameController.addListener(onListen);
     _voterNoNode = FocusNode()..addListener(onListen);
-    _nameNode = FocusNode()..addListener(onListen);
+    _fNameNode = FocusNode()..addListener(onListen);
+    _lNameNode = FocusNode()..addListener(onListen);
     _relNameNode = FocusNode()..addListener(onListen);
     _aadharNoNode = FocusNode()..addListener(onListen);
   }
@@ -97,14 +109,18 @@ class _VoterListScreenState extends State<VoterListScreen> {
     _voterNoController.removeListener(onListen);
     _aadharController.dispose();
     _aadharController.removeListener(onListen);
-    _nameController.dispose();
-    _nameController.removeListener(onListen);
+    _fNameController.dispose();
+    _fNameController.removeListener(onListen);
+    _lNameController.dispose();
+    _lNameController.removeListener(onListen);
     _relationNameController.dispose();
     _relationNameController.removeListener(onListen);
     _voterNoNode.dispose();
     _voterNoNode.removeListener(onListen);
-    _nameNode.dispose();
-    _nameNode.removeListener(onListen);
+    _fNameNode.dispose();
+    _fNameNode.removeListener(onListen);
+    _lNameNode.dispose();
+    _lNameNode.removeListener(onListen);
     _aadharNoNode.dispose();
     _aadharNoNode.removeListener(onListen);
     _relNameNode.dispose();
@@ -141,7 +157,6 @@ class _VoterListScreenState extends State<VoterListScreen> {
     return GestureDetector(
       onTap: () => FocusScope.of(context).unfocus(),
       child: Scaffold(
-        key: _scaffoldKey,
         backgroundColor: Colors.grey.shade50,
         body: Consumer<ConnectivityProvider>(builder: (context, value, child) {
           if (value.isOnline != null) {
@@ -643,11 +658,27 @@ class _VoterListScreenState extends State<VoterListScreen> {
             children: [
               Expanded(
                 child: _buildTextButtonWidget(
-                  onPressed: () => _draggableScrollableSheet(context),
-                  // onPressed: () => Navigator.push(
-                  //     context,
-                  //     MaterialPageRoute(
-                  //         builder: (_) => const SearchFamilyMemberScreen())),
+                  // onPressed: () => showModalBottomSheet(
+                  //   context: context,
+                  //   isScrollControlled: true,
+                  //   useSafeArea: true,
+                  //   backgroundColor: Colors.transparent,
+                  //   builder: (context) => StatefulBuilder(
+                  //       builder: (context, StateSetter setState) {
+                  //     return IOSModalStyle(
+                  //         childBody: _buildSheetItems(size, setState),
+                  //         headerTop: _dividerWidget(size,
+                  //             name: '${data.fname} ${data.mname} ${data.lname}',
+                  //             dob: data.dob,
+                  //             voterID: data.voterNo,
+                  //             mobileNo: data.mobileNo));
+                  //   }),
+                  // ),
+                  // onPressed: () => _draggableScrollableSheet(context),
+                  onPressed: () => Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (_) => const SearchFamilyMemberScreen())),
                   label: 'Add Family Members',
                   bgColor: Constants.kLightThemeColor,
                   textColor: Constants.kSecondaryThemeColor,
@@ -658,7 +689,7 @@ class _VoterListScreenState extends State<VoterListScreen> {
               Expanded(
                 child: _buildTextButtonWidget(
                   onPressed: () {},
-                  label: 'See Family Details',
+                  label: 'See Family Members',
                   bgColor: Colors.orange.withAlpha(40),
                   textColor: Colors.deepOrange.shade400,
                   overlayColor: Colors.grey.shade300,
@@ -667,6 +698,166 @@ class _VoterListScreenState extends State<VoterListScreen> {
             ],
           ),
         ],
+      ),
+    );
+  }
+
+  Widget _buildSheetItems(Size size, StateSetter setState) {
+    return Padding(
+      padding: const EdgeInsets.only(
+        top: 10.0,
+        left: 10.0,
+        right: 10.0,
+        bottom: 10.0,
+      ),
+      child: Column(
+        children: [
+          FormFieldWidget(
+            controller: _voterNoController,
+            autovalidateMode: _autovalidateMode
+                ? AutovalidateMode.onUserInteraction
+                : AutovalidateMode.disabled,
+            focusNode: _voterNoNode,
+            hintText: 'Search by Voter ID',
+            isPrefixIcon: false,
+            isSuffixIcon: false,
+            // maxLength: 10,
+            keyboardType: TextInputType.text,
+            textCapitalization: TextCapitalization.characters,
+            inputFormatters: const <TextInputFormatter>[
+              // UpperCaseTextFormatter(),
+              // FilteringTextInputFormatter.allow(
+              // RegExp("[0-9a-zA-Z]"))
+              // FilteringTextInputFormatter.allow(
+              //     RegExp(r'^[A-Za-z]{1,3}')),
+              // FilteringTextInputFormatter.allow(
+              //     RegExp(r'[0-9]{1,7}$')),
+            ],
+          ),
+          const SizedBox(height: 16.0),
+          MaterialButtonWidget(
+            size: size,
+            widget: _isBottomSheetLoad
+                ? Row(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    mainAxisSize: MainAxisSize.max,
+                    children: const [
+                      SizedBox(
+                        height: 16.0,
+                        width: 16.0,
+                        child: CircularProgressIndicator(
+                          color: Colors.white,
+                        ),
+                      ),
+                      SizedBox(width: 10.0),
+                      Text(
+                        'Searching...',
+                        style: TextStyle(color: Colors.white),
+                      ),
+                    ],
+                  )
+                : const Text(
+                    'Search',
+                    style: TextStyle(color: Colors.white),
+                  ),
+            onPressed: () {
+              setState(() {
+                _isBottomSheetLoad = !_isBottomSheetLoad;
+              });
+            },
+          ),
+          orDivider(
+              label: Text(
+                'Or Search by',
+                style: TextStyle(color: Colors.grey.shade400),
+              ),
+              borderColor: Colors.grey.shade300),
+        ],
+      ),
+    );
+  }
+
+  Widget _dividerWidget(Size size,
+      {String? photo,
+      String? name,
+      String? dob,
+      String? voterID,
+      String? mobileNo}) {
+    return Card(
+      margin: const EdgeInsets.symmetric(
+          vertical: 10.0), // margin of top divider bar
+      color: Colors.white,
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(6.0)),
+      clipBehavior: Clip.antiAliasWithSaveLayer,
+      elevation: 0.0,
+      child: SizedBox(
+        width: size.width,
+        child: Padding(
+          padding: const EdgeInsets.all(10.0),
+          child: SingleChildScrollView(
+            child: Column(
+              children: [
+                Row(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  children: [
+                    SizedBox(
+                      width: size.width / 4.67,
+                      height: 76.0,
+                      child: Card(
+                        color: Colors.grey.shade200,
+                        margin: EdgeInsets.zero,
+                        elevation: 0.0,
+                        child: photo != null
+                            ? CachedNetworkImage(
+                                imageUrl: photo.toString(),
+                                fit: BoxFit.cover,
+                              )
+                            : Center(
+                                child: Icon(
+                                  Icons.person,
+                                  size: 32.0,
+                                  color: Colors.grey.shade400,
+                                ),
+                              ),
+                      ),
+                    ),
+                    const SizedBox(width: 10.0),
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        children: [
+                          Text(
+                            // 'Subash Mahanta',
+                            name.toString(),
+                            maxLines: 2,
+                            style: const TextStyle(
+                              color: Colors.black,
+                              fontSize: Constants.fontRegular,
+                              fontWeight: FontWeight.bold,
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                          ),
+                          const SizedBox(height: 4.0),
+                          _buildRowItems(
+                              label: 'DOB:', labelData: dob.toString()),
+                          _buildRowItems(
+                              label: 'Voter ID:',
+                              labelData: voterID.toString()),
+                          _buildRowItems(
+                              label: 'Mobile No:',
+                              labelData: mobileNo.toString()),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          ),
+        ),
       ),
     );
   }
@@ -699,38 +890,38 @@ class _VoterListScreenState extends State<VoterListScreen> {
     );
   }
 
-  Widget _buildCardItems({required String label, required String labelData}) {
-    return Container(
-      constraints: const BoxConstraints(maxWidth: 100.0, minWidth: 100.0),
-      padding: const EdgeInsets.symmetric(horizontal: 6.0, vertical: 4.0),
-      decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(4.0),
-          color: Colors.grey.shade200),
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.center,
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Text(
-            label.toString(),
-            style: const TextStyle(
-              color: Colors.black,
-              fontWeight: FontWeight.w500,
-              fontSize: Constants.fontSmall,
-            ),
-          ),
-          const SizedBox(width: 4.0),
-          Text(
-            labelData.toString(),
-            style: const TextStyle(
-              color: Colors.black,
-              fontWeight: FontWeight.w500,
-              fontSize: Constants.fontSmall,
-            ),
-          ),
-        ],
-      ),
-    );
-  }
+  // Widget _buildCardItems({required String label, required String labelData}) {
+  //   return Container(
+  //     constraints: const BoxConstraints(maxWidth: 100.0, minWidth: 100.0),
+  //     padding: const EdgeInsets.symmetric(horizontal: 6.0, vertical: 4.0),
+  //     decoration: BoxDecoration(
+  //         borderRadius: BorderRadius.circular(4.0),
+  //         color: Colors.grey.shade200),
+  //     child: Row(
+  //       crossAxisAlignment: CrossAxisAlignment.center,
+  //       mainAxisAlignment: MainAxisAlignment.center,
+  //       children: [
+  //         Text(
+  //           label.toString(),
+  //           style: const TextStyle(
+  //             color: Colors.black,
+  //             fontWeight: FontWeight.w500,
+  //             fontSize: Constants.fontSmall,
+  //           ),
+  //         ),
+  //         const SizedBox(width: 4.0),
+  //         Text(
+  //           labelData.toString(),
+  //           style: const TextStyle(
+  //             color: Colors.black,
+  //             fontWeight: FontWeight.w500,
+  //             fontSize: Constants.fontSmall,
+  //           ),
+  //         ),
+  //       ],
+  //     ),
+  //   );
+  // }
 
   Widget _buildItems({required String label, required String labelData}) {
     return Row(
@@ -791,173 +982,212 @@ class _VoterListScreenState extends State<VoterListScreen> {
     );
   }
 
-  Future _draggableScrollableSheet(context) {
-    Size size = MediaQuery.of(context).size;
-    return showModalBottomSheet(
-      context: context,
-      backgroundColor: Colors.transparent,
-      isDismissible: false,
-      enableDrag: true,
-      // useSafeArea: true,
-      isScrollControlled: true, // set this to true
-      builder: (context) {
-        return StatefulBuilder(builder: (context, StateSetter setState) {
-          return GestureDetector(
-            onTap: () => FocusScope.of(context).unfocus(),
-            child: Card(
-              color: Colors.white,
-              margin: EdgeInsets.zero,
-              shape: const RoundedRectangleBorder(
-                  borderRadius:
-                      BorderRadius.vertical(top: Radius.circular(6.0))),
-              child: ListView(
-                shrinkWrap: true,
-                controller: _scrollController,
-                padding: EdgeInsets.only(
-                    top: 10.0,
-                    right: 10.0,
-                    left: 10.0,
-                    bottom: MediaQuery.of(context).viewInsets.bottom + 10.0),
-                children: [
-                  SizedBox(
-                    width: size.width,
-                    child: const Text(
-                      'Search Family Members',
-                      textAlign: TextAlign.center,
-                      style: TextStyle(
-                        color: Colors.black,
-                        fontSize: Constants.fontLarge,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                  ),
-                  const SizedBox(height: 20.0),
-                  SizedBox(
-                    width: size.width,
-                    child: Form(
-                      key: _formKey,
-                      child: FormFieldWidget(
-                        controller: _voterNoController,
-                        autovalidateMode: _autovalidateMode
-                            ? AutovalidateMode.onUserInteraction
-                            : AutovalidateMode.disabled,
-                        focusNode: _voterNoNode,
-                        hintText: 'Search by Voter ID',
-                        isPrefixIcon: false,
-                        isSuffixIcon: false,
-                        // maxLength: 10,
-                        keyboardType: TextInputType.text,
-                        textCapitalization: TextCapitalization.characters,
-                        inputFormatters: <TextInputFormatter>[
-                          // UpperCaseTextFormatter(),
-                          // FilteringTextInputFormatter.allow(
-                          // RegExp("[0-9a-zA-Z]"))
-                          FilteringTextInputFormatter.allow(
-                              RegExp(r'^[A-Za-z]{1,3}')),
-                          FilteringTextInputFormatter.allow(
-                              RegExp(r'[0-9]{1,7}$')),
-                        ],
-                        onChanged: (value) {
-                          print(value);
-                        },
-                      ),
-                    ),
-                  ),
-                  const SizedBox(height: 10.0),
-                  orDivider(
-                      label: const Text('Or'),
-                      borderColor: Colors.grey.shade400),
-                  const SizedBox(height: 10.0),
-                  SizedBox(
-                    width: size.width,
-                    child: Form(
-                      key: _formKey2,
-                      child: FormFieldWidget(
-                        controller: _aadharController,
-                        autovalidateMode: _autovalidateMode
-                            ? AutovalidateMode.onUserInteraction
-                            : AutovalidateMode.disabled,
-                        focusNode: _aadharNoNode,
-                        hintText: 'Search by Aadhar Number',
-                        isPrefixIcon: false,
-                        isSuffixIcon: false,
-                        maxLength: 12,
-                        keyboardType: TextInputType.number,
-                        onChanged: (value) {},
-                      ),
-                    ),
-                  ),
-                  const SizedBox(height: 10.0),
-                  orDivider(
-                      label: const Text('Or'),
-                      borderColor: Colors.grey.shade400),
-                  const SizedBox(height: 10.0),
-                  SizedBox(
-                    width: size.width,
-                    child: Form(
-                      key: _formKey3,
-                      child: Row(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Expanded(
-                            child: FormFieldWidget(
-                              controller: _nameController,
-                              autovalidateMode: _autovalidateMode
-                                  ? AutovalidateMode.onUserInteraction
-                                  : AutovalidateMode.disabled,
-                              focusNode: _nameNode,
-                              hintText: 'Name',
-                              isPrefixIcon: false,
-                              isSuffixIcon: false,
-                              keyboardType: TextInputType.name,
-                              onChanged: (value) {},
-                            ),
-                          ),
-                          const SizedBox(width: 10.0),
-                          Expanded(
-                            child: FormFieldWidget(
-                              controller: _relationNameController,
-                              autovalidateMode: _autovalidateMode
-                                  ? AutovalidateMode.onUserInteraction
-                                  : AutovalidateMode.disabled,
-                              focusNode: _relNameNode,
-                              hintText: 'Relation Name',
-                              isPrefixIcon: false,
-                              isSuffixIcon: false,
-                              keyboardType: TextInputType.name,
-                              onChanged: (value) {},
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
-                  const SizedBox(height: 16.0),
-                  MaterialButtonWidget(
-                    size: size,
-                    widget: const Text(
-                      'Search',
-                      style: TextStyle(color: Colors.white),
-                    ),
-                    onPressed: () {
-                      if (_formKey.currentState!.validate() ||
-                          _formKey2.currentState!.validate() ||
-                          _formKey3.currentState!.validate()) {
-                        print('Success');
-                      } else {
-                        print('Error');
-                      }
-                    },
-                  ),
-                ],
-              ),
-            ),
-          );
-        });
-      },
-    );
-  }
+  // Future _draggableScrollableSheet(context) {
+  //   Size size = MediaQuery.of(context).size;
+  //   return showModalBottomSheet(
+  //     context: context,
+  //     backgroundColor: Colors.transparent,
+  //     isDismissible: false,
+  //     enableDrag: true,
+  //     useSafeArea: true,
+  //     isScrollControlled: true, // set this to true
+  //     builder: (context) {
+  //       return StatefulBuilder(builder: (context, StateSetter setState) {
+  //         return GestureDetector(
+  //           onTap: () => FocusScope.of(context).unfocus(),
+  //           child: Card(
+  //             color: Colors.white,
+  //             margin: EdgeInsets.zero,
+  //             shape: const RoundedRectangleBorder(
+  //                 borderRadius:
+  //                     BorderRadius.vertical(top: Radius.circular(6.0))),
+  //             child: ListView(
+  //               shrinkWrap: true,
+  //               controller: _scrollController,
+  //               padding: EdgeInsets.only(
+  //                   top: 10.0,
+  //                   right: 10.0,
+  //                   left: 10.0,
+  //                   bottom: MediaQuery.of(context).viewInsets.bottom + 10.0),
+  //               children: [
+  //                 SizedBox(
+  //                   width: size.width,
+  //                   child: const Text(
+  //                     'Search Family Members',
+  //                     textAlign: TextAlign.center,
+  //                     style: TextStyle(
+  //                       color: Colors.black,
+  //                       fontSize: Constants.fontLarge,
+  //                       fontWeight: FontWeight.bold,
+  //                     ),
+  //                   ),
+  //                 ),
+  //                 const SizedBox(height: 20.0),
+  //                 SizedBox(
+  //                   width: size.width,
+  //                   child: Form(
+  //                     key: _formKey,
+  //                     child: FormFieldWidget(
+  //                       controller: _voterNoController,
+  //                       autovalidateMode: _autovalidateMode
+  //                           ? AutovalidateMode.onUserInteraction
+  //                           : AutovalidateMode.disabled,
+  //                       focusNode: _voterNoNode,
+  //                       hintText: 'Search by Voter ID',
+  //                       isPrefixIcon: false,
+  //                       isSuffixIcon: false,
+  //                       // maxLength: 10,
+  //                       keyboardType: TextInputType.text,
+  //                       textCapitalization: TextCapitalization.characters,
+  //                       inputFormatters: const <TextInputFormatter>[
+  //                         // UpperCaseTextFormatter(),
+  //                         // FilteringTextInputFormatter.allow(
+  //                         // RegExp("[0-9a-zA-Z]"))
+  //                         // FilteringTextInputFormatter.allow(
+  //                         //     RegExp(r'^[A-Za-z]{1,3}')),
+  //                         // FilteringTextInputFormatter.allow(
+  //                         //     RegExp(r'[0-9]{1,7}$')),
+  //                       ],
+  //                     ),
+  //                   ),
+  //                 ),
+  //                 // const SizedBox(height: 5.0),
+  //                 orDivider(
+  //                     label: const Text('Or'),
+  //                     borderColor: Colors.grey.shade400),
+  //                 // const SizedBox(height: 5.0),
+  //                 SizedBox(
+  //                   width: size.width,
+  //                   child: Form(
+  //                     key: _formKey2,
+  //                     child: FormFieldWidget(
+  //                       controller: _aadharController,
+  //                       autovalidateMode: _autovalidateMode
+  //                           ? AutovalidateMode.onUserInteraction
+  //                           : AutovalidateMode.disabled,
+  //                       focusNode: _aadharNoNode,
+  //                       hintText: 'Search by Aadhar Number',
+  //                       isPrefixIcon: false,
+  //                       isSuffixIcon: false,
+  //                       maxLength: 12,
+  //                       keyboardType: TextInputType.number,
+  //                     ),
+  //                   ),
+  //                 ),
+  //                 // const SizedBox(height: 5.0),
+  //                 orDivider(
+  //                     label: const Text('Or'),
+  //                     borderColor: Colors.grey.shade400),
+  //                 // const SizedBox(height: 5.0),
+  //                 SizedBox(
+  //                   width: size.width,
+  //                   child: Form(
+  //                     key: _formKey3,
+  //                     child: Column(
+  //                       children: [
+  //                         Row(
+  //                           crossAxisAlignment: CrossAxisAlignment.start,
+  //                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
+  //                           children: [
+  //                             Expanded(
+  //                               child: FormFieldWidget(
+  //                                 controller: _fNameController,
+  //                                 autovalidateMode: _autovalidateMode
+  //                                     ? AutovalidateMode.onUserInteraction
+  //                                     : AutovalidateMode.disabled,
+  //                                 focusNode: _fNameNode,
+  //                                 hintText: 'First name',
+  //                                 isPrefixIcon: false,
+  //                                 isSuffixIcon: false,
+  //                                 keyboardType: TextInputType.name,
+  //                               ),
+  //                             ),
+  //                             const SizedBox(width: 10.0),
+  //                             Expanded(
+  //                               child: FormFieldWidget(
+  //                                 controller: _lNameController,
+  //                                 autovalidateMode: _autovalidateMode
+  //                                     ? AutovalidateMode.onUserInteraction
+  //                                     : AutovalidateMode.disabled,
+  //                                 focusNode: _lNameNode,
+  //                                 hintText: 'Last name',
+  //                                 isPrefixIcon: false,
+  //                                 isSuffixIcon: false,
+  //                                 keyboardType: TextInputType.name,
+  //                               ),
+  //                             ),
+  //                           ],
+  //                         ),
+  //                         const SizedBox(height: 10.0),
+  //                         FormFieldWidget(
+  //                           controller: _relationNameController,
+  //                           autovalidateMode: _autovalidateMode
+  //                               ? AutovalidateMode.onUserInteraction
+  //                               : AutovalidateMode.disabled,
+  //                           focusNode: _relNameNode,
+  //                           hintText: 'Relation Name',
+  //                           isPrefixIcon: false,
+  //                           isSuffixIcon: false,
+  //                           keyboardType: TextInputType.name,
+  //                         ),
+  //                       ],
+  //                     ),
+  //                   ),
+  //                 ),
+  //                 const SizedBox(height: 16.0),
+  //                 MaterialButtonWidget(
+  //                   size: size,
+  //                   widget: _isBottomSheetLoad
+  //                       ? Row(
+  //                           crossAxisAlignment: CrossAxisAlignment.center,
+  //                           mainAxisAlignment: MainAxisAlignment.center,
+  //                           mainAxisSize: MainAxisSize.max,
+  //                           children: const [
+  //                             SizedBox(
+  //                               height: 16.0,
+  //                               width: 16.0,
+  //                               child: CircularProgressIndicator(
+  //                                 color: Colors.white,
+  //                               ),
+  //                             ),
+  //                             SizedBox(width: 10.0),
+  //                             Text(
+  //                               'Searching...',
+  //                               style: TextStyle(color: Colors.white),
+  //                             ),
+  //                           ],
+  //                         )
+  //                       : const Text(
+  //                           'Search',
+  //                           style: TextStyle(color: Colors.white),
+  //                         ),
+  //                   onPressed: () {
+  //                     if (_formKey.currentState!.validate() &&
+  //                         _voterNoController.text.isNotEmpty) {
+  //                       print('voter');
+  //                     } else if (_formKey2.currentState!.validate() &&
+  //                         _aadharController.text.isNotEmpty) {
+  //                       print('aadhar');
+  //                     } else if (_formKey3.currentState!.validate() &&
+  //                         _fNameController.text.isNotEmpty) {
+  //                       print('fname');
+  //                     } else {
+  //                       print('Error');
+  //                     }
+  //                   },
+  //                 ),
+  //               ],
+  //             ),
+  //           ),
+  //         );
+  //       });
+  //     },
+  //   ).then((value) {
+  //     setState(() {
+  //       _isBottomSheetLoad = false;
+  //     });
+  //   });
+  // }
 
   Future searchVoterId(String query) async => debounce(() async {
         final searchResult = await APIServices.getVoterList(context,
@@ -968,4 +1198,11 @@ class _VoterListScreenState extends State<VoterListScreen> {
           _searchResultsItems = searchResult!;
         });
       });
+
+  void getDBID() async {
+    SharedPreferences preferences = await SharedPreferences.getInstance();
+    setState(() {
+      getLoginID = preferences.getString('id');
+    });
+  }
 }

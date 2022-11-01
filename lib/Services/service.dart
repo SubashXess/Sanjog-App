@@ -87,6 +87,28 @@ class APIServices {
     }
   }
 
+  static Future<List<UserDataModel>>? getUserByVoterID(context,
+      {required String voterId}) async {
+    Client client = http.Client();
+    Uri uri = Uri.parse(APIs.VOTER_LIST_API);
+    try {
+      Response response = await client.get(uri);
+      if (response.statusCode == 200) {
+        String json = response.body;
+        return getVoterListFromJson(json).where((items) {
+          final String voterIDLower =
+              items.voterNo!.trim().toLowerCase().toString();
+          final String searchVoterID = voterId.trim().toLowerCase().toString();
+          return voterIDLower.contains(searchVoterID);
+        }).toList();
+      } else {
+        return Future.error('Connection Error');
+      }
+    } catch (e) {
+      return Future.error(showSnackBar(context, 'Unexpected Error $e'));
+    }
+  }
+
   static Future<List<UserDataModel>>? getVoterDetails(context) async {
     Client client = http.Client();
     Uri uri = Uri.parse(APIs.VOTER_LIST_API);
@@ -122,34 +144,37 @@ class APIServices {
   }) async {
     Client client = http.Client();
     Uri uri = Uri.parse(APIs.USER_DATA_UPDATE);
+
+    Map<String, String> body = {
+      'id': id.toString(), // voter user for each
+      'user_id': loginUserId
+          .toString(), // assembly user id who is update this / login user
+      'photo': photo.toString(),
+      'position': position.toString(),
+      'category': category.toString(),
+      'mobileNo': mobile.toString(),
+      'whatsappNo': wpNumber.toString(),
+      'address': address.toString(),
+      'dob': dob.toString(),
+      'dom': dom.toString(),
+      'blood_group': bloodGroup.toString(),
+      'postBJP': postBJP.toString(),
+      'soc_org': socialOrg.toString(),
+    };
+
     try {
-      Response response = await client.post(uri, body: <String, String>{
-        'id': id.toString(), // voter user for each
-        'user_id': loginUserId
-            .toString(), // assembly user id who is update this / login user
-        'photo': photo.toString(),
-        'position': position.toString(),
-        'category': category.toString(),
-        'mobileNo': mobile.toString(),
-        'whatsappNo': wpNumber.toString(),
-        'address': address.toString(),
-        'dob': dob.toString(),
-        'dom': dom.toString(),
-        'blood_group': bloodGroup.toString(),
-        'postBJP': postBJP.toString(),
-        'soc_org': socialOrg.toString(),
-      });
-      // print(id);
-      // print(address);
-      // print(position);
-      // print(category);
-      // print(mobile);
-      // print(wpNumber);
-      // print(dob);
-      // print(dom);
-      // print(bloodGroup);
-      // print(postBJP);
-      // print(socialOrg);
+      Response response = await client.post(uri, body: body);
+      print(id);
+      print(address);
+      print(position);
+      print(category);
+      print(mobile);
+      print(wpNumber);
+      print(dob);
+      print(dom);
+      print(bloodGroup);
+      print(postBJP);
+      print(socialOrg);
 
       if (response.statusCode == 200) {
         var jsonResponse = json.decode(response.body);

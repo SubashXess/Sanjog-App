@@ -14,6 +14,11 @@ class _AddFamilyMemberListScreenState extends State<AddFamilyMemberListScreen> {
   final ScrollController _scrollController = ScrollController();
 
   @override
+  void initState() {
+    super.initState();
+  }
+
+  @override
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
     return Scaffold(

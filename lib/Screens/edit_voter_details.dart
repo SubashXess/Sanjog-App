@@ -192,7 +192,7 @@ class _EditDetailsScreenState extends State<EditDetailsScreen> {
   @override
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
-    print(_mobileNoController.text);
+   
     return GestureDetector(
       onTap: () => FocusScope.of(context).unfocus(),
       child: Scaffold(
@@ -687,7 +687,7 @@ class _EditDetailsScreenState extends State<EditDetailsScreen> {
                                                     .format(DateTime.parse(
                                                         _dobController.text))),
                                             firstDate: DateTime(1970),
-                                            lastDate: DateTime(2101),
+                                            lastDate: DateTime.now(),
                                           );
 
                                           if (pickedDate != null) {
@@ -745,7 +745,7 @@ class _EditDetailsScreenState extends State<EditDetailsScreen> {
                                                                   _domController
                                                                       .text))),
                                                   firstDate: DateTime(1970),
-                                                  lastDate: DateTime(2101));
+                                                  lastDate: DateTime.now());
 
                                           if (pickedDate != null) {
                                             String formattedDate = DateFormat(
@@ -1032,15 +1032,18 @@ class _EditDetailsScreenState extends State<EditDetailsScreen> {
                                   widget.details!.position.toString(),
                               category: categoryDefaultValue ??
                                   widget.details!.category.toString(),
-                              mobile: _mobileNoController.text,
+                              mobile:
+                                  _mobileNoController.text.trim().toString(),
                               wpNumber:
                                   _whatsappNoController.text.trim().toString(),
-                              address: _addressController.text,
-                              dob: _dobController.text.toString(),
-                              dom: _domController.text.toString(),
+                              address:
+                                  _addressController.text.trim().toString(),
+                              dob: _dobController.text.trim().toString(),
+                              dom: _domController.text.trim().toString(),
                               bloodGroup: bloodGroupDefaultValue ??
                                   widget.details!.bloodGroup.toString(),
-                              postBJP: _postBJPController.text.toString(),
+                              postBJP:
+                                  _postBJPController.text.trim().toString(),
                               socialOrg: socialOrgDefaultValue ??
                                   widget.details!.socialOrg.toString(),
                             ).then((value) {
