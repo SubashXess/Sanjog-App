@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:sonjagapp/Error%20Screens/no_data_found.dart';
 import 'package:sonjagapp/Error%20Screens/no_internet_connection.dart';
+import 'package:sonjagapp/Providers/add_to_family_members_provider.dart';
 import 'package:sonjagapp/Providers/connection_provider.dart';
 import 'package:sonjagapp/Providers/edit_voters_provider.dart';
 import 'package:sonjagapp/Providers/voter_list_provider.dart';
@@ -34,7 +35,7 @@ class MyApp extends StatelessWidget {
       providers: [
         ChangeNotifierProvider(create: (context) => ConnectivityProvider()),
         ChangeNotifierProvider(create: (context) => EditVotersProvider()),
-        // ChangeNotifierProvider(create: (context) => TestProvider()),
+        ChangeNotifierProvider(create: (context) => AddToFamilyProvider()),
       ],
       builder: (context, child) => MaterialApp(
         title: 'Sanjog App',

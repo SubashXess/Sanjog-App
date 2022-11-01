@@ -1,4 +1,8 @@
+// ignore_for_file: avoid_print
+
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:sonjagapp/Providers/add_to_family_members_provider.dart';
 
 import '../Components/gradients.dart';
 import '../Constants/constants.dart';
@@ -12,13 +16,27 @@ class SeeFamilyMembers extends StatefulWidget {
 
 class _SeeFamilyMembersState extends State<SeeFamilyMembers> {
   ScrollController scrollController = ScrollController();
-  bool _isLongPressed = false;
+
+  @override
+  void initState() {
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
+    final addedFamily = Provider.of<AddToFamilyProvider>(context);
+    print('reload');
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Family Details'),
+        title: const Text(
+          'Family Members',
+          style: TextStyle(
+            color: Colors.white,
+            fontSize: Constants.fontLarge,
+            fontWeight: FontWeight.w600,
+          ),
+        ),
         centerTitle: true,
         automaticallyImplyLeading: false,
         leadingWidth: 36.0,
@@ -39,15 +57,11 @@ class _SeeFamilyMembersState extends State<SeeFamilyMembers> {
         ),
       ),
       body: ListView(
-        // crossAxisAlignment: CrossAxisAlignment.start,
-        // mainAxisAlignment: MainAxisAlignment.start,
-        // mainAxisSize: MainAxisSize.min,
         shrinkWrap: true,
         controller: scrollController,
         physics: const ClampingScrollPhysics(),
         padding: const EdgeInsets.all(10.0),
         keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
-
         children: [
           const SizedBox(height: 10.0),
           const Text(
@@ -59,242 +73,144 @@ class _SeeFamilyMembersState extends State<SeeFamilyMembers> {
             ),
           ),
           const SizedBox(height: 10.0),
-          ListView.builder(
-            itemCount: 4,
-            shrinkWrap: true,
-            clipBehavior: Clip.none,
-            padding: EdgeInsets.only(
-                bottom: MediaQuery.of(context).viewInsets.bottom),
-            controller: scrollController,
-            physics: const NeverScrollableScrollPhysics(),
-            itemBuilder: (context, index) {
-              return Card(
-                margin: EdgeInsets.only(bottom: _isLongPressed ? 10.0 : 0.0),
-                elevation: 0.0,
-                clipBehavior: Clip.antiAliasWithSaveLayer,
-                shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(6.0),
-                    side: _isLongPressed
-                        ? const BorderSide(
-                            color: Constants.kLightThemeColor, width: 1.0)
-                        : BorderSide.none),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  children: [
-                    Card(
-                      margin:
-                          EdgeInsets.only(bottom: _isLongPressed ? 0.0 : 10.0),
-                      elevation: 0.0,
-                      clipBehavior: Clip.antiAliasWithSaveLayer,
-                      shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(6.0),
-                          side: _isLongPressed
-                              ? BorderSide.none
-                              : const BorderSide(
-                                  color: Constants.kLightThemeColor,
-                                  width: 1.0)),
-                      child: InkWell(
-                        splashColor: Constants.kLightThemeColor,
-                        highlightColor: Colors.transparent,
-                        onTap: () {},
-                        child: Padding(
-                          padding: const EdgeInsets.all(10.0),
-                          child: Column(
-                            children: [
-                              Row(
-                                crossAxisAlignment: CrossAxisAlignment.center,
-                                mainAxisAlignment: MainAxisAlignment.start,
-                                children: const [
-                                  Text(
-                                    'Name of the voter:',
-                                    style: TextStyle(
-                                      color: Colors.black87,
-                                      fontWeight: FontWeight.w500,
-                                      fontSize: Constants.fontSmall,
-                                    ),
-                                  ),
-                                  SizedBox(width: 10.0),
-                                  Expanded(
-                                    child: Text(
-                                      'Babu Pradhan',
-                                      style: TextStyle(
-                                        color: Colors.black,
-                                        fontWeight: FontWeight.bold,
-                                        fontSize: Constants.fontSmall,
-                                      ),
-                                    ),
-                                  ),
-                                ],
-                              ),
-                              const SizedBox(height: 10.0),
-                              Row(
-                                crossAxisAlignment: CrossAxisAlignment.center,
-                                mainAxisAlignment: MainAxisAlignment.start,
-                                children: const [
-                                  Text(
-                                    'Rel-Name of the voters:',
-                                    style: TextStyle(
-                                      color: Colors.black87,
-                                      fontWeight: FontWeight.w500,
-                                      fontSize: Constants.fontSmall,
-                                    ),
-                                  ),
-                                  SizedBox(width: 10.0),
-                                  Expanded(
-                                    child: Text(
-                                      'Bhramara Pradhan',
-                                      style: TextStyle(
-                                        color: Colors.black,
-                                        fontWeight: FontWeight.bold,
-                                        fontSize: Constants.fontSmall,
-                                      ),
-                                    ),
-                                  ),
-                                ],
-                              ),
-                              const SizedBox(height: 10.0),
-                              Row(
-                                crossAxisAlignment: CrossAxisAlignment.center,
-                                mainAxisAlignment: MainAxisAlignment.start,
-                                children: [
-                                  const Text(
-                                    'Voter ID number:',
-                                    style: TextStyle(
-                                      color: Colors.black87,
-                                      fontWeight: FontWeight.w500,
-                                      fontSize: Constants.fontSmall,
-                                    ),
-                                  ),
-                                  const SizedBox(width: 10.0),
-                                  Expanded(
-                                    child: Text(
-                                      'Rmu1169697'.toUpperCase(),
-                                      style: const TextStyle(
-                                        color: Colors.black,
-                                        fontWeight: FontWeight.bold,
-                                        fontSize: Constants.fontSmall,
-                                      ),
-                                    ),
-                                  ),
-                                ],
-                              ),
-                              const SizedBox(height: 10.0),
-                              Row(
-                                crossAxisAlignment: CrossAxisAlignment.center,
-                                mainAxisAlignment: MainAxisAlignment.start,
-                                children: const [
-                                  Text(
-                                    'Mobile number:',
-                                    style: TextStyle(
-                                      color: Colors.black87,
-                                      fontWeight: FontWeight.w500,
-                                      fontSize: Constants.fontSmall,
-                                    ),
-                                  ),
-                                  SizedBox(width: 10.0),
-                                  Expanded(
-                                    child: Text(
-                                      '1234567890',
-                                      style: TextStyle(
-                                        color: Colors.black,
-                                        fontWeight: FontWeight.bold,
-                                        fontSize: Constants.fontSmall,
-                                      ),
-                                    ),
-                                  ),
-                                ],
-                              ),
-                              // TextField(
-                              //   autofocus: true,
-                              // ),
-                            ],
-                          ),
-                        ),
-                      ),
-                    ),
-                    _isLongPressed
-                        ? Container(
-                            margin: const EdgeInsets.only(
-                                bottom: 10.0, right: 10.0, left: 10.0),
-                            child: Row(
-                              crossAxisAlignment: CrossAxisAlignment.center,
-                              mainAxisAlignment: MainAxisAlignment.end,
-                              children: [
-                                TextButton.icon(
-                                  onPressed: () {},
-                                  style: ButtonStyle(
-                                    backgroundColor: MaterialStateProperty.all(
-                                        Constants.kLightThemeColor),
-                                    padding: MaterialStateProperty.all(
-                                        const EdgeInsets.symmetric(
-                                            horizontal: 6.0, vertical: 0.0)),
-                                    shape: MaterialStateProperty.all(
-                                        RoundedRectangleBorder(
-                                            borderRadius:
-                                                BorderRadius.circular(6.0))),
-                                    tapTargetSize:
-                                        MaterialTapTargetSize.shrinkWrap,
-                                    visualDensity: const VisualDensity(
-                                        horizontal: -2.0, vertical: -2.0),
-                                  ),
-                                  icon: const Icon(
-                                    Icons.delete,
-                                    size: 16.0,
-                                    color: Constants.kPrimaryThemeColor,
-                                  ),
-                                  label: const Text(
-                                    'Delete',
-                                    style: TextStyle(
-                                        fontSize: 12.0,
-                                        color: Constants.kPrimaryThemeColor),
-                                  ),
-                                ),
-                                const SizedBox(width: 36.0),
-                                TextButton.icon(
-                                  onPressed: () {},
-                                  style: ButtonStyle(
-                                    backgroundColor: MaterialStateProperty.all(
-                                        // Constants.kLightThemeColor,
-                                        Colors.green.shade50),
-                                    padding: MaterialStateProperty.all(
-                                        const EdgeInsets.symmetric(
-                                            horizontal: 6.0, vertical: 0.0)),
-                                    shape: MaterialStateProperty.all(
-                                        RoundedRectangleBorder(
-                                            borderRadius:
-                                                BorderRadius.circular(6.0))),
-                                    tapTargetSize:
-                                        MaterialTapTargetSize.shrinkWrap,
-                                    visualDensity: const VisualDensity(
-                                        horizontal: -2.0, vertical: -2.0),
-                                  ),
-                                  icon: const Icon(
-                                    Icons.edit,
-                                    size: 16.0,
-                                    // color: Constants.kPrimaryThemeColor,
-                                    color: Colors.green,
-                                  ),
-                                  label: const Text(
-                                    'Edit',
-                                    style: TextStyle(
-                                      fontSize: 12.0,
-                                      // color: Constants.kPrimaryThemeColor,
-                                      color: Colors.green,
-                                    ),
-                                  ),
-                                ),
-                              ],
-                            ),
-                          )
-                        : Container(width: 0.0),
-                  ],
-                ),
-              );
-            },
-          ),
+          _buildVoterList(addedFamily),
         ],
       ),
+    );
+  }
+
+  Widget _buildVoterList(AddToFamilyProvider addedFamily) {
+    Size size = MediaQuery.of(context).size;
+    print(addedFamily.selectedMember);
+    print('child');
+    return ListView.separated(
+      itemCount: addedFamily.selectedMember.length,
+      shrinkWrap: true,
+      controller: scrollController,
+      padding: EdgeInsets.zero,
+      itemBuilder: (context, index) {
+        return SizedBox(
+          width: size.width,
+          child: Row(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            mainAxisAlignment: MainAxisAlignment.start,
+            children: [
+              SizedBox(
+                height: 82.0,
+                width: size.width / 4.6,
+                child: Card(
+                  margin: EdgeInsets.zero,
+                  elevation: 0.0,
+                  shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(4.0)),
+                  color: Colors.grey.shade200,
+                  clipBehavior: Clip.antiAliasWithSaveLayer,
+                  child: const Center(
+                    child: Text('Image'),
+                  ),
+                ),
+              ),
+              const SizedBox(width: 10.0),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  children: [
+                    Text(
+                      'Saroj Das $index',
+                      style: const TextStyle(
+                        color: Colors.black,
+                        fontWeight: FontWeight.bold,
+                        fontSize: Constants.fontRegular,
+                      ),
+                    ),
+                    const SizedBox(height: 6.0),
+                    _buildRowItems(label: 'DOB:', labelData: '10-03-2000'),
+                    const SizedBox(height: 6.0),
+                    _buildRowItems(label: 'Voter ID:', labelData: 'OXP1234567'),
+                    const SizedBox(height: 6.0),
+                    _buildRowItems(
+                        label: 'Aadhar No', labelData: '1234 5678 4534'),
+                    const SizedBox(height: 6.0),
+                    _buildRowItems(
+                        label: 'Mobile No', labelData: '+91 1234567890'),
+                  ],
+                ),
+              ),
+              InkWell(
+                splashColor: Colors.transparent,
+                highlightColor: Colors.transparent,
+                onTap: () {},
+                child: Container(
+                  width: 30.0,
+                  height: 30.0,
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    color: Colors.deepPurple.shade100,
+                  ),
+                  child: Icon(
+                    Icons.edit_rounded,
+                    size: 14.0,
+                    color: Colors.deepPurple.shade700,
+                  ),
+                ),
+              ),
+              const SizedBox(width: 10.0),
+              Consumer<AddToFamilyProvider>(builder: (context, value, child) {
+                return InkWell(
+                  splashColor: Colors.transparent,
+                  highlightColor: Colors.transparent,
+                  onTap: () {
+                    value.removeMembers(value.selectedMember[index]);
+                  },
+                  child: Container(
+                    width: 30.0,
+                    height: 30.0,
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      color: Colors.red.shade100,
+                    ),
+                    child: Icon(
+                      Icons.delete_rounded,
+                      size: 14.0,
+                      color: Colors.red.shade700,
+                    ),
+                  ),
+                );
+              }),
+            ],
+          ),
+        );
+      },
+      separatorBuilder: (context, index) => const Divider(height: 20.0),
+    );
+  }
+
+  Widget _buildRowItems({required String label, required String labelData}) {
+    return Row(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      mainAxisAlignment: MainAxisAlignment.start,
+      children: [
+        Text(
+          label.toString(),
+          style: const TextStyle(
+            color: Colors.black38,
+            fontWeight: FontWeight.w500,
+            fontSize: Constants.fontExtraSmall,
+          ),
+        ),
+        const SizedBox(width: 4.0),
+        Expanded(
+          child: Text(
+            labelData.toString(),
+            style: const TextStyle(
+              color: Colors.black54,
+              fontWeight: FontWeight.bold,
+              fontSize: Constants.fontExtraSmall,
+            ),
+          ),
+        ),
+      ],
     );
   }
 }

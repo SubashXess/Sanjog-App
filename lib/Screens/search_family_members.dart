@@ -4,11 +4,13 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:provider/provider.dart';
 import 'package:sonjagapp/Components/gradients.dart';
 import 'package:sonjagapp/Components/or_divider.dart';
 import 'package:sonjagapp/Components/showsnackbar.dart';
 import 'package:sonjagapp/Constants/constants.dart';
 import 'package:sonjagapp/Models/user_data_model.dart';
+import 'package:sonjagapp/Providers/add_to_family_members_provider.dart';
 import 'package:sonjagapp/Screens/add_family_members_list_screen.dart';
 import 'package:sonjagapp/Services/service.dart';
 import 'package:sonjagapp/Widgets/button_widget.dart';
@@ -102,6 +104,8 @@ class _SearchFamilyMemberScreenState extends State<SearchFamilyMemberScreen> {
   @override
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
+
+    print('reload');
     return GestureDetector(
       onTap: () => FocusScope.of(context).unfocus(),
       child: Scaffold(
@@ -127,6 +131,27 @@ class _SearchFamilyMemberScreenState extends State<SearchFamilyMemberScreen> {
               fontWeight: FontWeight.w600,
             ),
           ),
+          actions: [
+            !_isDataSearch
+                ? const SizedBox(width: 0.0)
+                : IconButton(
+                    onPressed: () {
+                      setState(() {
+                        _isDataSearch = false;
+                      });
+                      _voterNoController.clear();
+                      _aadharController.clear();
+                      _firstNameController.clear();
+                      _lastNameController.clear();
+                      _relationNameController.clear();
+                    },
+                    icon: const Icon(
+                      Icons.search_rounded,
+                      size: 20.0,
+                      color: Colors.white,
+                    ),
+                  ),
+          ],
           flexibleSpace: FlexibleSpaceBar(
             background: Container(
               decoration: BoxDecoration(
@@ -135,181 +160,174 @@ class _SearchFamilyMemberScreenState extends State<SearchFamilyMemberScreen> {
             ),
           ),
         ),
-        body: !_isDataSearch
-            ? SingleChildScrollView(
-                child: Container(
-                  width: double.infinity,
-                  padding: const EdgeInsets.all(10.0),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      SizedBox(
-                        width: size.width,
-                        child: Form(
-                          key: _formKey,
-                          child: FormFieldWidget(
-                            controller: _voterNoController,
-                            autovalidateMode: _autovalidateMode
-                                ? AutovalidateMode.onUserInteraction
-                                : AutovalidateMode.disabled,
-                            focusNode: _voterNoNode,
-                            hintText: 'Search by Voter ID',
-                            isPrefixIcon: false,
-                            isSuffixIcon: false,
-                            // maxLength: 10,
-                            keyboardType: TextInputType.text,
-                            textCapitalization: TextCapitalization.characters,
-                            inputFormatters: const <TextInputFormatter>[
-                              // UpperCaseTextFormatter(),
-                              // FilteringTextInputFormatter.allow(
-                              // RegExp("[0-9a-zA-Z]"))
-                              // FilteringTextInputFormatter.allow(
-                              //     RegExp(r'^[A-Za-z]{1,3}')),
-                              // FilteringTextInputFormatter.allow(
-                              //     RegExp(r'[0-9]{1,7}$')),
-                            ],
-                          ),
-                        ),
-                      ),
-                      // const SizedBox(height: 5.0),
-                      orDivider(
-                          label: const Text('Or'),
-                          borderColor: Colors.grey.shade400),
-                      // const SizedBox(height: 5.0),
-                      SizedBox(
-                        width: size.width,
-                        child: Form(
-                          key: _formKey2,
-                          child: FormFieldWidget(
-                            controller: _aadharController,
-                            autovalidateMode: _autovalidateMode
-                                ? AutovalidateMode.onUserInteraction
-                                : AutovalidateMode.disabled,
-                            focusNode: _aadharNoNode,
-                            hintText: 'Search by Aadhar Number',
-                            isPrefixIcon: false,
-                            isSuffixIcon: false,
-                            maxLength: 12,
-                            keyboardType: TextInputType.number,
-                          ),
-                        ),
-                      ),
-                      // const SizedBox(height: 5.0),
-                      orDivider(
-                          label: const Text('Or'),
-                          borderColor: Colors.grey.shade400),
-                      // const SizedBox(height: 5.0),
-                      SizedBox(
-                        width: size.width,
-                        child: Form(
-                          key: _formKey3,
-                          child: Column(
-                            children: [
-                              Row(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceBetween,
-                                children: [
-                                  Expanded(
-                                    child: FormFieldWidget(
-                                      controller: _firstNameController,
-                                      autovalidateMode: _autovalidateMode
-                                          ? AutovalidateMode.onUserInteraction
-                                          : AutovalidateMode.disabled,
-                                      focusNode: _fNameNode,
-                                      hintText: 'First name',
-                                      isPrefixIcon: false,
-                                      isSuffixIcon: false,
-                                      keyboardType: TextInputType.name,
-                                    ),
-                                  ),
-                                  const SizedBox(width: 10.0),
-                                  Expanded(
-                                    child: FormFieldWidget(
-                                      controller: _lastNameController,
-                                      autovalidateMode: _autovalidateMode
-                                          ? AutovalidateMode.onUserInteraction
-                                          : AutovalidateMode.disabled,
-                                      focusNode: _lNameNode,
-                                      hintText: 'Last name',
-                                      isPrefixIcon: false,
-                                      isSuffixIcon: false,
-                                      keyboardType: TextInputType.name,
-                                    ),
-                                  ),
-                                ],
-                              ),
-                              const SizedBox(height: 10.0),
-                              FormFieldWidget(
-                                controller: _relationNameController,
+        body: SingleChildScrollView(
+          controller: _scrollController,
+          child: Container(
+            width: double.infinity,
+            padding: const EdgeInsets.all(10.0),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                SizedBox(
+                  width: size.width,
+                  child: Form(
+                    key: _formKey,
+                    child: FormFieldWidget(
+                      controller: _voterNoController,
+                      autovalidateMode: _autovalidateMode
+                          ? AutovalidateMode.onUserInteraction
+                          : AutovalidateMode.disabled,
+                      focusNode: _voterNoNode,
+                      hintText: 'Search by Voter ID',
+                      isPrefixIcon: false,
+                      isSuffixIcon: false,
+                      // maxLength: 10,
+                      keyboardType: TextInputType.text,
+                      textCapitalization: TextCapitalization.characters,
+                      inputFormatters: const <TextInputFormatter>[
+                        // UpperCaseTextFormatter(),
+                        // FilteringTextInputFormatter.allow(
+                        // RegExp("[0-9a-zA-Z]"))
+                        // FilteringTextInputFormatter.allow(
+                        //     RegExp(r'^[A-Za-z]{1,3}')),
+                        // FilteringTextInputFormatter.allow(
+                        //     RegExp(r'[0-9]{1,7}$')),
+                      ],
+                    ),
+                  ),
+                ),
+                // const SizedBox(height: 5.0),
+                orDivider(
+                    label: const Text('Or'), borderColor: Colors.grey.shade400),
+                // const SizedBox(height: 5.0),
+                SizedBox(
+                  width: size.width,
+                  child: Form(
+                    key: _formKey2,
+                    child: FormFieldWidget(
+                      controller: _aadharController,
+                      autovalidateMode: _autovalidateMode
+                          ? AutovalidateMode.onUserInteraction
+                          : AutovalidateMode.disabled,
+                      focusNode: _aadharNoNode,
+                      hintText: 'Search by Aadhar Number',
+                      isPrefixIcon: false,
+                      isSuffixIcon: false,
+                      maxLength: 12,
+                      keyboardType: TextInputType.number,
+                    ),
+                  ),
+                ),
+                // const SizedBox(height: 5.0),
+                orDivider(
+                    label: const Text('Or'), borderColor: Colors.grey.shade400),
+                // const SizedBox(height: 5.0),
+                SizedBox(
+                  width: size.width,
+                  child: Form(
+                    key: _formKey3,
+                    child: Column(
+                      children: [
+                        Row(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Expanded(
+                              child: FormFieldWidget(
+                                controller: _firstNameController,
                                 autovalidateMode: _autovalidateMode
                                     ? AutovalidateMode.onUserInteraction
                                     : AutovalidateMode.disabled,
-                                focusNode: _relNameNode,
-                                hintText: 'Relation Name',
+                                focusNode: _fNameNode,
+                                hintText: 'First name',
                                 isPrefixIcon: false,
                                 isSuffixIcon: false,
                                 keyboardType: TextInputType.name,
                               ),
-                              const SizedBox(height: 16.0),
-                              MaterialButtonWidget(
-                                size: size,
-                                widget: const Text(
-                                  'Search',
-                                  style: TextStyle(color: Colors.white),
-                                ),
-                                onPressed: () {
-                                  if (_formKey.currentState!.validate() &&
-                                      _voterNoController.text.isNotEmpty) {
-                                    if (_voterNoController.text.length < 2) {
-                                      showSnackBar(context,
-                                          'Please enter valid voter id');
-                                    } else {
-                                      setState(() {
-                                        _isDataSearch = true;
-                                      });
-                                      print('ok');
-                                      searchVoterId(
-                                          _voterNoController.text.trim());
-                                    }
-
-                                    print('voter');
-                                  } else if (_formKey2.currentState!
-                                          .validate() &&
-                                      _aadharController.text.isNotEmpty) {
-                                    if (_aadharController.text.length < 12) {
-                                      showSnackBar(context,
-                                          'Please enter valid Aadhar Number');
-                                    } else {
-                                      setState(() {
-                                        _isDataSearch = !_isDataSearch;
-                                      });
-                                    }
-
-                                    print('aadhar');
-                                  } else if (_formKey3.currentState!
-                                          .validate() &&
-                                      _firstNameController.text.isNotEmpty) {
-                                    setState(() {
-                                      _isDataSearch = true;
-                                    });
-                                    print('fname');
-                                  } else {
-                                    print('Error');
-                                  }
-                                },
+                            ),
+                            const SizedBox(width: 10.0),
+                            Expanded(
+                              child: FormFieldWidget(
+                                controller: _lastNameController,
+                                autovalidateMode: _autovalidateMode
+                                    ? AutovalidateMode.onUserInteraction
+                                    : AutovalidateMode.disabled,
+                                focusNode: _lNameNode,
+                                hintText: 'Last name',
+                                isPrefixIcon: false,
+                                isSuffixIcon: false,
+                                keyboardType: TextInputType.name,
                               ),
-                            ],
-                          ),
+                            ),
+                          ],
                         ),
-                      ),
-                    ],
+                        const SizedBox(height: 10.0),
+                        FormFieldWidget(
+                          controller: _relationNameController,
+                          autovalidateMode: _autovalidateMode
+                              ? AutovalidateMode.onUserInteraction
+                              : AutovalidateMode.disabled,
+                          focusNode: _relNameNode,
+                          hintText: 'Relation Name',
+                          isPrefixIcon: false,
+                          isSuffixIcon: false,
+                          keyboardType: TextInputType.name,
+                        ),
+                        const SizedBox(height: 16.0),
+                        MaterialButtonWidget(
+                          size: size,
+                          widget: const Text(
+                            'Search',
+                            style: TextStyle(color: Colors.white),
+                          ),
+                          onPressed: () {
+                            if (_formKey.currentState!.validate() &&
+                                _voterNoController.text.isNotEmpty) {
+                              if (_voterNoController.text.length < 2) {
+                                showSnackBar(
+                                    context, 'Please enter valid voter id');
+                              } else {
+                                setState(() {
+                                  _isDataSearch = true;
+                                });
+                                print('ok');
+                                searchVoterId(_voterNoController.text.trim());
+                              }
+
+                              print('voter');
+                            } else if (_formKey2.currentState!.validate() &&
+                                _aadharController.text.isNotEmpty) {
+                              if (_aadharController.text.length < 12) {
+                                showSnackBar(context,
+                                    'Please enter valid Aadhar Number');
+                              } else {
+                                setState(() {
+                                  _isDataSearch = !_isDataSearch;
+                                });
+                              }
+
+                              print('aadhar');
+                            } else if (_formKey3.currentState!.validate() &&
+                                _firstNameController.text.isNotEmpty) {
+                              setState(() {
+                                _isDataSearch = true;
+                              });
+                              print('fname');
+                            } else {
+                              print('Error');
+                            }
+                          },
+                        ),
+                      ],
+                    ),
                   ),
                 ),
-              )
-            : const Center(
-                child: CircularProgressIndicator(),
-              ),
+                const SizedBox(height: 16.0),
+                _buildVoterList(),
+              ],
+            ),
+          ),
+        ),
       ),
     );
   }
@@ -332,82 +350,104 @@ class _SearchFamilyMemberScreenState extends State<SearchFamilyMemberScreen> {
     debouncer = Timer(duration, callback);
   }
 
-  Widget _buildVoterList(Size size) {
-    return ListView.builder(
-      itemCount: 10,
+  Widget _buildVoterList() {
+    Size size = MediaQuery.of(context).size;
+    print('child');
+    return ListView.separated(
+      itemCount: 20,
       shrinkWrap: true,
+      controller: _scrollController,
       padding: EdgeInsets.zero,
       itemBuilder: (context, index) {
-        return SizedBox(
-          width: size.width,
-          child: Card(
-            margin: EdgeInsets.zero,
-            color: Colors.grey.shade200,
-            shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(6.0)),
-            elevation: 0.0,
-            child: Padding(
-              padding: const EdgeInsets.all(10.0),
-              child: Column(
-                children: [
-                  Row(
+        return Consumer<AddToFamilyProvider>(builder: (context, value, child) {
+          var isAdded = value.selectedMember.contains(index);
+          print('object');
+          return SizedBox(
+            width: size.width,
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              mainAxisAlignment: MainAxisAlignment.start,
+              children: [
+                SizedBox(
+                  height: 82.0,
+                  width: size.width / 4.6,
+                  child: Card(
+                    margin: EdgeInsets.zero,
+                    elevation: 0.0,
+                    shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(4.0)),
+                    color: Colors.grey.shade200,
+                    clipBehavior: Clip.antiAliasWithSaveLayer,
+                    child: const Center(
+                      child: Text('Image'),
+                    ),
+                  ),
+                ),
+                const SizedBox(width: 10.0),
+                Expanded(
+                  child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     mainAxisAlignment: MainAxisAlignment.start,
                     children: [
-                      SizedBox(
-                        height: 100.0,
-                        width: 100.0,
-                        child: Card(
-                          margin: EdgeInsets.zero,
-                          elevation: 0.0,
-                          shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(4.0)),
-                          color: Colors.grey.shade400,
-                          clipBehavior: Clip.antiAliasWithSaveLayer,
-                          child: const Center(
-                            child: Text('Image'),
-                          ),
+                      const Text(
+                        'Saroj Das',
+                        style: TextStyle(
+                          color: Colors.black,
+                          fontWeight: FontWeight.bold,
+                          fontSize: Constants.fontRegular,
                         ),
                       ),
-                      const SizedBox(width: 10.0),
-                      Expanded(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          mainAxisAlignment: MainAxisAlignment.start,
-                          children: [
-                            const Text(
-                              'Saroj Das',
-                              style: TextStyle(
-                                color: Colors.black,
-                                fontWeight: FontWeight.bold,
-                                fontSize: Constants.fontLarge,
-                              ),
-                            ),
-                            const SizedBox(height: 6.0),
-                            _buildRowItems(
-                                label: 'DOB:', labelData: '10-03-2000'),
-                            const SizedBox(height: 6.0),
-                            _buildRowItems(
-                                label: 'Voter ID:', labelData: 'OXP1234567'),
-                            const SizedBox(height: 6.0),
-                            _buildRowItems(
-                                label: 'Aadhar No',
-                                labelData: '1234 5678 4534'),
-                            const SizedBox(height: 6.0),
-                            _buildRowItems(
-                                label: 'Mobile No',
-                                labelData: '+91 1234567890'),
-                          ],
-                        ),
-                      ),
+                      const SizedBox(height: 6.0),
+                      _buildRowItems(label: 'DOB:', labelData: '10-03-2000'),
+                      const SizedBox(height: 6.0),
+                      _buildRowItems(
+                          label: 'Voter ID:', labelData: 'OXP1234567'),
+                      const SizedBox(height: 6.0),
+                      _buildRowItems(
+                          label: 'Aadhar No', labelData: '1234 5678 4534'),
+                      const SizedBox(height: 6.0),
+                      _buildRowItems(
+                          label: 'Mobile No', labelData: '+91 1234567890'),
                     ],
                   ),
-                ],
-              ),
+                ),
+                InkWell(
+                  splashColor: Colors.transparent,
+                  highlightColor: Colors.transparent,
+                  onTap: () {
+                    if (isAdded) {
+                      value.removeMembers(index);
+                    } else {
+                      value.addMembers(index);
+                    }
+                  },
+                  child: Container(
+                    width: 36.0,
+                    height: 36.0,
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      color:
+                          isAdded ? Colors.green.shade100 : Colors.red.shade100,
+                    ),
+                    child: isAdded
+                        ? Icon(
+                            Icons.check_rounded,
+                            size: 20.0,
+                            color: Colors.green.shade700,
+                          )
+                        : Icon(
+                            Icons.add_rounded,
+                            size: 20.0,
+                            color: Colors.red.shade700,
+                          ),
+                  ),
+                ),
+              ],
             ),
-          ),
-        );
+          );
+        });
       },
+      separatorBuilder: (context, index) => const Divider(height: 20.0),
     );
   }
 
@@ -421,17 +461,17 @@ class _SearchFamilyMemberScreenState extends State<SearchFamilyMemberScreen> {
           style: const TextStyle(
             color: Colors.black38,
             fontWeight: FontWeight.w500,
-            fontSize: Constants.fontRegular,
+            fontSize: Constants.fontExtraSmall,
           ),
         ),
-        const SizedBox(width: 6.0),
+        const SizedBox(width: 4.0),
         Expanded(
           child: Text(
             labelData.toString(),
             style: const TextStyle(
               color: Colors.black54,
               fontWeight: FontWeight.bold,
-              fontSize: Constants.fontRegular,
+              fontSize: Constants.fontExtraSmall,
             ),
           ),
         ),

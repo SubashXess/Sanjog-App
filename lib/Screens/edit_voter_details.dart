@@ -10,6 +10,7 @@ import 'package:path_provider/path_provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:sonjagapp/Components/gradients.dart';
 import 'package:sonjagapp/Components/showsnackbar.dart';
+import 'package:sonjagapp/Models/update_user_data_model.dart';
 import 'package:sonjagapp/Models/user_data_model.dart';
 import 'package:sonjagapp/Services/service.dart';
 import 'package:sonjagapp/Widgets/textformfield_widget.dart';
@@ -63,6 +64,7 @@ class _EditDetailsScreenState extends State<EditDetailsScreen> {
 
   // Model
   List<UserDataModel> voterDetails = [];
+  List<UpdateVoterUserModel> updateVoterDetails = [];
 
   // Initial Selected Value
   String? positionDefaultValue;
@@ -192,7 +194,7 @@ class _EditDetailsScreenState extends State<EditDetailsScreen> {
   @override
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
-   
+
     return GestureDetector(
       onTap: () => FocusScope.of(context).unfocus(),
       child: Scaffold(

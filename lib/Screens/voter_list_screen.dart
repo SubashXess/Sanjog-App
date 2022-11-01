@@ -16,6 +16,7 @@ import 'package:sonjagapp/Providers/edit_voters_provider.dart';
 import 'package:sonjagapp/Screens/add_family_members_list_screen.dart';
 import 'package:sonjagapp/Screens/search_family_members.dart';
 import 'package:sonjagapp/Screens/edit_voter_details.dart';
+import 'package:sonjagapp/Screens/see_family_members.dart';
 import 'package:sonjagapp/Services/service.dart';
 import 'package:sonjagapp/Test%20Screens/test_screen_2.dart';
 import 'package:sonjagapp/Widgets/bottom_sheet_widget.dart';
@@ -688,7 +689,10 @@ class _VoterListScreenState extends State<VoterListScreen> {
               const SizedBox(width: 10.0),
               Expanded(
                 child: _buildTextButtonWidget(
-                  onPressed: () {},
+                  onPressed: () => Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (_) => const SeeFamilyMembers())),
                   label: 'See Family Members',
                   bgColor: Colors.orange.withAlpha(40),
                   textColor: Colors.deepOrange.shade400,
