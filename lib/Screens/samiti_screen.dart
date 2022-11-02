@@ -15,6 +15,7 @@ import 'package:sonjagapp/Screens/search_screen.dart';
 import 'package:sonjagapp/Screens/voter_list_screen.dart';
 import 'package:sonjagapp/Screens/well_wisher_target_screen.dart';
 import 'package:sonjagapp/Services/service.dart';
+import 'package:sonjagapp/Widgets/nav_drawer.dart';
 import 'package:sonjagapp/Widgets/textformfield_widget.dart';
 import '../Constants/constants.dart';
 import '../Widgets/button_widget.dart';
@@ -96,11 +97,12 @@ class _SamitiScreenState extends State<SamitiScreen> {
       child: Consumer<ConnectivityProvider>(builder: (context, value, child) {
         if (value.isOnline != null) {
           return Scaffold(
+            drawer: const NavDrawer(),
             appBar: value.isOnline!
                 ? AppBar(
                     title: const Text('Sanjog Ekmara'),
                     centerTitle: true,
-                    automaticallyImplyLeading: false,
+                    automaticallyImplyLeading: true,
                     // backgroundColor: Constants.kPrimaryThemeColor,
                     elevation: 1.0,
                     actions: [

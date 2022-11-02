@@ -673,38 +673,71 @@ class _EditDetailsScreenState extends State<EditDetailsScreen> {
                                         focusNode: _dobNode,
                                         hintText: 'DD-MM-YYYY',
                                         isPrefixIcon: false,
-                                        isSuffixIcon: false,
+                                        isSuffixIcon: true,
+                                        suffixIcon: IconButton(
+                                          onPressed: () async {
+                                            DateTime? pickedDate =
+                                                await showDatePicker(
+                                              context: context,
+                                              initialDate: DateTime.now(),
+                                              firstDate: DateTime(1970),
+                                              lastDate: DateTime.now(),
+                                            );
+
+                                            if (pickedDate != null) {
+                                              print('Picked : $pickedDate');
+                                              String formattedDate = DateFormat(
+                                                      'dd-MM-yyyy') // dd-MM-yyyy
+                                                  .format(pickedDate);
+                                              print(
+                                                  'Formatted : $formattedDate');
+                                              setState(() {
+                                                _dobController.text =
+                                                    formattedDate;
+                                              });
+                                            } else {
+                                              print('Date is not selected');
+                                            }
+                                          },
+                                          icon: Icon(
+                                            Icons.date_range,
+                                            size: 18.0,
+                                            color: Colors.grey.shade400,
+                                          ),
+                                        ),
                                         readOnly: true,
                                         onTap: () async {
-                                          print(_dobController.text);
-                                          DateTime? pickedDate =
-                                              await showDatePicker(
-                                            context: context,
-                                            // initialDate: DateTime.now(),
-                                            initialDate: _dobController
-                                                    .text.isEmpty
-                                                ? DateTime.now()
-                                                : DateTime.parse(DateFormat(
-                                                        'dd-MM-yyyy') // dd-MM-yyyy
-                                                    .format(DateTime.parse(
-                                                        _dobController.text))),
-                                            firstDate: DateTime(1970),
-                                            lastDate: DateTime.now(),
-                                          );
+                                          // print('DOB : ${_dobController.text}');
+                                          // DateTime? pickedDate =
+                                          //     await showDatePicker(
+                                          //   context: context,
+                                          //   initialDate: DateTime.now(),
+                                          //   // initialDate:
+                                          //   //     _dobController.text.isEmpty
+                                          //   //         ? DateTime.now()
+                                          //   //         : DateTime.parse(
+                                          //   //             _dobController.text),
+                                          //   // : DateTime.parse(DateFormat(
+                                          //   //         'dd-MM-yyyy') // dd-MM-yyyy
+                                          //   //     .format(DateTime.parse(
+                                          //   //         _dobController.text))),
+                                          //   firstDate: DateTime(1970),
+                                          //   lastDate: DateTime.now(),
+                                          // );
 
-                                          if (pickedDate != null) {
-                                            // print(pickedDate);
-                                            String formattedDate = DateFormat(
-                                                    'dd-MM-yyyy') // dd-MM-yyyy
-                                                .format(pickedDate);
-                                            // print(formattedDate);
-                                            setState(() {
-                                              _dobController.text =
-                                                  formattedDate;
-                                            });
-                                          } else {
-                                            print('Date is not selected');
-                                          }
+                                          // if (pickedDate != null) {
+                                          //   print('Picked : $pickedDate');
+                                          //   String formattedDate = DateFormat(
+                                          //           'dd-MM-yyyy') // dd-MM-yyyy
+                                          //       .format(pickedDate);
+                                          //   print('Formatted : $formattedDate');
+                                          //   setState(() {
+                                          //     _dobController.text =
+                                          //         formattedDate;
+                                          //   });
+                                          // } else {
+                                          //   print('Date is not selected');
+                                          // }
                                         },
                                         // validator: dobValidator,
                                       ),
@@ -731,36 +764,66 @@ class _EditDetailsScreenState extends State<EditDetailsScreen> {
                                         focusNode: _domNode,
                                         hintText: 'DD-MM-YYYY',
                                         isPrefixIcon: false,
-                                        isSuffixIcon: false,
+                                        isSuffixIcon: true,
+                                        suffixIcon: IconButton(
+                                            onPressed: () async {
+                                              DateTime? pickedDate =
+                                                  await showDatePicker(
+                                                context: context,
+                                                initialDate: DateTime.now(),
+                                                firstDate: DateTime(1970),
+                                                lastDate: DateTime.now(),
+                                              );
+
+                                              if (pickedDate != null) {
+                                                String formattedDate = DateFormat(
+                                                        'dd-MM-yyyy') // dd-MM-yyyy
+                                                    .format(pickedDate);
+
+                                                setState(() {
+                                                  _domController.text =
+                                                      formattedDate;
+                                                });
+                                              } else {
+                                                print('Date is not selected');
+                                              }
+                                            },
+                                            icon: Icon(
+                                              Icons.date_range,
+                                              size: 20.0,
+                                              color: Colors.grey.shade400,
+                                            )),
                                         readOnly: true,
                                         onTap: () async {
-                                          DateTime? pickedDate =
-                                              await showDatePicker(
-                                                  context: context,
-                                                  initialDate: _domController
-                                                          .text.isEmpty
-                                                      ? DateTime.now()
-                                                      : DateTime.parse(DateFormat(
-                                                              'dd-MM-yyyy') // dd-MM-yyyy
-                                                          .format(
-                                                              DateTime.parse(
-                                                                  _domController
-                                                                      .text))),
-                                                  firstDate: DateTime(1970),
-                                                  lastDate: DateTime.now());
+                                          // print('Dom : ${_domController.text}');
+                                          // DateTime? pickedDate =
+                                          //     await showDatePicker(
+                                          //         context: context,
+                                          //         initialDate: _domController
+                                          //                 .text.isEmpty
+                                          //             ? DateTime.now()
+                                          //             : DateTime.parse(DateFormat(
+                                          //                     'yyyy-MM-dd') // dd-MM-yyyy
+                                          //                 .format(
+                                          //                     DateTime.parse(
+                                          //                         _domController
+                                          //                             .text))),
+                                          //         firstDate: DateTime(1970),
+                                          //         lastDate: DateTime.now());
 
-                                          if (pickedDate != null) {
-                                            String formattedDate = DateFormat(
-                                                    'dd-MM-yyyy') // dd-MM-yyyy
-                                                .format(pickedDate);
+                                          // if (pickedDate != null) {
+                                          //   String formattedDate = DateFormat(
+                                          //           'yyyy-MM-dd') // dd-MM-yyyy
+                                          //       .format(pickedDate);
 
-                                            setState(() {
-                                              _domController.text =
-                                                  formattedDate;
-                                            });
-                                          } else {
-                                            print('Date is not selected');
-                                          }
+                                          //   setState(() {
+                                          //     _domController.text =
+                                          //         formattedDate;
+                                          //   });
+                                          //   print(_domController.text);
+                                          // } else {
+                                          //   print('Date is not selected');
+                                          // }
                                         },
                                         // validator: domValidator,
                                       ),
@@ -1026,7 +1089,7 @@ class _EditDetailsScreenState extends State<EditDetailsScreen> {
 
                             APIServices.updateUserData(
                               context,
-                              id: widget.details!.userId
+                              id: widget.details!.id
                                   .toString(), // voter user id
                               loginUserId: userId, // login user id
                               photo: image.toString(),

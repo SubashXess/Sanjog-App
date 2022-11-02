@@ -1,46 +1,44 @@
-// import 'package:flutter/material.dart';
-// import 'package:sonjagapp/Constants/constants.dart';
+import 'package:flutter/material.dart';
 
-// class IOSModalStyle extends StatelessWidget {
-//   const IOSModalStyle(
-//       {super.key, required this.childBody, required this.headerTop});
+class TestDateFormatted extends StatefulWidget {
+  const TestDateFormatted({super.key});
 
-//   final Widget childBody;
-//   final Widget headerTop;
+  @override
+  State<TestDateFormatted> createState() => _TestDateFormattedState();
+}
 
-//   @override
-//   Widget build(BuildContext context) {
-//     Size size = MediaQuery.of(context).size;
-//     return Container(
-//       margin: const EdgeInsets.all(10.0),
-//       clipBehavior: Clip.antiAlias,
-//       decoration: const BoxDecoration(
-//         color: Colors.transparent,
-//         borderRadius: BorderRadius.all(Radius.circular(6.0)),
-//       ),
-//       child: Column(
-//         mainAxisSize: MainAxisSize.min,
-//         children: [
-//           // _dividerWidget(size),
-//           const Text(
-//             'Family Members',
-//             style: TextStyle(
-//                 color: Colors.white,
-//                 fontSize: Constants.fontLarge,
-//                 fontWeight: FontWeight.bold),
-//           ),
-//           headerTop,
-//           Container(
-//             decoration: const BoxDecoration(
-//               color: Colors.white, // color of card
-//               borderRadius: BorderRadius.all(Radius.circular(6.0)),
-//             ),
-//             height: 200, // body container height
-//             width: double.infinity,
-//             child: childBody,
-//           )
-//         ],
-//       ),
-//     );
-//   }
-// }
+class _TestDateFormattedState extends State<TestDateFormatted> {
+  DateTime? pickedDate;
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      body: Center(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Text('Picked Date : $pickedDate'),
+            const SizedBox(height: 10.0),
+            MaterialButton(
+              onPressed: () async {
+                pickedDate = await showDatePicker(
+                  context: context,
+                  initialDate: DateTime.now(),
+                  firstDate: DateTime(1970),
+                  lastDate: DateTime.now(),
+                );
+                setState(() {});
+              },
+              color: Colors.deepPurple,
+              child: const Text(
+                'Pick Date',
+                style: TextStyle(color: Colors.white),
+              ),
+            )
+          ],
+        ),
+      ),
+    );
+  }
+}

@@ -15,6 +15,7 @@ import 'package:sonjagapp/Screens/search_by_voter_id_screen.dart';
 import 'package:sonjagapp/Screens/voter_list_screen.dart';
 import 'package:sonjagapp/Test%20Screens/test_provider.dart';
 import 'package:sonjagapp/Test%20Screens/test_screen.dart';
+import 'package:sonjagapp/Test%20Screens/test_screen_2.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -42,7 +43,7 @@ class MyApp extends StatelessWidget {
         debugShowCheckedModeBanner: false,
         theme: ThemeData(primarySwatch: Colors.red),
         home: isLoggedIn! ? const SamitiScreen() : const LoginScreen(),
-        // home: SamitiScreen(),
+        // home: TestDateFormatted(),
         // home: const SamitiScreen(),
         // home: const BS(),
       ),
