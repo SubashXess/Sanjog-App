@@ -2,8 +2,18 @@ import 'package:flutter/material.dart';
 import 'package:sonjagapp/Constants/constants.dart';
 import 'package:sonjagapp/Screens/notification_screen.dart';
 
+import '../Services/service.dart';
+
 class NavDrawer extends StatelessWidget {
-  const NavDrawer({super.key});
+  const NavDrawer(
+      {super.key,
+      required this.name,
+      required this.phone,
+      required this.voterId});
+
+  final String name;
+  final String phone;
+  final String voterId;
 
   @override
   Widget build(BuildContext context) {
@@ -68,8 +78,8 @@ class NavDrawer extends StatelessWidget {
             MaterialPageRoute(builder: (_) => const NotificationScreen()));
         break;
       case 3:
-        Navigator.push(context,
-            MaterialPageRoute(builder: (_) => const NotificationScreen()));
+        ApiClient.logout(context);
+
         break;
       default:
         Navigator.pop(context);
@@ -79,6 +89,7 @@ class NavDrawer extends StatelessWidget {
 
   Widget headerWidget() {
     // const profilePic = '';
+
     return DrawerHeader(
       padding: const EdgeInsets.all(10.0),
       child: Row(
@@ -99,26 +110,26 @@ class NavDrawer extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               mainAxisAlignment: MainAxisAlignment.center,
-              children: const [
+              children: [
                 Text(
-                  'Person Name',
-                  style: TextStyle(
+                  name,
+                  style: const TextStyle(
                       fontSize: Constants.fontMedium,
                       color: Colors.black,
                       fontWeight: FontWeight.bold),
                 ),
-                SizedBox(height: 10.0),
+                const SizedBox(height: 10.0),
                 Text(
-                  'Voter ID: CRP4356787',
-                  style: TextStyle(
+                  'Voter ID: $voterId',
+                  style: const TextStyle(
                       fontSize: Constants.fontSmall,
                       color: Colors.black45,
                       fontWeight: FontWeight.w500),
                 ),
-                SizedBox(height: 4.0),
+                const SizedBox(height: 4.0),
                 Text(
-                  'Mobile No: +91 87654 32178',
-                  style: TextStyle(
+                  'Mobile No: +91 $phone',
+                  style: const TextStyle(
                       fontSize: Constants.fontSmall,
                       color: Colors.black45,
                       fontWeight: FontWeight.w500),

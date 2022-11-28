@@ -204,6 +204,7 @@ class ApiClient {
           if (await preferences.setBool('login', true)) {
             preferences.setString('name', data['name']);
             preferences.setString('mobile', data['mobile']);
+            preferences.setString('voter_no', data['voter_no']);
             preferences.setString('id', data['id']);
             Navigator.of(context).pushAndRemoveUntil(
               MaterialPageRoute(builder: (context) => const SamitiScreen()),

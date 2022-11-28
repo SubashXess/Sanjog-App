@@ -1,14 +1,11 @@
 // ignore_for_file: avoid_print
 
-import 'package:badges/badges.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:sonjagapp/Components/or_divider.dart';
 import 'package:sonjagapp/Error%20Screens/no_internet_connection.dart';
-import 'package:sonjagapp/Models/login_model.dart';
 import 'package:sonjagapp/Providers/connection_provider.dart';
-import 'package:sonjagapp/Screens/notification_screen.dart';
 import 'package:sonjagapp/Screens/search_by_voter_id_screen.dart';
 import 'package:sonjagapp/Screens/search_samiti_list_screen.dart';
 import 'package:sonjagapp/Screens/search_screen.dart';
@@ -48,6 +45,7 @@ class _SamitiScreenState extends State<SamitiScreen> {
   String? username;
   String? userMobile;
   String? userId;
+  String? voterId;
 
   @override
   void initState() {
@@ -82,7 +80,8 @@ class _SamitiScreenState extends State<SamitiScreen> {
     setState(() {
       userId = preferences.getString('id');
       username = preferences.getString('name');
-      userMobile = preferences.getString('mobile');
+      userMobile = preferences.getString('mobile'); // voter_no
+      voterId = preferences.getString('voter_no');
     });
   }
 
@@ -90,14 +89,17 @@ class _SamitiScreenState extends State<SamitiScreen> {
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
     print('rebuild');
-    print('$userId, $username, $userMobile');
+    print('$userId, $username, $userMobile, $voterId');
 
     return GestureDetector(
       onTap: () => FocusScope.of(context).unfocus(),
       child: Consumer<ConnectivityProvider>(builder: (context, value, child) {
         if (value.isOnline != null) {
           return Scaffold(
-            drawer: const NavDrawer(),
+            drawer: NavDrawer(
+                name: username.toString(),
+                voterId: voterId.toString(),
+                phone: userMobile.toString()),
             appBar: value.isOnline!
                 ? AppBar(
                     title: const Text('Sanjog Ekmara'),
@@ -117,42 +119,43 @@ class _SamitiScreenState extends State<SamitiScreen> {
                                     builder: (_) => const SearchScreen()));
                           },
                           child: const Icon(Icons.search, size: 20.0)),
+                      const SizedBox(width: 10.0),
                       // const SizedBox(width: 10.0),
-                      PopupMenuButton(
-                        shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(6.0)),
-                        iconSize: 20.0,
-                        position: PopupMenuPosition.under,
-                        itemBuilder: (_) {
-                          return [
-                            PopupMenuItem(
-                              value: 0,
-                              height: 20.0,
-                              onTap: () {
-                                ApiClient.logout(context);
-                              },
-                              child: Row(
-                                crossAxisAlignment: CrossAxisAlignment.center,
-                                children: const [
-                                  Icon(
-                                    Icons.power_settings_new,
-                                    color: Constants.kPrimaryThemeColor,
-                                    size: 18.0,
-                                  ),
-                                  SizedBox(width: 6.0),
-                                  Text(
-                                    'Logout',
-                                    style: TextStyle(
-                                        color: Constants.kPrimaryThemeColor,
-                                        fontSize: Constants.fontSmall,
-                                        fontWeight: FontWeight.bold),
-                                  ),
-                                ],
-                              ),
-                            ),
-                          ];
-                        },
-                      ),
+                      // PopupMenuButton(
+                      //   shape: RoundedRectangleBorder(
+                      //       borderRadius: BorderRadius.circular(6.0)),
+                      //   iconSize: 20.0,
+                      //   position: PopupMenuPosition.under,
+                      //   itemBuilder: (_) {
+                      //     return [
+                      //       PopupMenuItem(
+                      //         value: 0,
+                      //         height: 20.0,
+                      //         onTap: () {
+                      //           ApiClient.logout(context);
+                      //         },
+                      //         child: Row(
+                      //           crossAxisAlignment: CrossAxisAlignment.center,
+                      //           children: const [
+                      //             Icon(
+                      //               Icons.power_settings_new,
+                      //               color: Constants.kPrimaryThemeColor,
+                      //               size: 18.0,
+                      //             ),
+                      //             SizedBox(width: 6.0),
+                      //             Text(
+                      //               'Logout',
+                      //               style: TextStyle(
+                      //                   color: Constants.kPrimaryThemeColor,
+                      //                   fontSize: Constants.fontSmall,
+                      //                   fontWeight: FontWeight.bold),
+                      //             ),
+                      //           ],
+                      //         ),
+                      //       ),
+                      //     ];
+                      //   },
+                      // ),
                     ],
                     flexibleSpace: FlexibleSpaceBar(
                       background: Container(
